@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Hello, world &middot; gooboolygoo/projects</title>
+  <meta name="description" content="The first project in gooboolygoo's daily-website series." />
+  <style>
+    :root{color-scheme:light dark}
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0;height:100%}
+    body{
+      display:grid;place-items:center;
+      font:16px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;
+      background:
+        radial-gradient(1200px 600px at 20% 10%, color-mix(in srgb, #ffdd00 20%, Canvas), Canvas 60%),
+        radial-gradient(900px 500px at 80% 90%, color-mix(in srgb, #ea4aaa 12%, Canvas), Canvas 60%),
+        Canvas;
+      color:CanvasText;
+      padding:2rem;
+    }
+    main{max-width:560px;text-align:center}
+    h1{font-size:clamp(2rem,6vw,3.25rem);margin:0 0 .5rem;letter-spacing:-.02em}
+    p{margin:.5rem 0;opacity:.85}
+    .day{
+      display:inline-block;margin-bottom:1rem;
+      font:600 12px/1 ui-monospace,Menlo,Consolas,monospace;
+      letter-spacing:.08em;text-transform:uppercase;
+      padding:.4rem .7rem;border-radius:999px;
+      background:color-mix(in srgb,CanvasText 8%,Canvas);
+    }
+    a.back{
+      display:inline-block;margin-top:1.25rem;
+      color:inherit;opacity:.7;text-decoration:underline;
+      text-underline-offset:3px;
+    }
+    a.back:hover{opacity:1}
+  </style>
+</head>
+<body>
+  <main>
+    <span class="day">Day 1</span>
+    <h1>Hello, world.</h1>
+    <p>This is the first tiny website in <strong>gooboolygoo/projects</strong>.</p>
+    <p>A new one ships every day. The pipeline that built and deployed this page also handles the social posts.</p>
+    <a class="back" href="../">&larr; back to all projects</a>
+  </main>
+</body>
+</html>
