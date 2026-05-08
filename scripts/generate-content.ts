@@ -286,18 +286,17 @@ function validateToolInput(raw: unknown): ToolInput {
   };
 }
 
-async function generatePromo(slug: string, client: Anthropic): Promise<Promo> {
-  if (!SLUG_RE.test(slug)) {
-    throw new Error(`Invalid slug: ${slug}`);
-  }
-  const meta = await loadMeta(slug);
-  const html = await readFile(join(SITES_DIR, slug, "index.html"), "utf8");
-  const pageText = htmlToText(html);
-  const url = `${SITE_BASE_URL}/${slug}/`;
-
+async function callClaudeOnce(args: {
+  client: Anthropic;
+  slug: string;
+  url: string;
+  meta: Meta;
+  pageText: string;
+}): Promise<{ data: ToolInput; stopReason: string | null }> {
+  const { client, slug, url, meta, pageText } = args;
   const response = await client.messages.create({
     model: MODEL,
-    max_tokens: 1500,
+    max_tokens: 2500,
     system: SYSTEM_PROMPT,
     tools: [TOOL_SCHEMA as unknown as Anthropic.Tool],
     tool_choice: { type: "tool", name: "publish_promo" },
@@ -316,6 +315,26 @@ async function generatePromo(slug: string, client: Anthropic): Promise<Promo> {
     );
   }
   const data = validateToolInput(toolUse.input);
+  return { data, stopReason: response.stop_reason };
+}
+
+async function generatePromo(slug: string, client: Anthropic): Promise<Promo> {
+  if (!SLUG_RE.test(slug)) {
+    throw new Error(`Invalid slug: ${slug}`);
+  }
+  const meta = await loadMeta(slug);
+  const html = await readFile(join(SITES_DIR, slug, "index.html"), "utf8");
+  const pageText = htmlToText(html);
+  const url = `${SITE_BASE_URL}/${slug}/`;
+
+  let data: ToolInput;
+  try {
+    ({ data } = await callClaudeOnce({ client, slug, url, meta, pageText }));
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error(`  [retry] first attempt failed: ${msg}`);
+    ({ data } = await callClaudeOnce({ client, slug, url, meta, pageText }));
+  }
   const wordCount = data.video.script.trim().split(/\s+/).length;
 
   return {
