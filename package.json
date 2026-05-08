@@ -8,7 +8,8 @@
     "build": "tsx scripts/build.ts",
     "preview": "npm run build && npx --yes serve public",
     "promo": "tsx scripts/generate-content.ts",
-    "video": "tsx scripts/render-video.ts"
+    "video": "tsx scripts/render-video.ts",
+    "post": "tsx scripts/post.ts"
   },
   "engines": {
     "node": ">=20"

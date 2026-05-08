@@ -1,0 +1,152 @@
+name: Promote daily site
+
+on:
+  workflow_run:
+    workflows: ["Publish daily site"]
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      slug:
+        description: "Specific slug to promote (default: all pending)"
+        required: false
+        type: string
+      mode:
+        description: "Posting mode"
+        required: false
+        type: choice
+        options:
+          - now
+          - draft
+          - schedule
+        default: now
+      schedule:
+        description: "ISO timestamp for --schedule (only used when mode = schedule)"
+        required: false
+        type: string
+
+permissions:
+  contents: write
+
+concurrency:
+  group: promote-daily
+  cancel-in-progress: false
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+  PLAYWRIGHT_BROWSERS_PATH: ${{ github.workspace }}/.cache/ms-playwright
+
+jobs:
+  promote:
+    name: Promote pending sites
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
+    steps:
+      - name: Checkout main (fresh)
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 1
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.PLAYWRIGHT_BROWSERS_PATH }}
+          key: playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+
+      - name: Install Chromium for Playwright
+        run: npx playwright install chromium --with-deps
+
+      - name: Determine slugs to promote
+        id: find
+        run: |
+          set -euo pipefail
+          if [ -n "${{ github.event.inputs.slug }}" ]; then
+            slugs="${{ github.event.inputs.slug }}"
+          else
+            slugs=$(npx tsx scripts/find-pending.ts)
+          fi
+          if [ -z "${slugs:-}" ]; then
+            echo "No pending slugs."
+          else
+            echo "Pending slugs:"
+            echo "$slugs"
+          fi
+          {
+            echo "slugs<<EOF"
+            echo "$slugs"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Build site bundle (input for video capture)
+        if: steps.find.outputs.slugs != ''
+        run: npm run build
+
+      - name: Run promo + video + post per slug
+        if: steps.find.outputs.slugs != ''
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          POSTIZ_API_KEY: ${{ secrets.POSTIZ_API_KEY }}
+          MODE: ${{ github.event.inputs.mode || 'now' }}
+          SCHEDULE: ${{ github.event.inputs.schedule || '' }}
+        run: |
+          set -euo pipefail
+          while IFS= read -r slug; do
+            [ -z "$slug" ] && continue
+            echo "::group::Promoting $slug"
+            if [ ! -f "sites/$slug/promo.json" ]; then
+              npm run promo -- "$slug"
+            else
+              echo "promo.json already present, skipping promo step"
+            fi
+            if [ ! -f "sites/$slug/promo.mp4" ]; then
+              npm run video -- "$slug"
+            else
+              echo "promo.mp4 already present, skipping video step"
+            fi
+            case "$MODE" in
+              now)
+                npm run post -- "$slug" --now
+                ;;
+              draft)
+                npm run post -- "$slug"
+                ;;
+              schedule)
+                if [ -z "$SCHEDULE" ]; then
+                  echo "mode=schedule requires the 'schedule' input (ISO timestamp)" >&2
+                  exit 1
+                fi
+                npm run post -- "$slug" --schedule "$SCHEDULE"
+                ;;
+              *)
+                echo "Unknown mode: $MODE" >&2
+                exit 1
+                ;;
+            esac
+            echo "::endgroup::"
+          done <<< "${{ steps.find.outputs.slugs }}"
+
+      - name: Commit promo artifacts
+        if: steps.find.outputs.slugs != ''
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -- 'sites/**/promo.json' 'sites/**/promo.mp4' 'sites/**/post.json' || true
+          if git diff --staged --quiet; then
+            echo "No artifact changes to commit."
+            exit 0
+          fi
+          slug_list=$(echo "${{ steps.find.outputs.slugs }}" | tr '\n' ' ' | sed 's/ *$//')
+          git commit -m "chore: auto-promote ${slug_list} [skip ci]"
+          git push origin main

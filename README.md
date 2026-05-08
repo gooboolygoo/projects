@@ -4,7 +4,7 @@ A new tiny website every day, by [@gooboolygoo](https://github.com/gooboolygoo).
 
 Live at **<https://gooboolygoo.github.io/projects/>**.
 
-Each project is a single `index.html` (plus optional assets). A GitHub Actions workflow injects a Buy Me a Coffee button, deploys to GitHub Pages at `gooboolygoo.github.io/projects/<slug>/`, and (in later phases) generates a tweet + a 9:16 promo video and fans the post out to X, TikTok, Instagram Reels, and YouTube Shorts via Postiz Cloud.
+Each project is a single `index.html` (plus optional assets). A GitHub Actions workflow injects a Buy Me a Coffee button, deploys to GitHub Pages at `gooboolygoo.github.io/projects/<slug>/`, and (in later phases) generates a tweet + a 9:16 promo video and fans the post out to X, TikTok, Instagram Reels, Facebook Reels, and YouTube Shorts via Postiz Cloud.
 
 ## Daily workflow
 
@@ -145,9 +145,9 @@ What the pipeline does, in order:
 
 The Remotion composition (see [`remotion/Promo.tsx`](remotion/Promo.tsx)) is:
 
-- `0 – 2 s` — title card with `video.title` and project title.
+- `0 – 2 s` — title card with the project's `meta.title`.
 - `2 s – ~25 s` — voiceover plays over Ken-Burns-zoomed screenshots, with word-by-word captions highlighting the active word in yellow.
-- last `3 s` — outro card with the URL, `@gooboolygoo`, and hashtags.
+- last `3 s` — outro card with "Try it yourself" and the project URL.
 
 Total cost per video: $0 (Edge TTS, Playwright, Remotion are all free; Claude generated the script in Phase 1). Render time on an Apple Silicon Mac: ~20 – 25 s wall-clock.
 
@@ -157,8 +157,89 @@ Total cost per video: $0 (Edge TTS, Playwright, Remotion are all free; Claude ge
 - If Playwright complains it can't find Chromium (which can happen after npm postinstall in some sandboxed editors), set `PLAYWRIGHT_BROWSERS_PATH=$HOME/Library/Caches/ms-playwright` in the shell before running.
 - `.video-cache/` (intermediate audio + screenshots) is gitignored. `promo.mp4` is committed.
 
+## Phase 3 — Cross-posting via Postiz Cloud
+
+After `promo.json` and `promo.mp4` exist, fan the project out to X, TikTok, Instagram Reels, Facebook Reels, and YouTube Shorts in one shot.
+
+### One-time Postiz setup
+
+1. Sign up at [platform.postiz.com](https://platform.postiz.com) (the Cloud plan is fine — $29/mo).
+2. Connect each channel (Settings → Channels): X, TikTok, Instagram (use **Instagram Standalone** unless you have a linked Facebook Page), Facebook (must be a Page, not a personal profile — Meta does not allow API posts to profiles), YouTube.
+3. Create an API key: Settings → Developers → Public API. Copy the value.
+4. Put the key in `.env`:
+
+   ```bash
+   POSTIZ_API_KEY=...
+   ```
+
+### Running it
+
+```bash
+npm run post -- hello                            # save as draft on Postiz (default)
+npm run post -- hello --now                      # publish immediately to all connected platforms
+npm run post -- hello --schedule 2026-05-08T20:00:00Z   # schedule for a specific UTC time
+npm run post -- hello --platforms x,tiktok       # restrict to a subset
+npm run post -- hello --dry-run                  # print the composed payload, no API calls
+```
+
+The default is `draft` so you can review the post in the Postiz UI before clicking publish — useful while you're getting comfortable. Switch to `--now` once you trust it.
+
+### What it does
+
+[`scripts/post.ts`](scripts/post.ts) does three Postiz API calls per slug (well under the 30 req/hour limit):
+
+1. `GET /integrations` to look up the integration ID for each connected platform.
+2. `POST /upload` to upload `promo.mp4` (multipart; returns `{id, path}`).
+3. `POST /posts` with one batched body containing five `PostItem`s — one per platform — composed as:
+
+   | Platform           | What gets sent |
+   | ------------------ | -------------- |
+   | **X**              | 2-tweet thread: tweet 1 = `x.tweet` with the video; tweet 2 = `${x.reply_lead} ${url}` (no media). `who_can_reply_post: everyone`. |
+   | **TikTok**         | Single video post. Caption = `${vertical_caption}\n\n${url}\n\n#hashtags`. Privacy `PUBLIC_TO_EVERYONE`, comments/duet/stitch on, posted directly via `DIRECT_POST`. |
+   | **Instagram**      | Single video post (IG auto-classifies as Reel from the 9:16 file). Caption = `${vertical_caption}\n\n${url}\n\n#hashtags`. Prefers Instagram Standalone if connected, falls back to FB-linked Instagram. |
+   | **Facebook**       | Single video post to your Page (FB auto-classifies as Reel from the 9:16 file). Caption = `${vertical_caption}\n\n${url}\n\n#hashtags`. URL goes in the caption, not as a link-preview, so the video stays the primary attachment. |
+   | **YouTube Shorts** | Single video post. Title = `video.title` (≤ 100 chars). Description = `${shorts_description_lead}\n\n${url}\n\n#hashtags`. Visibility public, not made-for-kids, hashtags also passed as YouTube tags. |
+
+   If a platform isn't connected on Postiz, it's skipped with a warning instead of failing the whole run.
+
+After a successful run, `sites/<slug>/post.json` is written as a receipt (mode, scheduled time, platforms, Postiz response). Like `promo.json` and `promo.mp4`, this file is excluded from the deployed Pages output.
+
+Cost: $29/month for Postiz Cloud, flat. No per-post fees.
+
+## End-to-end automation: push → publish → promote
+
+The full daily flow is wired into GitHub Actions across two workflows:
+
+1. [`publish-daily.yml`](.github/workflows/publish-daily.yml) — on push to `main`, builds and deploys to Pages.
+2. [`promote-daily.yml`](.github/workflows/promote-daily.yml) — runs after `publish-daily` succeeds. For each slug under `sites/` that has `index.html` + `meta.yml` but no `post.json` yet, it runs `npm run promo` → `npm run video` → `npm run post -- <slug> --now` and commits the resulting `promo.json`, `promo.mp4`, and `post.json` back to `main` with `[skip ci]` so it doesn't loop.
+
+The `post.json` receipt is the gate: once a slug has been posted, future pushes never re-promote it. Add a new site folder, push, and it gets promoted exactly once.
+
+### One-time setup for the cron
+
+1. **Add repo secrets** at `https://github.com/gooboolygoo/projects/settings/secrets/actions`:
+   - `ANTHROPIC_API_KEY` — for promo copy generation.
+   - `POSTIZ_API_KEY` — for cross-posting.
+2. **Connect channels on Postiz**: X, TikTok, Instagram (Standalone), Facebook (a Page, not a profile), YouTube. Re-run the workflow after connecting a channel and it'll start including that platform.
+3. The default workflow `GITHUB_TOKEN` already has the `contents: write` scope needed for the auto-commit.
+
+### Manual override
+
+Use `Run workflow` on `Promote daily site` in the Actions tab to:
+
+- Promote a specific slug (`slug = pomodoro`) without waiting for a push.
+- Switch posting `mode` to `draft` (saves to Postiz drafts UI for review) or `schedule` (with an ISO `schedule` input) for testing.
+
+To re-promote a slug whose site you've changed, delete its `sites/<slug>/post.json` and push — the cron will treat it as pending again.
+
+### Loop safety
+
+The auto-commit by the workflow uses `[skip ci]`, and pushes signed by `GITHUB_TOKEN` don't trigger new workflow runs by default — two layers of protection against an infinite promote loop.
+
 ## Roadmap
 
-- **Phase 3 — Cross-posting.** `scripts/post.ts` uploads `promo.mp4` and the per-platform copy from `promo.json` to Postiz Cloud and schedules fanout to X, TikTok, Instagram Reels, and YouTube Shorts. Requires `POSTIZ_API_KEY` (and the existing `ANTHROPIC_API_KEY`) in repo secrets.
+Possible next steps:
 
-The phases drop in incrementally — none of them break the Day 0 build/deploy.
+- Add a `--review` flag to `npm run post` that opens the rendered `promo.mp4` in your default player before posting.
+- Add Postiz analytics polling (`GET /posts/{id}/analytics`) so the receipt eventually includes views/likes per platform.
+- Surface a tiny dashboard at `gooboolygoo.github.io/projects/` showing the latest post receipts.

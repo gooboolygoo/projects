@@ -187,6 +187,7 @@ async function build(): Promise<void> {
         if (s.endsWith("promo.json")) return false;
         if (s.endsWith("promo.mp4")) return false;
         if (s.endsWith("promo.mp3")) return false;
+        if (s.endsWith("post.json")) return false;
         if (s.includes("/.video-cache")) return false;
         return true;
       },
