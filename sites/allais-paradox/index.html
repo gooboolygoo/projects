@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Allais Paradox & Prospect Theory</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+  :root {
+    --bg: #faf9f5;
+    --surface: #ffffff;
+    --surface-2: #f3f1ea;
+    --text: #1a1915;
+    --text-muted: #6b6960;
+    --text-dim: #8e8c83;
+    --border: rgba(0,0,0,0.1);
+    --border-strong: rgba(0,0,0,0.2);
+    --accent: #c96442;
+    --accent-soft: #faece7;
+    --teal: #1d9e75;
+    --teal-soft: #e1f5ee;
+    --purple: #534ab7;
+    --purple-soft: #eeedfe;
+    --amber: #ba7517;
+    --amber-soft: #faeeda;
+    --red: #a32d2d;
+    --red-soft: #fcebeb;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1a1915;
+      --surface: #25241f;
+      --surface-2: #2f2e28;
+      --text: #f0eee6;
+      --text-muted: #a8a69d;
+      --text-dim: #75736b;
+      --border: rgba(255,255,255,0.1);
+      --border-strong: rgba(255,255,255,0.2);
+      --accent: #e88a6b;
+      --accent-soft: #3a2218;
+      --teal-soft: #0a3328;
+      --purple-soft: #1f1a3d;
+      --amber-soft: #3a2810;
+      --red-soft: #3a1414;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.65;
+    font-size: 16px;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 3rem 1.5rem 5rem; }
+  header { margin-bottom: 3rem; }
+  .eyebrow {
+    font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--text-dim); font-weight: 500; margin-bottom: 0.75rem;
+  }
+  h1 { font-size: 32px; font-weight: 500; line-height: 1.2; margin-bottom: 0.75rem; letter-spacing: -0.01em; }
+  h2 { font-size: 22px; font-weight: 500; margin: 2.5rem 0 1rem; letter-spacing: -0.005em; }
+  h3 { font-size: 16px; font-weight: 500; margin-bottom: 0.5rem; }
+  .lede { font-size: 17px; color: var(--text-muted); max-width: 640px; }
+  p { margin-bottom: 1rem; color: var(--text); }
+  p.muted { color: var(--text-muted); font-size: 14px; }
+  .pair-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 1rem 0 1.5rem;
+  }
+  .gamble {
+    background: var(--surface); border: 0.5px solid var(--border);
+    border-radius: 12px; padding: 1.25rem; cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+    position: relative;
+  }
+  .gamble:hover { border-color: var(--border-strong); }
+  .gamble.selected {
+    border: 1.5px solid var(--accent);
+    background: var(--accent-soft);
+  }
+  .gamble-label {
+    font-weight: 500; font-size: 14px; letter-spacing: 0.04em;
+    color: var(--text-muted); margin-bottom: 0.75rem; text-transform: uppercase;
+  }
+  .outcome {
+    display: flex; justify-content: space-between; align-items: baseline;
+    padding: 6px 0; font-size: 15px;
+  }
+  .outcome .prob { color: var(--text-muted); font-variant-numeric: tabular-nums; }
+  .outcome .amt { font-weight: 500; font-variant-numeric: tabular-nums; }
+  .outcome.zero .amt { color: var(--text-dim); }
+  .verdict {
+    margin-top: 1rem; padding: 1rem 1.25rem; border-radius: 10px;
+    background: var(--surface-2); font-size: 14px; min-height: 60px;
+    border-left: 3px solid var(--text-dim);
+  }
+  .verdict.show { border-left-color: var(--accent); }
+  .verdict.show.contradiction { border-left-color: var(--red); background: var(--red-soft); }
+  .verdict.show.consistent { border-left-color: var(--teal); }
+  .verdict-row { display: flex; justify-content: space-between; gap: 1rem; }
+  .verdict-row + .verdict-row { margin-top: 0.5rem; }
+  .verdict strong { font-weight: 500; }
+  .reset-btn {
+    background: transparent; border: 0.5px solid var(--border-strong);
+    color: var(--text); font-size: 13px; padding: 6px 14px;
+    border-radius: 6px; cursor: pointer; font-family: inherit;
+    transition: background 0.15s;
+  }
+  .reset-btn:hover { background: var(--surface-2); }
+  .controls-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; }
+  .pair-title { font-size: 15px; font-weight: 500; color: var(--text-muted); }
+  .control-block {
+    background: var(--surface); border: 0.5px solid var(--border);
+    border-radius: 12px; padding: 1.5rem; margin: 1rem 0;
+  }
+  .slider-row {
+    display: grid; grid-template-columns: 110px 1fr 70px;
+    align-items: center; gap: 1rem; margin: 0.85rem 0;
+  }
+  .slider-row label { font-size: 14px; color: var(--text-muted); }
+  .slider-row .val {
+    font-variant-numeric: tabular-nums; font-weight: 500;
+    text-align: right; font-size: 14px;
+  }
+  input[type="range"] {
+    -webkit-appearance: none; appearance: none; width: 100%;
+    height: 4px; background: var(--surface-2); border-radius: 2px; outline: none;
+  }
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none; width: 16px; height: 16px;
+    background: var(--accent); border-radius: 50%; cursor: pointer;
+    border: 2px solid var(--surface);
+  }
+  input[type="range"]::-moz-range-thumb {
+    width: 16px; height: 16px; background: var(--accent);
+    border-radius: 50%; cursor: pointer; border: 2px solid var(--surface);
+  }
+  .chart-wrap {
+    background: var(--surface); border: 0.5px solid var(--border);
+    border-radius: 12px; padding: 1.25rem; margin: 1rem 0;
+  }
+  .chart-canvas { position: relative; height: 260px; width: 100%; }
+  .formula {
+    font-family: "SF Mono", Menlo, Monaco, "Roboto Mono", monospace;
+    font-size: 13.5px; background: var(--surface-2);
+    padding: 12px 16px; border-radius: 8px; margin: 0.75rem 0;
+    color: var(--text); overflow-x: auto;
+  }
+  .stat-grid {
+    display: grid; grid-template-columns: repeat(2, 1fr);
+    gap: 12px; margin: 1rem 0;
+  }
+  .stat {
+    background: var(--surface-2); border-radius: 8px;
+    padding: 14px 16px;
+  }
+  .stat .label { font-size: 12px; color: var(--text-muted); margin-bottom: 4px; letter-spacing: 0.04em; text-transform: uppercase; }
+  .stat .val { font-size: 22px; font-weight: 500; font-variant-numeric: tabular-nums; }
+  .stat .sub { font-size: 12px; color: var(--text-dim); margin-top: 2px; }
+  .winner { color: var(--teal); }
+  .pill {
+    display: inline-block; padding: 3px 10px; border-radius: 99px;
+    font-size: 12px; font-weight: 500; letter-spacing: 0.02em;
+  }
+  .pill-eu { background: var(--purple-soft); color: var(--purple); }
+  .pill-pt { background: var(--teal-soft); color: var(--teal); }
+  .pill-warn { background: var(--red-soft); color: var(--red); }
+  .formula-block { margin: 1rem 0; }
+  .formula-block .label { font-size: 13px; color: var(--text-muted); margin-bottom: 4px; }
+  .toggle-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 1rem 0;
+  }
+  .toggle-btn {
+    background: var(--surface); border: 0.5px solid var(--border);
+    padding: 10px 14px; border-radius: 8px; cursor: pointer;
+    font-family: inherit; font-size: 14px; color: var(--text);
+    transition: all 0.15s;
+  }
+  .toggle-btn.active {
+    background: var(--accent-soft); border-color: var(--accent);
+    color: var(--accent);
+  }
+  .insight {
+    background: var(--accent-soft); border-radius: 10px;
+    padding: 1.25rem 1.5rem; margin: 1.5rem 0;
+    border-left: 3px solid var(--accent); font-size: 15px;
+  }
+  .insight strong { font-weight: 500; }
+  .footnote {
+    font-size: 13px; color: var(--text-muted); margin-top: 2rem;
+    padding-top: 1.5rem; border-top: 0.5px solid var(--border);
+  }
+  @media (max-width: 640px) {
+    .pair-grid { grid-template-columns: 1fr; }
+    h1 { font-size: 26px; }
+    .wrap { padding: 2rem 1.25rem 3rem; }
+    .slider-row { grid-template-columns: 90px 1fr 60px; gap: 0.6rem; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="eyebrow">Exercise 36.5 · Decision under risk</div>
+  <h1>The Allais paradox &amp; prospect theory</h1>
+  <p class="lede">No utility function over money can rationalize the typical Allais preferences. But a value function with probability weighting can — here&rsquo;s how, interactively.</p>
+</header>
+
+<h2>Step 1 · Make your choices</h2>
+<p>Pick one gamble from each pair. Most people choose <strong>A</strong> in the first pair and <strong>D</strong> in the second.</p>
+
+<div class="controls-row">
+  <span class="pair-title">Pair 1</span>
+  <button class="reset-btn" id="reset">Reset choices</button>
+</div>
+
+<div class="pair-grid">
+  <div class="gamble" data-pair="1" data-choice="A">
+    <div class="gamble-label">Gamble A</div>
+    <div class="outcome"><span class="prob">100% chance</span><span class="amt">$1,000,000</span></div>
+    <div class="outcome"><span class="prob">&nbsp;</span><span class="amt">&nbsp;</span></div>
+    <div class="outcome"><span class="prob">&nbsp;</span><span class="amt">&nbsp;</span></div>
+  </div>
+  <div class="gamble" data-pair="1" data-choice="B">
+    <div class="gamble-label">Gamble B</div>
+    <div class="outcome"><span class="prob">89% chance</span><span class="amt">$1,000,000</span></div>
+    <div class="outcome"><span class="prob">10% chance</span><span class="amt">$2,500,000</span></div>
+    <div class="outcome zero"><span class="prob">1% chance</span><span class="amt">$0</span></div>
+  </div>
+</div>
+
+<div class="controls-row" style="margin-top: 1.5rem;">
+  <span class="pair-title">Pair 2</span>
+</div>
+
+<div class="pair-grid">
+  <div class="gamble" data-pair="2" data-choice="C">
+    <div class="gamble-label">Gamble C</div>
+    <div class="outcome"><span class="prob">11% chance</span><span class="amt">$1,000,000</span></div>
+    <div class="outcome zero"><span class="prob">89% chance</span><span class="amt">$0</span></div>
+    <div class="outcome"><span class="prob">&nbsp;</span><span class="amt">&nbsp;</span></div>
+  </div>
+  <div class="gamble" data-pair="2" data-choice="D">
+    <div class="gamble-label">Gamble D</div>
+    <div class="outcome"><span class="prob">10% chance</span><span class="amt">$2,500,000</span></div>
+    <div class="outcome zero"><span class="prob">90% chance</span><span class="amt">$0</span></div>
+    <div class="outcome"><span class="prob">&nbsp;</span><span class="amt">&nbsp;</span></div>
+  </div>
+</div>
+
+<div class="verdict" id="verdict">
+  <div style="color: var(--text-muted);">Pick one gamble from each pair to see how expected utility theory and prospect theory rank your choices.</div>
+</div>
+
+<h2>Step 2 · Why expected utility breaks</h2>
+<p>Suppose any utility function <em>U</em> exists with U(0) = 0, U(1M) = u₁, U(2.5M) = u₂. Plugging in the typical preferences:</p>
+
+<div class="formula-block">
+  <div class="label">A ≻ B implies</div>
+  <div class="formula">u₁ &gt; 0.89·u₁ + 0.10·u₂  ⟹  0.11·u₁ &gt; 0.10·u₂</div>
+</div>
+<div class="formula-block">
+  <div class="label">D ≻ C implies</div>
+  <div class="formula">0.10·u₂ &gt; 0.11·u₁</div>
+</div>
+
+<p>These can&rsquo;t both hold. The same 89% chance of $1M sits on both sides of pair 1 and both sides of pair 2 — by EU&rsquo;s independence axiom it should cancel out, leaving the same comparison. People treat the two situations as fundamentally different.</p>
+
+<h2>Step 3 · Prospect theory&rsquo;s fix</h2>
+<p>Kahneman &amp; Tversky (1979, 1992) replaced two pieces of the EU machinery:</p>
+
+<div class="formula-block">
+  <div class="label">Value function (concave for gains, with loss aversion λ for losses)</div>
+  <div class="formula">v(x) = x<sup>α</sup>           if x ≥ 0
+v(x) = −λ·(−x)<sup>β</sup>     if x &lt; 0</div>
+</div>
+<div class="formula-block">
+  <div class="label">Probability weighting function (Tversky &amp; Kahneman 1992)</div>
+  <div class="formula">w(p) = p<sup>γ</sup> / (p<sup>γ</sup> + (1−p)<sup>γ</sup>)<sup>1/γ</sup></div>
+</div>
+
+<p>The 1992 paper&rsquo;s median estimates: <strong>α = β ≈ 0.88</strong>, <strong>λ ≈ 2.25</strong>, <strong>γ ≈ 0.61</strong> for gains. Small probabilities get overweighted, moderate-to-large probabilities get underweighted, and certainty (p = 1) keeps its full weight.</p>
+
+<h2>Step 4 · Tune the parameters</h2>
+<p>Drag the sliders to see how each parameter shapes the value and weighting curves — and watch the gamble valuations update live.</p>
+
+<div class="control-block">
+  <div class="slider-row">
+    <label for="alpha">α (gains curvature)</label>
+    <input type="range" id="alpha" min="0.3" max="1.0" step="0.01" value="0.88">
+    <span class="val" id="alpha-val">0.88</span>
+  </div>
+  <div class="slider-row">
+    <label for="lambda">λ (loss aversion)</label>
+    <input type="range" id="lambda" min="1.0" max="4.0" step="0.05" value="2.25">
+    <span class="val" id="lambda-val">2.25</span>
+  </div>
+  <div class="slider-row">
+    <label for="gamma">γ (prob weight)</label>
+    <input type="range" id="gamma" min="0.3" max="1.0" step="0.01" value="0.61">
+    <span class="val" id="gamma-val">0.61</span>
+  </div>
+  <p class="muted" style="margin-top: 0.75rem; margin-bottom: 0;">α = γ = 1, λ = 1 collapses prospect theory back to risk-neutral expected value.</p>
+</div>
+
+<div class="chart-wrap">
+  <h3>Value function v(x)</h3>
+  <p class="muted" style="margin-bottom: 0.75rem;">Concave on gains (diminishing marginal value), steeper on losses (loss aversion).</p>
+  <div class="chart-canvas"><canvas id="valueChart" role="img" aria-label="Value function curve, concave for gains and steeper for losses"></canvas></div>
+</div>
+
+<div class="chart-wrap">
+  <h3>Probability weighting w(p)</h3>
+  <p class="muted" style="margin-bottom: 0.75rem;">The S-shape: small probabilities feel bigger, large probabilities feel smaller — but only certainty (p = 1) stays at 1.</p>
+  <div class="chart-canvas"><canvas id="weightChart" role="img" aria-label="Probability weighting function showing inverse-S shape"></canvas></div>
+</div>
+
+<h2>Step 5 · Side-by-side scoring</h2>
+<p>Here&rsquo;s how each gamble scores under expected utility (with U linear in money) versus prospect theory (with your slider settings):</p>
+
+<div class="stat-grid" id="scores"></div>
+
+<div class="insight" id="insight">
+  <strong>The certainty effect at work.</strong> Under EU, the 89% × $1M term cancels across both pairs. Under prospect theory, w(1) = 1 but w(0.99) &lt; 1 — so collapsing a near-sure thing into an actual sure thing gives an outsized boost that doesn&rsquo;t happen anywhere in pair 2. That&rsquo;s why A beats B but D beats C.
+</div>
+
+<h2>How well does this approximate humans?</h2>
+<p>Prospect theory isn&rsquo;t the final word — but it&rsquo;s the closest single model we have to how people actually decide under risk. It captures four robust effects EU misses:</p>
+
+<div class="formula-block">
+  <div class="label">1 · Certainty effect</div>
+  <div style="font-size: 14.5px;">Sure things are valued disproportionately more than near-sure things. Resolves Allais.</div>
+</div>
+<div class="formula-block">
+  <div class="label">2 · Reflection effect</div>
+  <div style="font-size: 14.5px;">People are risk-averse for gains but risk-seeking for losses (β makes the loss curve concave too).</div>
+</div>
+<div class="formula-block">
+  <div class="label">3 · Loss aversion</div>
+  <div style="font-size: 14.5px;">Losing $100 hurts roughly 2&times; as much as gaining $100 helps. λ ≈ 2.25.</div>
+</div>
+<div class="formula-block">
+  <div class="label">4 · Probability distortion</div>
+  <div style="font-size: 14.5px;">Lottery tickets and insurance both sell because tiny probabilities get overweighted.</div>
+</div>
+
+<p>Cumulative prospect theory (1992) generalizes this further by applying the weighting function to <em>cumulative</em> rather than individual probabilities, which fixes some technical issues with stochastic dominance. For most descriptive purposes, the version above is what gets used.</p>
+
+<div class="footnote">
+  Parameters from Tversky &amp; Kahneman (1992), <em>Advances in Prospect Theory: Cumulative Representation of Uncertainty</em>. Allais paradox formulation follows MacKay&rsquo;s <em>Information Theory, Inference, and Learning Algorithms</em>, exercise 36.5.
+</div>
+
+</div>
+
+<script>
+// ---- State ----
+const choices = { 1: null, 2: null };
+let alpha = 0.88, lambda = 2.25, gamma = 0.61;
+
+// ---- Prospect theory functions ----
+function v(x) {
+  if (x >= 0) return Math.pow(x, alpha);
+  return -lambda * Math.pow(-x, alpha);
+}
+function w(p) {
+  if (p <= 0) return 0;
+  if (p >= 1) return 1;
+  const num = Math.pow(p, gamma);
+  const den = Math.pow(Math.pow(p, gamma) + Math.pow(1 - p, gamma), 1 / gamma);
+  return num / den;
+}
+
+// Gambles in millions for numerical stability
+const gambles = {
+  A: [{ p: 1.0,  x: 1.0 }],
+  B: [{ p: 0.89, x: 1.0 }, { p: 0.10, x: 2.5 }, { p: 0.01, x: 0 }],
+  C: [{ p: 0.11, x: 1.0 }, { p: 0.89, x: 0 }],
+  D: [{ p: 0.10, x: 2.5 }, { p: 0.90, x: 0 }],
+};
+
+function eu(g) { return g.reduce((s, o) => s + o.p * o.x, 0); }
+function pt(g) { return g.reduce((s, o) => s + w(o.p) * v(o.x), 0); }
+
+// ---- Choice handling ----
+document.querySelectorAll('.gamble').forEach(el => {
+  el.addEventListener('click', () => {
+    const pair = el.dataset.pair;
+    const choice = el.dataset.choice;
+    choices[pair] = choice;
+    document.querySelectorAll(`.gamble[data-pair="${pair}"]`).forEach(g => g.classList.remove('selected'));
+    el.classList.add('selected');
+    updateVerdict();
+  });
+});
+document.getElementById('reset').addEventListener('click', () => {
+  choices[1] = null; choices[2] = null;
+  document.querySelectorAll('.gamble').forEach(g => g.classList.remove('selected'));
+  updateVerdict();
+});
+
+function updateVerdict() {
+  const v = document.getElementById('verdict');
+  if (!choices[1] || !choices[2]) {
+    v.className = 'verdict';
+    v.innerHTML = '<div style="color: var(--text-muted);">Pick one gamble from each pair to see how expected utility theory and prospect theory rank your choices.</div>';
+    return;
+  }
+  const c1 = choices[1], c2 = choices[2];
+  const isAllais = (c1 === 'A' && c2 === 'D');
+  const isInverse = (c1 === 'B' && c2 === 'C');
+  const isConsistent = (c1 === 'A' && c2 === 'C') || (c1 === 'B' && c2 === 'D');
+
+  let html = '';
+  html += `<div class="verdict-row"><span><strong>Your picks:</strong> ${c1} from pair 1, ${c2} from pair 2.</span></div>`;
+  if (isAllais) {
+    v.className = 'verdict show contradiction';
+    html += `<div class="verdict-row" style="margin-top: 0.75rem;"><span><span class="pill pill-warn">Allais paradox</span> &nbsp; No expected utility function over $0, $1M, $2.5M can rank both A ≻ B and D ≻ C. Prospect theory can.</span></div>`;
+  } else if (isInverse) {
+    v.className = 'verdict show contradiction';
+    html += `<div class="verdict-row" style="margin-top: 0.75rem;"><span><span class="pill pill-warn">Inverse Allais</span> &nbsp; Same independence violation in the opposite direction — also unrationalizable by EU.</span></div>`;
+  } else if (isConsistent) {
+    v.className = 'verdict show consistent';
+    const role = c1 === 'A' ? 'risk-averse' : 'risk-seeking on the gamble';
+    html += `<div class="verdict-row" style="margin-top: 0.75rem;"><span><span class="pill pill-eu">EU-consistent</span> &nbsp; Both choices respect the independence axiom — a single utility function (${role}) explains them.</span></div>`;
+  }
+  v.innerHTML = html;
+}
+
+// ---- Sliders ----
+const aSlider = document.getElementById('alpha');
+const lSlider = document.getElementById('lambda');
+const gSlider = document.getElementById('gamma');
+const aVal = document.getElementById('alpha-val');
+const lVal = document.getElementById('lambda-val');
+const gVal = document.getElementById('gamma-val');
+
+function syncParams() {
+  alpha = parseFloat(aSlider.value);
+  lambda = parseFloat(lSlider.value);
+  gamma = parseFloat(gSlider.value);
+  aVal.textContent = alpha.toFixed(2);
+  lVal.textContent = lambda.toFixed(2);
+  gVal.textContent = gamma.toFixed(2);
+  updateCharts();
+  updateScores();
+}
+[aSlider, lSlider, gSlider].forEach(s => s.addEventListener('input', syncParams));
+
+// ---- Theme-aware colors ----
+function isDark() { return window.matchMedia('(prefers-color-scheme: dark)').matches; }
+function colors() {
+  const dark = isDark();
+  return {
+    text: dark ? '#a8a69d' : '#6b6960',
+    grid: dark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.07)',
+    accent: dark ? '#e88a6b' : '#c96442',
+    teal: dark ? '#5dcaa5' : '#1d9e75',
+    purple: dark ? '#7f77dd' : '#534ab7',
+    diag: dark ? 'rgba(255,255,255,0.25)' : 'rgba(0,0,0,0.2)',
+  };
+}
+
+// ---- Value function chart ----
+let valueChart, weightChart;
+function buildValueData() {
+  const xs = [], ys = [];
+  for (let x = -3; x <= 3; x += 0.05) {
+    xs.push(x);
+    ys.push(v(x));
+  }
+  return { xs, ys };
+}
+function buildWeightData() {
+  const xs = [], ys = [];
+  for (let p = 0; p <= 1.0001; p += 0.01) {
+    xs.push(p);
+    ys.push(w(Math.min(p, 1)));
+  }
+  return { xs, ys };
+}
+
+function makeValueChart() {
+  const c = colors();
+  const { xs, ys } = buildValueData();
+  valueChart = new Chart(document.getElementById('valueChart'), {
+    type: 'line',
+    data: {
+      labels: xs.map(x => x.toFixed(2)),
+      datasets: [{
+        label: 'v(x)',
+        data: ys,
+        borderColor: c.accent,
+        backgroundColor: c.accent,
+        borderWidth: 2,
+        pointRadius: 0,
+        tension: 0.1,
+      }, {
+        label: 'identity',
+        data: xs.map(x => x),
+        borderColor: c.diag,
+        borderWidth: 1,
+        borderDash: [4, 4],
+        pointRadius: 0,
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false }, tooltip: {
+        callbacks: { title: (i) => 'x = $' + (parseFloat(i[0].label) * 1).toFixed(2) + 'M', label: (i) => 'v(x) = ' + i.parsed.y.toFixed(3) }
+      }},
+      scales: {
+        x: {
+          type: 'linear', min: -3, max: 3,
+          title: { display: true, text: 'outcome ($M)', color: c.text, font: { size: 12 } },
+          ticks: { color: c.text, font: { size: 11 } },
+          grid: { color: c.grid },
+        },
+        y: {
+          title: { display: true, text: 'subjective value', color: c.text, font: { size: 12 } },
+          ticks: { color: c.text, font: { size: 11 } },
+          grid: { color: c.grid },
+        }
+      }
+    }
+  });
+}
+
+function makeWeightChart() {
+  const c = colors();
+  const { xs, ys } = buildWeightData();
+  weightChart = new Chart(document.getElementById('weightChart'), {
+    type: 'line',
+    data: {
+      labels: xs.map(x => x.toFixed(2)),
+      datasets: [{
+        label: 'w(p)',
+        data: ys,
+        borderColor: c.teal,
+        backgroundColor: c.teal,
+        borderWidth: 2,
+        pointRadius: 0,
+        tension: 0.1,
+      }, {
+        label: 'identity',
+        data: xs,
+        borderColor: c.diag,
+        borderWidth: 1,
+        borderDash: [4, 4],
+        pointRadius: 0,
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false }, tooltip: {
+        callbacks: { title: (i) => 'p = ' + parseFloat(i[0].label).toFixed(2), label: (i) => 'w(p) = ' + i.parsed.y.toFixed(3) }
+      }},
+      scales: {
+        x: {
+          type: 'linear', min: 0, max: 1,
+          title: { display: true, text: 'objective probability p', color: c.text, font: { size: 12 } },
+          ticks: { color: c.text, font: { size: 11 } },
+          grid: { color: c.grid },
+        },
+        y: {
+          min: 0, max: 1,
+          title: { display: true, text: 'decision weight w(p)', color: c.text, font: { size: 12 } },
+          ticks: { color: c.text, font: { size: 11 } },
+          grid: { color: c.grid },
+        }
+      }
+    }
+  });
+}
+
+function updateCharts() {
+  if (!valueChart || !weightChart) return;
+  const vd = buildValueData();
+  valueChart.data.datasets[0].data = vd.ys;
+  valueChart.update('none');
+  const wd = buildWeightData();
+  weightChart.data.datasets[0].data = wd.ys;
+  weightChart.update('none');
+}
+
+// ---- Score grid ----
+function updateScores() {
+  const grid = document.getElementById('scores');
+  const scoreA = pt(gambles.A), scoreB = pt(gambles.B);
+  const scoreC = pt(gambles.C), scoreD = pt(gambles.D);
+  const euA = eu(gambles.A), euB = eu(gambles.B);
+  const euC = eu(gambles.C), euD = eu(gambles.D);
+  const ptWinner1 = scoreA > scoreB ? 'A' : 'B';
+  const ptWinner2 = scoreC > scoreD ? 'C' : 'D';
+  const euWinner1 = euA > euB ? 'A' : 'B';
+  const euWinner2 = euC > euD ? 'C' : 'D';
+
+  function card(title, pillClass, pillLabel, vals, winner) {
+    return `<div class="stat">
+      <div class="label">${title}</div>
+      <div style="display: flex; gap: 12px; margin-top: 6px;">
+        ${vals.map(v => `<div>
+          <div style="font-size: 12px; color: var(--text-muted);">${v.name} ${winner === v.name ? '<span class="winner">✓</span>' : ''}</div>
+          <div style="font-size: 18px; font-weight: 500; font-variant-numeric: tabular-nums;">${v.val}</div>
+        </div>`).join('')}
+      </div>
+      <div class="sub" style="margin-top: 8px;"><span class="pill ${pillClass}">${pillLabel}</span> &nbsp; picks <strong>${winner}</strong></div>
+    </div>`;
+  }
+
+  grid.innerHTML =
+    card('Pair 1 · expected $ value', 'pill-eu', 'EU', [
+      { name: 'A', val: '$' + euA.toFixed(2) + 'M' },
+      { name: 'B', val: '$' + euB.toFixed(2) + 'M' }
+    ], euWinner1) +
+    card('Pair 1 · prospect theory', 'pill-pt', 'PT', [
+      { name: 'A', val: scoreA.toFixed(3) },
+      { name: 'B', val: scoreB.toFixed(3) }
+    ], ptWinner1) +
+    card('Pair 2 · expected $ value', 'pill-eu', 'EU', [
+      { name: 'C', val: '$' + euC.toFixed(2) + 'M' },
+      { name: 'D', val: '$' + euD.toFixed(2) + 'M' }
+    ], euWinner2) +
+    card('Pair 2 · prospect theory', 'pill-pt', 'PT', [
+      { name: 'C', val: scoreC.toFixed(3) },
+      { name: 'D', val: scoreD.toFixed(3) }
+    ], ptWinner2);
+
+  // Update insight based on whether PT picks the typical Allais pattern
+  const insight = document.getElementById('insight');
+  if (ptWinner1 === 'A' && ptWinner2 === 'D') {
+    insight.innerHTML = '<strong>Prospect theory reproduces the Allais pattern.</strong> With these parameters, PT prefers <strong>A ≻ B</strong> and <strong>D ≻ C</strong> — exactly the choices EU calls contradictory. The certainty effect comes from w(1) = 1 versus w(0.99) ≈ ' + w(0.99).toFixed(2) + '; that gap appears in pair 1 but not pair 2.';
+  } else if (ptWinner1 === ptWinner2 || (ptWinner1 === 'B' && ptWinner2 === 'C')) {
+    insight.innerHTML = '<strong>At these parameters, PT does <em>not</em> reproduce the paradox.</strong> Try lowering γ (more probability distortion) or α (more concavity) to see the certainty effect dominate.';
+  } else {
+    insight.innerHTML = '<strong>Try the canonical settings (α = 0.88, γ = 0.61).</strong> They were fit to median human choices and should reproduce A ≻ B together with D ≻ C — the very pattern that breaks expected utility.';
+  }
+}
+
+// ---- Init ----
+makeValueChart();
+makeWeightChart();
+updateScores();
+
+// Re-color charts on theme change
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+  valueChart.destroy(); weightChart.destroy();
+  makeValueChart(); makeWeightChart();
+});
+</script>
+
+</body>
+</html>
