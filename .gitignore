@@ -4,3 +4,7 @@ public/
 *.log
 .env
 .env.local
+
+# Remotion / video render intermediates (regenerable)
+.video-cache/
+sites/*/.video-cache/

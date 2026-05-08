@@ -182,7 +182,14 @@ async function build(): Promise<void> {
     const dest = join(PUBLIC_DIR, slug);
     await cp(src, dest, {
       recursive: true,
-      filter: (s) => !s.endsWith("meta.yml"),
+      filter: (s) => {
+        if (s.endsWith("meta.yml")) return false;
+        if (s.endsWith("promo.json")) return false;
+        if (s.endsWith("promo.mp4")) return false;
+        if (s.endsWith("promo.mp3")) return false;
+        if (s.includes("/.video-cache")) return false;
+        return true;
+      },
     });
 
     const indexPath = join(dest, "index.html");

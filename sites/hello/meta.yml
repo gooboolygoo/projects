@@ -1,6 +1,5 @@
 title: Hello, world
-blurb: The first project in the gooboolygoo/projects daily series. A simple page that proves the build, deploy, and donate-injection pipeline works end-to-end.
+blurb: A small friendly hello-world page that says hi. Used to verify the build, deploy, and donate-injection pipeline works end-to-end.
 tags:
-  - meta
   - hello
 donate: true

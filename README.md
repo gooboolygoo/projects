@@ -124,9 +124,41 @@ Review and edit `promo.json` by hand if you want — Phase 2 (video) and Phase 3
 
 Cost: ~$0.003 per site at Claude Haiku 4.5 rates ($1/$5 per million tokens).
 
+## Phase 2 — Promo video
+
+After `promo.json` exists for a site, render a 9:16 ~30 s vertical MP4:
+
+```bash
+npm run video                          # render every site missing promo.mp4
+npm run video -- hello                 # render one slug
+npm run video -- hello -f              # overwrite an existing promo.mp4
+npm run video -- hello --source live   # capture from the deployed URL instead of public/
+```
+
+The output lands at `sites/<slug>/promo.mp4` (~5 – 8 MB) and is committed alongside `promo.json` so Phase 3 can upload it directly. It is excluded from the deployed Pages output.
+
+What the pipeline does, in order:
+
+1. **TTS**: [`scripts/video/tts.ts`](scripts/video/tts.ts) sends `video.script` from `promo.json` to Microsoft Edge TTS via [`edge-tts-universal`](https://www.npmjs.com/package/edge-tts-universal). It captures the MP3 stream plus per-word timing offsets (100-ns units → ms).
+2. **Capture**: [`scripts/video/capture.ts`](scripts/video/capture.ts) launches Playwright at 1080×1920 dark-mode and screenshots the page at 4 evenly-spaced scroll positions. By default it uses `public/<slug>/index.html` (run `npm run build` first); pass `--source live` once the site is on Pages.
+3. **Render**: [`scripts/render-video.ts`](scripts/render-video.ts) bundles the Remotion project at [`remotion/`](remotion/) with `publicDir` pointing at the temp `.video-cache/` folder, then `selectComposition` + `renderMedia` produces `promo.mp4` at H.264 / 30 fps.
+
+The Remotion composition (see [`remotion/Promo.tsx`](remotion/Promo.tsx)) is:
+
+- `0 – 2 s` — title card with `video.title` and project title.
+- `2 s – ~25 s` — voiceover plays over Ken-Burns-zoomed screenshots, with word-by-word captions highlighting the active word in yellow.
+- last `3 s` — outro card with the URL, `@gooboolygoo`, and hashtags.
+
+Total cost per video: $0 (Edge TTS, Playwright, Remotion are all free; Claude generated the script in Phase 1). Render time on an Apple Silicon Mac: ~20 – 25 s wall-clock.
+
+### Notes on dependencies
+
+- Playwright pulls a ~96 MB Chromium binary on first install via `npx playwright install chromium`. The first `npm run video` after a fresh clone may also take ~30 s while Remotion downloads its own Chrome Headless Shell to `node_modules/`.
+- If Playwright complains it can't find Chromium (which can happen after npm postinstall in some sandboxed editors), set `PLAYWRIGHT_BROWSERS_PATH=$HOME/Library/Caches/ms-playwright` in the shell before running.
+- `.video-cache/` (intermediate audio + screenshots) is gitignored. `promo.mp4` is committed.
+
 ## Roadmap
 
-- **Phase 2 — Promo video.** `scripts/render-video.ts` uses Playwright + Edge TTS + Remotion to render a 9:16 ~30s MP4 from the live URL, the script, and the AI voiceover. Optional AI b-roll inserts via the ZSky/Veo free tiers.
-- **Phase 3 — Cross-posting.** `scripts/post.ts` uploads the MP4 + tweet copy to Postiz Cloud and schedules fanout to X, TikTok, Instagram Reels, and YouTube Shorts. Requires `POSTIZ_API_KEY` (and the existing `ANTHROPIC_API_KEY`) in repo secrets.
+- **Phase 3 — Cross-posting.** `scripts/post.ts` uploads `promo.mp4` and the per-platform copy from `promo.json` to Postiz Cloud and schedules fanout to X, TikTok, Instagram Reels, and YouTube Shorts. Requires `POSTIZ_API_KEY` (and the existing `ANTHROPIC_API_KEY`) in repo secrets.
 
 The phases drop in incrementally — none of them break the Day 0 build/deploy.
