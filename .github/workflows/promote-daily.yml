@@ -88,6 +88,23 @@ jobs:
             echo "EOF"
           } >> "$GITHUB_OUTPUT"
 
+      - name: Verify required secrets
+        if: steps.find.outputs.slugs != ''
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          POSTIZ_API_KEY: ${{ secrets.POSTIZ_API_KEY }}
+        run: |
+          missing=()
+          if [ -z "${ANTHROPIC_API_KEY:-}" ]; then missing+=("ANTHROPIC_API_KEY"); fi
+          if [ -z "${POSTIZ_API_KEY:-}" ]; then missing+=("POSTIZ_API_KEY"); fi
+          if [ ${#missing[@]} -gt 0 ]; then
+            echo "::error::Missing repo secret(s): ${missing[*]}"
+            echo "::error::Add them at https://github.com/${{ github.repository }}/settings/secrets/actions"
+            echo "::error::They must be saved as repository Secrets (not Variables) with these exact names."
+            exit 1
+          fi
+          echo "Both required secrets are present."
+
       - name: Build site bundle (input for video capture)
         if: steps.find.outputs.slugs != ''
         run: npm run build
