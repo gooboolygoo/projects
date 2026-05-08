@@ -1,0 +1,23 @@
+{
+  "generated_at": "2026-05-08T16:47:15.565Z",
+  "model": "claude-haiku-4-5",
+  "url": "https://gooboolygoo.github.io/projects/hello/",
+  "hashtags": [
+    "metaproject",
+    "buildinpublic",
+    "webdev",
+    "dailyproject",
+    "devtools"
+  ],
+  "x": {
+    "tweet": "day 1: we shipped a tiny site that proves our daily build-deploy-social pipeline actually works. hello, world.",
+    "reply_lead": "see day 1 →"
+  },
+  "vertical_caption": "day 1 of a new daily series: tiny self-contained websites, one per day. this first one is proof of concept for the whole pipeline. check it out.",
+  "shorts_description_lead": "Day 1 of gooboolygoo/projects: a daily series shipping one tiny website every day. This first site proves the entire build, deploy, and social pipeline works end-to-end.",
+  "video": {
+    "title": "Day 1: Hello, World",
+    "script": "Every day, a new tiny website ships from gooboolygoo/projects. Today is day one, and it's a simple hello world page. Nothing fancy, just proof that the whole pipeline works—the builder, the deployer, and the social post generator. It's a meta project about shipping daily. If you're curious about how these things get made, follow along. Link in the description.",
+    "word_count": 59
+  }
+}

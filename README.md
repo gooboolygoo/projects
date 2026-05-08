@@ -76,10 +76,57 @@ The build script ([`scripts/build.ts`](scripts/build.ts)):
 3. Enable Pages: **Settings → Pages → Build and deployment → Source: GitHub Actions**.
 4. The first push (or a manual `Run workflow`) will deploy to `https://gooboolygoo.github.io/projects/`.
 
+## Phase 1 — Promo copy generation
+
+After authoring a site, generate tweet copy and a 30-second video script with Claude:
+
+```bash
+cp .env.example .env                # first time only
+# put your real ANTHROPIC_API_KEY in .env
+
+npm run promo                       # generate for every site missing promo.json
+npm run promo -- hello              # generate for one specific slug
+npm run promo -- hello -f           # force-regenerate even if promo.json exists
+```
+
+The script writes `sites/<slug>/promo.json` looking like:
+
+```json
+{
+  "generated_at": "2026-05-08T...",
+  "model": "claude-haiku-4-5",
+  "url": "https://gooboolygoo.github.io/projects/hello/",
+  "hashtags": ["..."],
+  "x": {
+    "tweet": "main post body, no URL, no inline hashtags",
+    "reply_lead": "live here \u2192"
+  },
+  "vertical_caption": "TikTok + Reels caption body, no URL, no hashtags",
+  "shorts_description_lead": "YouTube Shorts description body, no URL, no hashtags",
+  "video": {
+    "title": "Day One: Proving the Pipeline",
+    "script": "...",
+    "word_count": 78
+  }
+}
+```
+
+Claude generates only creative copy. Phase 3 composes the final per-platform string by stitching copy with the URL and hashtags in the right slot for each platform:
+
+| Platform        | Title             | Body                                                                         |
+| --------------- | ----------------- | ---------------------------------------------------------------------------- |
+| **X**           | (none)            | post `x.tweet`, then post `${x.reply_lead} ${url}` as the first reply        |
+| **TikTok**      | (none)            | `${vertical_caption}\n\n${url}\n\n#tag1 #tag2 #tag3`                         |
+| **Reels**       | (none)            | `${vertical_caption}\n\n${url}\n\n#tag1 #tag2 #tag3`                         |
+| **YouTube Shorts** | `video.title` | `${shorts_description_lead}\n\n${url}\n\n#tag1 #tag2 #tag3`                  |
+
+Review and edit `promo.json` by hand if you want — Phase 2 (video) and Phase 3 (cross-posting) read whatever you commit. `promo.json` is excluded from the deployed Pages output, so it never leaks publicly.
+
+Cost: ~$0.003 per site at Claude Haiku 4.5 rates ($1/$5 per million tokens).
+
 ## Roadmap
 
-- **Phase 1 — Tweet generation.** `scripts/generate-content.ts` calls the Anthropic API (Claude Haiku) on each new site to produce tweet copy and a 30-second video script, saved to `sites/<slug>/promo.json`.
 - **Phase 2 — Promo video.** `scripts/render-video.ts` uses Playwright + Edge TTS + Remotion to render a 9:16 ~30s MP4 from the live URL, the script, and the AI voiceover. Optional AI b-roll inserts via the ZSky/Veo free tiers.
-- **Phase 3 — Cross-posting.** `scripts/post.ts` uploads the MP4 + tweet copy to Postiz Cloud and schedules fanout to X, TikTok, Instagram Reels, and YouTube Shorts. Requires `POSTIZ_API_KEY` and `ANTHROPIC_API_KEY` in repo secrets.
+- **Phase 3 — Cross-posting.** `scripts/post.ts` uploads the MP4 + tweet copy to Postiz Cloud and schedules fanout to X, TikTok, Instagram Reels, and YouTube Shorts. Requires `POSTIZ_API_KEY` (and the existing `ANTHROPIC_API_KEY`) in repo secrets.
 
 The phases drop in incrementally — none of them break the Day 0 build/deploy.
