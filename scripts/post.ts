@@ -10,6 +10,7 @@ const SITES_DIR = join(ROOT, "sites");
 const POSTIZ_BASE = "https://api.postiz.com/public/v1";
 const SLUG_RE = /^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/;
 
+
 type PromoPlatformX = { tweet: string; reply_lead: string };
 type Promo = {
   url: string;
