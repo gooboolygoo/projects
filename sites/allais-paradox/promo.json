@@ -1,0 +1,23 @@
+{
+  "generated_at": "2026-05-08T20:18:55.421Z",
+  "model": "claude-haiku-4-5",
+  "url": "https://gooboolygoo.github.io/projects/allais-paradox/",
+  "hashtags": [
+    "allaisparadox",
+    "prospecttheory",
+    "behavioraleconomics",
+    "decisiontheory",
+    "interactive"
+  ],
+  "x": {
+    "tweet": "Why do smart people make contradictory choices in identical gambles? The Allais paradox breaks expected utility theory. Prospect theory fixes it. Slide the parameters, watch human rationality collapse and rebuild.",
+    "reply_lead": "interactive demo ↓"
+  },
+  "vertical_caption": "The Allais paradox shows why expected utility theory can't explain how humans actually choose. Pick gambles, adjust the sliders, and watch prospect theory lock in the paradox.",
+  "shorts_description_lead": "Why do people make contradictory choices in mathematically identical gambles? Explore the Allais paradox and see how prospect theory's value and probability-weighting functions capture real human behavior.",
+  "video": {
+    "title": "The Allais Paradox Explained",
+    "script": "Here's a puzzle: two pairs of gambles. Most people pick the same way in both pairs. But mathematically? It's impossible. Expected utility theory says you should be indifferent, but you're not. This is the Allais paradox. Prospect theory explains why. Value functions, probability weighting, loss aversion — three tweaks that turn rational failure into human realism. Adjust the sliders and watch the numbers click into place. Link in the description.",
+    "word_count": 70
+  }
+}
