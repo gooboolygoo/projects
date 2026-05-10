@@ -1,0 +1,2227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Squeeze — Ethiopia 2024–2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Source+Serif+4:opsz,wght@8..60,300;8..60,400;8..60,500;8..60,600;8..60,700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f5f1e8;
+  --bg-soft: #ebe6d9;
+  --ink: #0e0e0e;
+  --ink-soft: #2a2520;
+  --paper: #ffffff;
+  --rule: #c9c2b0;
+  --rule-soft: #ddd6c3;
+  --dim: #6e6557;
+  --blood: #c41e1e;
+  --leaf: #2d4a2a;
+  --gold: #b08800;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: 'Source Serif 4', Georgia, serif;
+  font-feature-settings: 'ss01', 'onum';
+  line-height: 1.55;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 100;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+.display { font-family: 'Archivo Black', sans-serif; letter-spacing: -0.02em; }
+.mono { font-family: 'JetBrains Mono', monospace; }
+
+/* ============ CITATION (hover popover) ============ */
+.cite {
+  display: inline-block;
+  position: relative;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7em;
+  vertical-align: super;
+  line-height: 1;
+  color: var(--dim);
+  cursor: help;
+  margin: 0 1px 0 2px;
+  padding: 1px 4px;
+  border-radius: 2px;
+  background: var(--bg-soft);
+  border: 1px solid var(--rule-soft);
+  font-weight: 600;
+  transition: all 0.15s;
+}
+.cite:hover, .cite:focus {
+  background: var(--ink);
+  color: var(--bg);
+  border-color: var(--ink);
+  outline: none;
+}
+.cite::before {
+  content: attr(data-source);
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--ink);
+  color: var(--bg);
+  padding: 10px 14px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.5;
+  letter-spacing: 0.02em;
+  text-transform: none;
+  white-space: normal;
+  width: 280px;
+  border-radius: 4px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s;
+  z-index: 50;
+  vertical-align: baseline;
+}
+.cite::after {
+  content: '';
+  position: absolute;
+  bottom: calc(100% + 2px);
+  left: 50%;
+  transform: translateX(-50%);
+  border: 6px solid transparent;
+  border-top-color: var(--ink);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s;
+}
+.cite:hover::before, .cite:focus::before, .cite:hover::after, .cite:focus::after { opacity: 1; }
+
+/* ============ FLOAT TOGGLE ============ */
+.toggle-bar {
+  background: var(--ink);
+  color: var(--bg);
+  padding: 14px 24px;
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  border-bottom: 2px solid var(--ink);
+}
+.toggle-inner {
+  max-width: 1300px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+.toggle-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--bg);
+  opacity: 0.85;
+}
+.toggle-label strong { font-weight: 700; opacity: 1; color: var(--bg); }
+.toggle-switch {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+}
+.toggle-switch button {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.3);
+  color: rgba(255,255,255,0.7);
+  padding: 6px 14px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.toggle-switch button.active {
+  background: var(--bg);
+  color: var(--ink);
+  border-color: var(--bg);
+}
+.toggle-switch button:not(.active):hover { color: var(--bg); border-color: var(--bg); }
+.toggle-switch button:focus { outline: 2px solid var(--gold); outline-offset: 2px; }
+.rate-readout {
+  font-family: 'Archivo Black', sans-serif;
+  font-size: 14px;
+  letter-spacing: -0.01em;
+  color: var(--bg);
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+.rate-readout .num { font-size: 18px; }
+.rate-readout .label {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 500;
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  opacity: 0.6;
+  text-transform: uppercase;
+}
+
+/* ============ MASTHEAD ============ */
+.mast {
+  padding: 40px 24px 0;
+  max-width: 1300px;
+  margin: 0 auto;
+}
+.mast-meta {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--dim);
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--ink);
+}
+.mast-title {
+  font-family: 'Archivo Black', sans-serif;
+  font-size: clamp(72px, 15vw, 200px);
+  line-height: 0.85;
+  letter-spacing: -0.04em;
+  text-transform: uppercase;
+  margin-top: 32px;
+}
+.mast-sub {
+  font-family: 'Source Serif 4', serif;
+  font-weight: 400;
+  font-style: italic;
+  font-size: clamp(18px, 1.8vw, 24px);
+  max-width: 720px;
+  margin-top: 24px;
+  line-height: 1.4;
+  color: var(--ink-soft);
+}
+
+/* ============ SECTION FRAME ============ */
+.frame {
+  border-top: 2px solid var(--ink);
+  padding: 64px 24px;
+  max-width: 1300px;
+  margin: 80px auto 0;
+  position: relative;
+}
+.frame-num {
+  position: absolute;
+  top: -22px;
+  left: 24px;
+  background: var(--bg);
+  padding: 0 16px 0 0;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+.eyebrow {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--dim);
+  margin-bottom: 14px;
+}
+.headline {
+  font-family: 'Archivo Black', sans-serif;
+  font-size: clamp(36px, 5vw, 68px);
+  line-height: 0.92;
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
+  max-width: 1100px;
+  margin-bottom: 32px;
+}
+.headline .accent { color: var(--blood); }
+.lede {
+  font-family: 'Source Serif 4', serif;
+  font-size: 19px;
+  line-height: 1.55;
+  max-width: 680px;
+  margin-bottom: 32px;
+  color: var(--ink-soft);
+  font-weight: 400;
+}
+.lede strong { color: var(--ink); font-weight: 600; }
+
+/* ============ HERO STATS w/ SPARKLINES ============ */
+.hero-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  border-top: 2px solid var(--ink);
+  border-bottom: 2px solid var(--ink);
+}
+.hs {
+  padding: 28px 22px;
+  border-right: 1px solid var(--rule);
+  display: flex;
+  flex-direction: column;
+  min-height: 200px;
+  background: var(--paper);
+}
+.hs:last-child { border-right: none; }
+.hs-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+  color: var(--dim);
+  font-weight: 600;
+}
+.hs-num {
+  font-family: 'Archivo Black', sans-serif;
+  font-size: clamp(36px, 4vw, 56px);
+  line-height: 0.9;
+  letter-spacing: -0.04em;
+  color: var(--ink);
+}
+.hs-num .accent { color: var(--blood); }
+.hs-spark {
+  margin-top: auto;
+  padding-top: 16px;
+  height: 50px;
+}
+.hs-spark svg { width: 100%; height: 100%; overflow: visible; }
+.hs-foot {
+  font-family: 'Source Serif 4', serif;
+  font-style: italic;
+  font-size: 14px;
+  margin-top: 10px;
+  line-height: 1.35;
+  color: var(--dim);
+}
+
+/* ============ CALCULATOR ============ */
+.calculator {
+  background: var(--paper);
+  border: 2px solid var(--ink);
+  margin-top: 24px;
+}
+.calc-controls {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border-bottom: 1px solid var(--ink);
+}
+.calc-control {
+  padding: 20px 24px;
+  border-right: 1px solid var(--rule);
+}
+.calc-control:last-child { border-right: none; }
+.calc-control label {
+  display: block;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+  color: var(--dim);
+  font-weight: 600;
+}
+.calc-control select {
+  width: 100%;
+  padding: 12px 14px;
+  font-family: 'Archivo Black', sans-serif;
+  font-size: 18px;
+  letter-spacing: -0.01em;
+  background: var(--bg-soft);
+  border: 1px solid var(--rule);
+  color: var(--ink);
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%230e0e0e'%3E%3Cpath d='M8 11L3 6h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  background-size: 14px;
+  padding-right: 40px;
+}
+.calc-control select:focus { outline: 2px solid var(--blood); outline-offset: -2px; }
+
+.calc-result {
+  padding: 32px 24px;
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 32px;
+  align-items: start;
+}
+.calc-summary {
+  border-right: 1px solid var(--rule);
+  padding-right: 32px;
+}
+.calc-wage-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--dim);
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+.calc-wage {
+  font-family: 'Archivo Black', sans-serif;
+  font-size: 56px;
+  line-height: 0.95;
+  letter-spacing: -0.04em;
+}
+.calc-wage-etb {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  color: var(--dim);
+  font-weight: 600;
+  margin-top: 6px;
+}
+.calc-burden {
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px dashed var(--rule);
+}
+.calc-burden-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--dim);
+  margin-bottom: 10px;
+  font-weight: 600;
+}
+.calc-burden-bar {
+  height: 16px;
+  border: 1px solid var(--ink);
+  background: var(--bg-soft);
+  position: relative;
+  overflow: hidden;
+}
+.calc-burden-fill {
+  height: 100%;
+  background: var(--ink);
+  transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.calc-burden-fill.over { background: var(--blood); }
+.calc-burden-text {
+  margin-top: 10px;
+  font-family: 'Source Serif 4', serif;
+  font-size: 14px;
+  font-style: italic;
+  color: var(--ink-soft);
+  line-height: 1.4;
+}
+.calc-burden-text .b { font-style: normal; font-weight: 700; color: var(--ink); }
+.calc-burden-text .red { color: var(--blood); font-weight: 700; font-style: normal; }
+
+.calc-buys {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+.buy {
+  padding: 16px;
+  background: var(--bg-soft);
+  border: 1px solid var(--rule);
+}
+.buy-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--dim);
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+.buy-num {
+  font-family: 'Archivo Black', sans-serif;
+  font-size: 32px;
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+  transition: all 0.3s;
+}
+.buy-foot {
+  font-family: 'Source Serif 4', serif;
+  font-size: 13px;
+  margin-top: 6px;
+  color: var(--dim);
+  font-style: italic;
+  line-height: 1.35;
+}
+
+/* ============ HOUSEHOLD STACK ============ */
+.stacks {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0;
+  margin-top: 32px;
+  border: 2px solid var(--ink);
+  background: var(--paper);
+}
+.stack {
+  padding: 28px 24px 24px;
+  border-right: 1px solid var(--rule);
+}
+.stack:last-child { border-right: none; }
+.stack-name {
+  font-family: 'Archivo Black', sans-serif;
+  font-size: 18px;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.stack-wage {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--dim);
+  margin-bottom: 24px;
+}
+.stack-bar {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--ink);
+  height: 320px;
+}
+.stack-seg {
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--paper);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--ink);
+  transition: all 0.4s;
+  overflow: hidden;
+  white-space: nowrap;
+}
+.stack-seg:last-child { border-bottom: none; }
+.stack-seg.rent { background: #1a1a1a; }
+.stack-seg.food { background: #4a3a2a; }
+.stack-seg.transport { background: #6b5840; }
+.stack-seg.kerosene { background: var(--blood); }
+.stack-seg.left { background: var(--leaf); color: var(--paper); }
+.stack-seg.over { background: repeating-linear-gradient(45deg, var(--blood), var(--blood) 8px, #8a1414 8px, #8a1414 16px); }
+.stack-seg .seg-label { flex: 1; }
+.stack-seg .seg-pct { font-weight: 700; }
+.stack-foot {
+  margin-top: 14px;
+  font-family: 'Source Serif 4', serif;
+  font-size: 13px;
+  font-style: italic;
+  color: var(--ink-soft);
+  line-height: 1.4;
+}
+.stack-foot .strong { font-style: normal; font-weight: 700; }
+
+/* ============ WAGE LADDER ============ */
+.ladder { margin-top: 32px; }
+.rung {
+  display: grid;
+  grid-template-columns: 220px 1fr 110px;
+  border-bottom: 1px solid var(--rule);
+  min-height: 56px;
+  background: var(--paper);
+}
+.rung:first-child { border-top: 2px solid var(--ink); }
+.rung:last-child { border-bottom: 2px solid var(--ink); }
+.rung-label {
+  display: flex;
+  align-items: center;
+  padding: 0 18px;
+  font-family: 'Source Serif 4', serif;
+  font-weight: 600;
+  font-size: 16px;
+  border-right: 1px solid var(--rule);
+}
+.rung-label.flagged {
+  background: var(--blood);
+  color: var(--paper);
+  font-weight: 700;
+}
+.rung-label.flagged::before {
+  content: '⚕';
+  margin-right: 10px;
+  font-size: 17px;
+}
+.rung-bar {
+  display: flex;
+  align-items: center;
+  background: var(--bg-soft);
+}
+.rung-fill {
+  height: 100%;
+  background: var(--ink);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 14px;
+  font-family: 'Archivo Black', sans-serif;
+  color: var(--paper);
+  font-size: 17px;
+  letter-spacing: -0.02em;
+  transition: width 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.rung-fill.flagged { background: var(--blood); }
+.rung-num {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--dim);
+  border-left: 1px solid var(--rule);
+  text-align: center;
+  padding: 0 8px;
+}
+
+/* ============ MEGA STAT ============ */
+.mega {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border: 2px solid var(--ink);
+  margin: 40px 0;
+  background: var(--paper);
+}
+.mega-num-box {
+  background: var(--ink);
+  color: var(--bg);
+  padding: 44px 36px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.mega-num-box.alarm { background: var(--blood); }
+.mega-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  opacity: 0.75;
+  margin-bottom: 14px;
+}
+.mega-num {
+  font-family: 'Archivo Black', sans-serif;
+  font-size: clamp(72px, 9vw, 140px);
+  line-height: 0.85;
+  letter-spacing: -0.05em;
+}
+.mega-foot {
+  margin-top: 14px;
+  font-family: 'Source Serif 4', serif;
+  font-style: italic;
+  font-size: 14px;
+  line-height: 1.4;
+  opacity: 0.85;
+}
+.mega-text {
+  padding: 44px 36px;
+  display: flex;
+  align-items: center;
+}
+.mega-text p {
+  font-family: 'Source Serif 4', serif;
+  font-size: 18px;
+  line-height: 1.5;
+  font-weight: 400;
+  color: var(--ink-soft);
+}
+.mega-text p strong { color: var(--ink); font-weight: 700; }
+
+/* ============ SCOREBOARD ============ */
+.scoreboard {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  border: 2px solid var(--ink);
+  margin: 24px 0;
+  background: var(--paper);
+}
+.score {
+  padding: 28px 22px;
+  border-right: 1px solid var(--rule);
+}
+.score:last-child { border-right: none; }
+.score.alarm { background: var(--blood); color: var(--paper); }
+.score-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+  color: var(--dim);
+  font-weight: 600;
+}
+.score.alarm .score-label { color: var(--paper); opacity: 0.85; }
+.score-num {
+  font-family: 'Archivo Black', sans-serif;
+  font-size: clamp(36px, 4vw, 56px);
+  line-height: 0.9;
+  letter-spacing: -0.04em;
+  margin-bottom: 10px;
+}
+.score-detail {
+  font-family: 'Source Serif 4', serif;
+  font-size: 13px;
+  line-height: 1.4;
+  font-style: italic;
+  color: var(--dim);
+}
+.score.alarm .score-detail { color: var(--paper); opacity: 0.9; }
+
+/* ============ TESTIMONY (full-width quote) ============ */
+.testimony {
+  background: var(--ink);
+  color: var(--bg);
+  padding: 56px 40px;
+  margin: 56px -24px;
+  position: relative;
+}
+.testimony-inner { max-width: 1200px; margin: 0 auto; }
+.testimony-mark {
+  font-family: 'Archivo Black', sans-serif;
+  font-size: 64px;
+  line-height: 0.5;
+  color: var(--blood);
+  margin-bottom: 12px;
+  display: block;
+}
+.testimony-quote {
+  font-family: 'Source Serif 4', serif;
+  font-size: clamp(22px, 2.4vw, 30px);
+  line-height: 1.4;
+  font-weight: 400;
+  letter-spacing: -0.005em;
+  max-width: 1000px;
+  color: var(--bg);
+}
+.testimony-quote em { font-style: italic; }
+.testimony-meta {
+  margin-top: 28px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255,255,255,0.2);
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.6);
+}
+.testimony-meta strong { color: var(--bg); font-weight: 700; }
+
+/* ============ FUEL CHART ============ */
+.fuelchart { margin-top: 32px; background: var(--paper); border: 2px solid var(--ink); }
+.fc-row {
+  display: grid;
+  grid-template-columns: 180px 1fr 90px;
+  border-bottom: 1px solid var(--rule);
+  min-height: 48px;
+}
+.fc-row:last-child { border-bottom: none; }
+.fc-label {
+  display: flex;
+  align-items: center;
+  padding: 0 18px;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 600;
+  font-size: 12px;
+  border-right: 1px solid var(--rule);
+  letter-spacing: 0.05em;
+}
+.fc-bar { background: var(--bg-soft); display: flex; align-items: center; }
+.fc-fill {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 12px;
+  font-family: 'Archivo Black', sans-serif;
+  color: var(--paper);
+  font-size: 15px;
+  background: var(--ink);
+  transition: width 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.fc-fill.alarm { background: var(--blood); }
+.fc-change {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Archivo Black', sans-serif;
+  font-size: 13px;
+  border-left: 1px solid var(--rule);
+}
+.fc-change.up { background: var(--blood); color: var(--paper); }
+.fc-change.flat { color: var(--dim); }
+
+/* ============ COST GRID ============ */
+.costgrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  margin-top: 24px;
+  border: 2px solid var(--ink);
+  background: var(--paper);
+}
+.costcol {
+  padding: 28px 24px;
+  border-right: 1px solid var(--rule);
+}
+.costcol:last-child { border-right: none; }
+.costcol-title {
+  font-family: 'Archivo Black', sans-serif;
+  font-size: 26px;
+  margin-bottom: 22px;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+}
+.costcol ul { list-style: none; }
+.costcol li {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 11px 0;
+  border-bottom: 1px dashed var(--rule);
+  font-family: 'Source Serif 4', serif;
+  font-size: 15px;
+}
+.costcol li:last-child { border-bottom: none; }
+.costcol li b {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700;
+  color: var(--ink);
+  font-size: 13px;
+}
+
+/* ============ MAP ============ */
+.map-wrap {
+  display: grid;
+  grid-template-columns: 1fr 360px;
+  gap: 0;
+  border: 2px solid var(--ink);
+  background: var(--paper);
+  margin-top: 24px;
+}
+.map-svg-wrap {
+  padding: 24px;
+  border-right: 1px solid var(--rule);
+  position: relative;
+}
+.map-svg-wrap svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+.map-region {
+  fill: var(--bg-soft);
+  stroke: var(--ink);
+  stroke-width: 1;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+.map-region:hover, .map-region:focus { opacity: 0.75; outline: none; }
+.map-region.active { stroke-width: 3; }
+.map-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  fill: var(--ink);
+  text-anchor: middle;
+  pointer-events: none;
+  text-transform: uppercase;
+}
+.map-controls {
+  display: flex;
+  gap: 0;
+  margin-bottom: 16px;
+  border: 1px solid var(--ink);
+}
+.map-controls button {
+  flex: 1;
+  background: var(--paper);
+  border: none;
+  border-right: 1px solid var(--rule);
+  padding: 10px 12px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  color: var(--dim);
+  transition: all 0.15s;
+}
+.map-controls button:last-child { border-right: none; }
+.map-controls button.active { background: var(--ink); color: var(--bg); }
+.map-controls button:hover:not(.active) { color: var(--ink); }
+.map-controls button:focus { outline: 2px solid var(--blood); outline-offset: -2px; }
+.map-info {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+}
+.map-info-region {
+  font-family: 'Archivo Black', sans-serif;
+  font-size: 28px;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.map-info-pop {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--dim);
+  margin-bottom: 20px;
+  letter-spacing: 0.05em;
+}
+.map-stat {
+  padding: 16px 0;
+  border-bottom: 1px dashed var(--rule);
+}
+.map-stat:last-child { border-bottom: none; }
+.map-stat-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--dim);
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+.map-stat-num {
+  font-family: 'Archivo Black', sans-serif;
+  font-size: 32px;
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+}
+.map-stat-num.bad { color: var(--blood); }
+.map-stat-foot {
+  font-family: 'Source Serif 4', serif;
+  font-style: italic;
+  font-size: 13px;
+  margin-top: 4px;
+  color: var(--dim);
+  line-height: 1.4;
+}
+.map-legend {
+  margin-top: 18px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+.map-legend-bar {
+  flex: 1;
+  height: 10px;
+  border: 1px solid var(--ink);
+}
+.legend-poverty { background: linear-gradient(90deg, #f5e6d3, #c41e1e); }
+.legend-food { background: linear-gradient(90deg, #e8e3cf, #5a3a14); }
+.legend-conflict { background: linear-gradient(90deg, #f0eadb, #2a1a1a); }
+
+/* ============ TIMELINE ============ */
+.timeline {
+  margin-top: 32px;
+  border-top: 2px solid var(--ink);
+  background: var(--paper);
+}
+.tl-row {
+  display: grid;
+  grid-template-columns: 160px 1fr;
+  border-bottom: 1px solid var(--rule);
+  padding: 22px 0;
+}
+.tl-row:last-child { border-bottom: 2px solid var(--ink); }
+.tl-row.major { background: var(--ink); color: var(--bg); padding: 22px 0; }
+.tl-row.major .tl-date { color: var(--blood); }
+.tl-date {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  padding: 0 24px;
+}
+.tl-content { padding: 0 24px; }
+.tl-title {
+  font-family: 'Archivo Black', sans-serif;
+  font-size: 22px;
+  letter-spacing: -0.02em;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+}
+.tl-desc {
+  font-family: 'Source Serif 4', serif;
+  font-size: 15px;
+  line-height: 1.5;
+  max-width: 700px;
+  font-weight: 400;
+  color: var(--ink-soft);
+}
+.tl-row.major .tl-desc { color: rgba(245, 241, 232, 0.85); }
+
+/* ============ TRIPTYCH ============ */
+.triptych {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  margin-top: 24px;
+  border: 2px solid var(--ink);
+  background: var(--paper);
+}
+.panel {
+  padding: 28px 24px;
+  border-right: 1px solid var(--rule);
+  min-height: 240px;
+}
+.panel:last-child { border-right: none; }
+.panel-num {
+  font-family: 'Archivo Black', sans-serif;
+  font-size: 56px;
+  line-height: 0.8;
+  color: var(--ink-soft);
+  margin-bottom: 14px;
+}
+.panel-title {
+  font-family: 'Archivo Black', sans-serif;
+  font-size: 20px;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+}
+.panel-desc {
+  font-family: 'Source Serif 4', serif;
+  font-size: 15px;
+  line-height: 1.5;
+  font-weight: 400;
+  color: var(--ink-soft);
+}
+
+/* ============ MISSING / DISCLOSURE ============ */
+.missing {
+  background: var(--bg-soft);
+  border: 2px solid var(--ink);
+  padding: 36px 32px;
+  margin-top: 24px;
+}
+.missing h3 {
+  font-family: 'Archivo Black', sans-serif;
+  font-size: 24px;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+.missing p {
+  font-family: 'Source Serif 4', serif;
+  font-size: 16px;
+  line-height: 1.55;
+  margin-bottom: 16px;
+  color: var(--ink-soft);
+  max-width: 800px;
+}
+.missing p strong { color: var(--ink); font-weight: 700; }
+.missing-list {
+  margin-top: 24px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0;
+  border-top: 1px solid var(--ink);
+}
+.missing-item {
+  padding: 18px 0;
+  padding-right: 24px;
+  border-bottom: 1px dashed var(--rule);
+}
+.missing-item:nth-child(odd) { padding-right: 24px; border-right: 1px dashed var(--rule); }
+.missing-item:nth-child(even) { padding-left: 24px; }
+.missing-item-title {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink);
+  margin-bottom: 6px;
+}
+.missing-item-text {
+  font-family: 'Source Serif 4', serif;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--ink-soft);
+  font-style: italic;
+}
+
+/* ============ KICKER ============ */
+.kicker {
+  background: var(--ink);
+  color: var(--bg);
+  padding: 64px 24px;
+  margin-top: 80px;
+}
+.kicker-inner { max-width: 1300px; margin: 0 auto; }
+.kicker-quote {
+  font-family: 'Archivo Black', sans-serif;
+  font-size: clamp(28px, 4vw, 52px);
+  line-height: 1.05;
+  letter-spacing: -0.025em;
+  text-transform: uppercase;
+  max-width: 1100px;
+}
+.kicker-quote .accent { color: var(--blood); }
+.kicker-meta {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--dim);
+  margin-top: 32px;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  border-top: 1px solid var(--dim);
+  padding-top: 24px;
+}
+
+/* ============ ANIM ============ */
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(28px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.reveal { opacity: 0; }
+.reveal.in { animation: slideUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+
+/* ============ RESPONSIVE ============ */
+@media (max-width: 950px) {
+  .hero-stats { grid-template-columns: repeat(2, 1fr); }
+  .hs:nth-child(2) { border-right: none; }
+  .hs:nth-child(1), .hs:nth-child(2) { border-bottom: 1px solid var(--rule); }
+  .calc-controls { grid-template-columns: 1fr; }
+  .calc-control { border-right: none; border-bottom: 1px solid var(--rule); }
+  .calc-control:last-child { border-bottom: none; }
+  .calc-result { grid-template-columns: 1fr; gap: 24px; }
+  .calc-summary { border-right: none; padding-right: 0; padding-bottom: 24px; border-bottom: 1px dashed var(--rule); }
+  .stacks { grid-template-columns: 1fr; }
+  .stack { border-right: none; border-bottom: 1px solid var(--rule); }
+  .stack:last-child { border-bottom: none; }
+  .scoreboard { grid-template-columns: repeat(2, 1fr); }
+  .score:nth-child(2) { border-right: none; }
+  .score:nth-child(1), .score:nth-child(2) { border-bottom: 1px solid var(--rule); }
+  .map-wrap { grid-template-columns: 1fr; }
+  .map-svg-wrap { border-right: none; border-bottom: 1px solid var(--rule); }
+  .mega { grid-template-columns: 1fr; }
+  .costgrid { grid-template-columns: 1fr; }
+  .costcol { border-right: none; border-bottom: 1px solid var(--rule); }
+  .costcol:last-child { border-bottom: none; }
+  .triptych { grid-template-columns: 1fr; }
+  .panel { border-right: none; border-bottom: 1px solid var(--rule); min-height: auto; }
+  .panel:last-child { border-bottom: none; }
+  .rung { grid-template-columns: 130px 1fr 70px; }
+  .rung-label { font-size: 13px; padding: 0 12px; }
+  .rung-fill { font-size: 14px; padding-right: 8px; }
+  .fc-row { grid-template-columns: 110px 1fr 70px; }
+  .fc-label { font-size: 11px; padding: 0 10px; }
+  .tl-row { grid-template-columns: 1fr; gap: 8px; padding: 18px 24px; }
+  .tl-date { padding: 0; }
+  .tl-content { padding: 0; }
+  .missing-list { grid-template-columns: 1fr; }
+  .missing-item:nth-child(odd) { padding-right: 0; border-right: none; }
+  .missing-item:nth-child(even) { padding-left: 0; }
+  .testimony { padding: 40px 24px; margin: 40px -24px; }
+  .calc-buys { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- ============ FLOAT TOGGLE BAR ============ -->
+<div class="toggle-bar" role="region" aria-label="Currency view toggle">
+  <div class="toggle-inner">
+    <div class="toggle-label">VIEW WAGES IN: <strong id="view-readout">MAY 2026 BIRR</strong></div>
+    <div class="toggle-switch" role="group" aria-label="Toggle exchange rate basis">
+      <button id="btn-pre" data-view="pre">JUL 2024 (PRE-FLOAT)</button>
+      <button id="btn-post" data-view="post" class="active">MAY 2026 (CURRENT)</button>
+    </div>
+    <div class="rate-readout">
+      <span class="label">RATE</span>
+      <span class="num" id="rate-num">136 ETB / USD</span>
+    </div>
+  </div>
+</div>
+
+<!-- ============ MASTHEAD ============ -->
+<header class="mast">
+  <div class="mast-meta">
+    <span>VOL. 03 / NO. 12</span>
+    <span>AN ECONOMIC AUTOPSY</span>
+    <span>MAY 2026</span>
+  </div>
+  <h1 class="mast-title">THE<br>SQUEEZE</h1>
+  <p class="mast-sub">A two-year civil war that broke the state's fiscal capacity. A currency that halved. Fuel that doubled. The largest donor walked away. Doctors paid less than receptionists. How four shocks landed on a war-broken country of 132 million — explained, calculated, and shown.</p>
+</header>
+
+<!-- ============ HERO STATS w/ SPARKLINES ============ -->
+<div style="max-width: 1300px; margin: 48px auto 0; padding: 0 24px;">
+  <div class="hero-stats reveal">
+    <div class="hs">
+      <div class="hs-label">BIRR / USD</div>
+      <div class="hs-num">57 → <span class="accent">136</span></div>
+      <div class="hs-spark">
+        <svg viewBox="0 0 200 50" preserveAspectRatio="none" aria-label="Birr to USD exchange rate, 2022 to 2026">
+          <line x1="0" y1="40" x2="200" y2="40" stroke="#c9c2b0" stroke-width="0.5" stroke-dasharray="2 2"/>
+          <path d="M0,40 L40,40 L80,40 L100,38 L110,30 L120,20 L160,15 L200,8" fill="none" stroke="#0e0e0e" stroke-width="2"/>
+          <circle cx="120" cy="20" r="3" fill="#c41e1e"/>
+          <text x="124" y="18" font-family="JetBrains Mono" font-size="8" fill="#c41e1e" font-weight="700">FLOAT</text>
+          <circle cx="200" cy="8" r="2.5" fill="#0e0e0e"/>
+        </svg>
+      </div>
+      <div class="hs-foot">Halved in two weeks, July 2024.<a class="cite" tabindex="0" data-source="Africa Practice analysis · July 2025. Birr fell from 57 to 114 ETB/USD in <2 weeks after the float.">¹</a></div>
+    </div>
+    <div class="hs">
+      <div class="hs-label">KEROSENE PRICE</div>
+      <div class="hs-num"><span class="accent">+112%</span></div>
+      <div class="hs-spark">
+        <svg viewBox="0 0 200 50" preserveAspectRatio="none" aria-label="Kerosene price trajectory">
+          <line x1="0" y1="40" x2="200" y2="40" stroke="#c9c2b0" stroke-width="0.5" stroke-dasharray="2 2"/>
+          <path d="M0,42 L60,40 L100,38 L140,32 L170,28 L185,8 L200,5" fill="none" stroke="#0e0e0e" stroke-width="2"/>
+          <circle cx="185" cy="8" r="3.5" fill="#c41e1e"/>
+        </svg>
+      </div>
+      <div class="hs-foot">Cooking fuel doubled in 30 days, May 2026.<a class="cite" tabindex="0" data-source="Capital Market Ethiopia · 4 May 2026. Kerosene 151.39→320.66 ETB/L.">²</a></div>
+    </div>
+    <div class="hs">
+      <div class="hs-label">MEDIAN WAGE</div>
+      <div class="hs-num" id="hero-wage">$50</div>
+      <div class="hs-spark">
+        <svg viewBox="0 0 200 50" preserveAspectRatio="none" aria-label="Median wage USD trajectory">
+          <line x1="0" y1="40" x2="200" y2="40" stroke="#c9c2b0" stroke-width="0.5" stroke-dasharray="2 2"/>
+          <path d="M0,15 L40,16 L80,17 L100,18 L120,32 L160,38 L200,40" fill="none" stroke="#0e0e0e" stroke-width="2"/>
+          <circle cx="120" cy="32" r="3" fill="#c41e1e"/>
+          <circle cx="200" cy="40" r="2.5" fill="#0e0e0e"/>
+        </svg>
+      </div>
+      <div class="hs-foot">Per month. Most earn less.<a class="cite" tabindex="0" data-source="Wage.is, RemotePeople · Feb 2026. National median ~3,000 ETB. Excludes 63% in subsistence agriculture.">³</a></div>
+    </div>
+    <div class="hs">
+      <div class="hs-label">POVERTY RATE</div>
+      <div class="hs-num">43%</div>
+      <div class="hs-spark">
+        <svg viewBox="0 0 200 50" preserveAspectRatio="none" aria-label="Poverty rate trajectory">
+          <line x1="0" y1="40" x2="200" y2="40" stroke="#c9c2b0" stroke-width="0.5" stroke-dasharray="2 2"/>
+          <path d="M0,30 L40,28 L80,26 L120,22 L160,15 L200,12" fill="none" stroke="#0e0e0e" stroke-width="2"/>
+          <circle cx="200" cy="12" r="2.5" fill="#0e0e0e"/>
+        </svg>
+      </div>
+      <div class="hs-foot">World Bank estimate, 2025.<a class="cite" tabindex="0" data-source="World Bank Macro Poverty Outlook · Ethiopia, 2025. Up sharply from ~27% pre-conflict.">⁴</a></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 01 / CALCULATOR ============ -->
+<section class="frame reveal">
+  <div class="frame-num">01 / BUILD A HOUSEHOLD</div>
+  <h2 class="headline">PICK A LIFE.<br>WATCH IT NOT FIT.</h2>
+  <p class="lede">Pick a profession, a city, and a household size. The calculator shows what your wage actually buys at May 2026 prices — and what it would have bought at the July 2024 exchange rate. Toggle the bar at the top of the page to see the squeeze in motion.</p>
+
+  <div class="calculator">
+    <div class="calc-controls">
+      <div class="calc-control">
+        <label for="prof">PROFESSION</label>
+        <select id="prof" aria-label="Select profession">
+          <option value="factory">Factory worker</option>
+          <option value="median">Median worker</option>
+          <option value="kerosene_seller">Smallholder farmer</option>
+          <option value="hotel">Hotel receptionist</option>
+          <option value="teacher">Teacher (primary)</option>
+          <option value="doctor_general" selected>General doctor (MD)</option>
+          <option value="doctor_spec">Specialist doctor</option>
+          <option value="bank">Bank employee (mid)</option>
+          <option value="dev">Software engineer (snr)</option>
+          <option value="exec">Bank executive</option>
+        </select>
+      </div>
+      <div class="calc-control">
+        <label for="city">CITY</label>
+        <select id="city" aria-label="Select city">
+          <option value="addis" selected>Addis Ababa</option>
+          <option value="adama">Adama</option>
+          <option value="dire">Dire Dawa</option>
+          <option value="mekelle">Mekelle (Tigray)</option>
+          <option value="rural">Rural / small town</option>
+        </select>
+      </div>
+      <div class="calc-control">
+        <label for="size">HOUSEHOLD SIZE</label>
+        <select id="size" aria-label="Select household size">
+          <option value="1">1 — Single</option>
+          <option value="2">2 — Couple</option>
+          <option value="4" selected>4 — Family</option>
+          <option value="6">6 — Extended</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="calc-result">
+      <div class="calc-summary">
+        <div class="calc-wage-label">MONTHLY WAGE</div>
+        <div class="calc-wage" id="calc-wage-usd">$90</div>
+        <div class="calc-wage-etb" id="calc-wage-etb">12,000 ETB</div>
+
+        <div class="calc-burden">
+          <div class="calc-burden-label">RENT BURDEN<a class="cite" tabindex="0" data-source="Local apartment rents from Numbeo Mar 2026. Burden = monthly rent / monthly wage. >100% means rent exceeds wage.">⁵</a></div>
+          <div class="calc-burden-bar">
+            <div class="calc-burden-fill" id="burden-fill" style="width: 0%"></div>
+          </div>
+          <div class="calc-burden-text" id="burden-text">—</div>
+        </div>
+      </div>
+
+      <div class="calc-buys">
+        <div class="buy">
+          <div class="buy-label">DAYS OF WAGE = 1 LITER PETROL</div>
+          <div class="buy-num" id="buy-petrol">—</div>
+          <div class="buy-foot">At 167.50 ETB/L, May 2026.<a class="cite" tabindex="0" data-source="Birr Metrics · 4 May 2026. Petrol 167.50 ETB/L after second hike.">⁶</a></div>
+        </div>
+        <div class="buy">
+          <div class="buy-label">MINIBUS RIDES PER MONTH</div>
+          <div class="buy-num" id="buy-bus">—</div>
+          <div class="buy-foot">If you spent it all on transport.<a class="cite" tabindex="0" data-source="GlobalCostData 2025: minibus 8 ETB / ride (avg).">⁷</a></div>
+        </div>
+        <div class="buy">
+          <div class="buy-label">LITERS OF KEROSENE</div>
+          <div class="buy-num" id="buy-kero">—</div>
+          <div class="buy-foot">At 320.66 ETB/L, May 2026.<a class="cite" tabindex="0" data-source="Birr Metrics · 4 May 2026. Kerosene 320.66 ETB/L after Hormuz.">⁸</a></div>
+        </div>
+        <div class="buy">
+          <div class="buy-label">MONTHS OF GROCERIES</div>
+          <div class="buy-num" id="buy-food">—</div>
+          <div class="buy-foot">At ~$100 local-style, single person.<a class="cite" tabindex="0" data-source="GlobalCostData / Numbeo 2025. Local-cuisine groceries $80–150/mo.">⁹</a></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 02 / WAGES ============ -->
+<section class="frame reveal">
+  <div class="frame-num">02 / WAGES</div>
+  <div class="eyebrow">Monthly income · USD equivalent</div>
+  <h2 class="headline">$50 A MONTH<br>IS THE MIDDLE.</h2>
+  <p class="lede">Ethiopia has <strong>no statutory minimum wage</strong>. The median worker earns about $50 a month.<a class="cite" tabindex="0" data-source="RemotePeople · April 2026. Median monthly income 3,000 ETB ≈ $50 at post-float rate.">¹⁰</a> <strong>63% of the workforce is in agriculture</strong> — most as smallholders, two-thirds below the poverty line.<a class="cite" tabindex="0" data-source="ALIGN Living Wage Tool, 2024; ~67% of smallholders below national poverty line.">¹¹</a> The chart describes a thin formal slice.</p>
+
+  <div class="ladder" id="ladder-main"></div>
+</section>
+
+<!-- ============ 03 / DOCTORS ============ -->
+<section class="frame reveal">
+  <div class="frame-num">03 / THE WHITE COATS</div>
+  <div class="eyebrow">A profession in collapse</div>
+  <h2 class="headline">DOCTORS EARN LESS<br>THAN HOTEL RECEPTIONISTS.</h2>
+  <p class="lede">Seven years of medical school. Then <strong>$80 to $110 a month</strong>.<a class="cite" tabindex="0" data-source="Borkena May 2025; Geeska May 2025; Glassdoor Apr 2026. Specialists $80, GPs ~$90, sub-specialists ~$110/mo.">¹²</a> Many leave medicine for ride-hailing apps, hairstyling, makeup. Many leave the country.<a class="cite" tabindex="0" data-source="Al Jazeera · 2 Sep 2025. Doctors taking on side hustles, ~140 arrests in May–June 2025.">¹³</a> In May 2025, those who stayed went on strike.</p>
+
+  <div class="mega">
+    <div class="mega-num-box alarm">
+      <div class="mega-label">SPECIALIST DOCTOR</div>
+      <div class="mega-num">$80</div>
+      <div class="mega-foot">Per month. After 7+ years of training.</div>
+    </div>
+    <div class="mega-text">
+      <p>A specialist at <strong>Tikur Anbesa</strong>, Ethiopia's flagship referral hospital, earns less than a bank teller in Bole. Bank executives at the same firms make <strong>500,000 ETB</strong> — roughly fifty times more.<a class="cite" tabindex="0" data-source="Borkena · 21 May 2025. Citing executive compensation 500,000+ ETB vs. physician avg 12,220 ETB.">¹⁴</a> Public health spending: <strong>2.85% of GDP</strong>. The Abuja Declaration target is 15%.<a class="cite" tabindex="0" data-source="Amnesty International · 28 May 2025. Ethiopia health spend at 2.85% GDP, 2022 (record low).">¹⁵</a></p>
+    </div>
+  </div>
+
+  <div class="eyebrow" style="margin-top: 8px;">The wage ladder, with doctors marked</div>
+  <div class="ladder" id="ladder-doctors"></div>
+
+  <!-- TESTIMONY 1 -->
+  <div class="testimony">
+    <div class="testimony-inner">
+      <span class="testimony-mark">"</span>
+      <p class="testimony-quote">One of my relatives is employed as a truck driver and earns about $250 per month, which is more than three times my salary as a medical doctor. I am now seriously considering leaving the medical profession for better-paid jobs in the country's service sector. <em>This was the only way to make our voices heard.</em></p>
+      <div class="testimony-meta">
+        <span><strong>TEWODROS*</strong> — DOCTOR, ADDIS ABABA. ARRESTED MID-SHIFT IN HIS HOSPITAL'S EMERGENCY ROOM, MAY 2025.</span>
+        <span>AL JAZEERA / 2 SEP 2025</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="eyebrow" style="margin-top: 16px;">May 2025 healthcare strike</div>
+  <div class="scoreboard">
+    <div class="score">
+      <div class="score-label">DEMANDED</div>
+      <div class="score-num">$1,000</div>
+      <div class="score-detail">Monthly starting salary</div>
+    </div>
+    <div class="score alarm">
+      <div class="score-label">RECEIVED</div>
+      <div class="score-num">$3–5</div>
+      <div class="score-detail">Salary increment</div>
+    </div>
+    <div class="score">
+      <div class="score-label">ARRESTED</div>
+      <div class="score-num">140+</div>
+      <div class="score-detail">Doctors, EHPM tally<a class="cite" tabindex="0" data-source="Al Jazeera · 2 Sep 2025. EHPM count: 140+ arrests during May–June 2025 strike.">¹⁶</a></div>
+    </div>
+    <div class="score">
+      <div class="score-label">HALTED</div>
+      <div class="score-num">70%</div>
+      <div class="score-detail">Of health services<a class="cite" tabindex="0" data-source="Addis Insight · 13 May 2025. ~70% of health services suspended in partial strike.">¹⁷</a></div>
+    </div>
+  </div>
+
+  <!-- TESTIMONY 2 -->
+  <div class="testimony">
+    <div class="testimony-inner">
+      <span class="testimony-mark">"</span>
+      <p class="testimony-quote">I never took an oath to serve while starving, while in pain, unable to provide for my children. <em>If patients are left untreated, it's the government that holds the responsibility, not us.</em> We did not choose this path willingly. It's the government's silence that pushed us here.</p>
+      <div class="testimony-meta">
+        <span><strong>SPECIALIST</strong> — TIKUR ANBESA HOSPITAL, ADDIS ABABA. MAY 2025.</span>
+        <span>ADDIS INSIGHT / BBC</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 04 / DAY IN THE WAGE ============ -->
+<section class="frame reveal">
+  <div class="frame-num">04 / WHERE THE MONEY GOES</div>
+  <h2 class="headline">A WAGE, BROKEN INTO RENT,<br>FOOD, BUS, KEROSENE.</h2>
+  <p class="lede">Same essentials. Three different lives. Each column shows a single-person budget at May 2026 prices: rent, food, transport, cooking fuel — and what's left.</p>
+
+  <div class="stacks" id="stacks"></div>
+
+  <p class="lede" style="margin-top: 24px;">For the doctor, essentials don't fit inside the wage. Rent alone exceeds it. The hatched red bar below the bottom of the chart shows the deficit — what they have to make up through side hustles, family, or debt.<a class="cite" tabindex="0" data-source="Al Jazeera · 2 Sep 2025: 'One doctor said he spends well more than two-thirds of his $73 monthly salary on rent.'">¹⁸</a></p>
+</section>
+
+<!-- ============ 05 / GAP ============ -->
+<section class="frame reveal">
+  <div class="frame-num">05 / THE GAP</div>
+  <div class="eyebrow">Wages vs. cost of living, single person, Addis Ababa</div>
+  <h2 class="headline">THE MEDIAN WAGE COVERS<br>21% OF MEASURED COSTS.</h2>
+
+  <div class="costgrid" style="margin-top: 16px;">
+    <div class="costcol">
+      <div class="costcol-title">Housing</div>
+      <ul>
+        <li>Local apartment <b>$100–250</b></li>
+        <li>Bole expat zone <b>$300–800</b></li>
+        <li>Outside Addis <b>$50–150</b></li>
+      </ul>
+    </div>
+    <div class="costcol">
+      <div class="costcol-title">Food</div>
+      <ul>
+        <li>Injera + tibs <b>$1–3</b></li>
+        <li>Local groceries/mo <b>$80–150</b></li>
+        <li>Imported premium <b>+40–60%</b></li>
+      </ul>
+    </div>
+    <div class="costcol">
+      <div class="costcol-title">Move</div>
+      <ul>
+        <li>Minibus ride <b>$0.10–0.20</b></li>
+        <li>Shared taxi <b>$1–3</b></li>
+        <li>Petrol, May 2026 <b>167 ETB/L</b></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 06 / THE WAR ============ -->
+<section class="frame reveal">
+  <div class="frame-num">06 / WHAT CAME BEFORE</div>
+  <div class="eyebrow">November 2020 – November 2022 · Tigray, Amhara, Afar</div>
+  <h2 class="headline">EVERY SHOCK ABOVE<br>STARTED <span class="accent">HERE</span>.</h2>
+  <p class="lede">For two years before the float, before Hormuz, before the aid collapse, Ethiopia fought a civil war in its north. The Tigray War killed up to <strong>one million people</strong>,<a class="cite" tabindex="0" data-source="ImpACT International, July 2025; multiple academic estimates. War in Tigray plus spillover into Amhara/Afar, Nov 2020 – Nov 2022.">³⁴</a> destroyed roughly a quarter of Ethiopia's GDP in physical damage,<a class="cite" tabindex="0" data-source="Ethiopian govt assessment via The New Humanitarian, Aug 2023. $22.7B infrastructure damage + $6B productivity loss = 26% of GDP, Nov 2020–Dec 2021 alone.">³⁵</a> and broke the state's ability to pay its own way. Everything that has happened since happened on top of this.</p>
+
+  <div class="mega">
+    <div class="mega-num-box alarm">
+      <div class="mega-label">DAMAGE & LOSS</div>
+      <div class="mega-num">$28.7B</div>
+      <div class="mega-foot">Infrastructure damage + productivity loss in 13 months. 26% of GDP.</div>
+    </div>
+    <div class="mega-text">
+      <p>The Ethiopian government's own assessment, conducted with the World Bank, put physical damage at <strong>$22.7 billion</strong> with another <strong>$6 billion</strong> in lost productivity — for one year, in three regions. Reconstruction needs were estimated at <strong>$20 billion</strong>, roughly <strong>130% of the annual government budget</strong>.<a class="cite" tabindex="0" data-source="IGC / Addis Standard, July 2023. Joint government–World Bank assessment: $28B losses; $19–20B reconstruction needs ≈ 130% of annual government budget.">³⁶</a> The country has not paid this back. Most of it never will be.</p>
+    </div>
+  </div>
+
+  <div class="eyebrow" style="margin-top: 8px;">The fiscal collapse the war produced</div>
+  <div class="scoreboard">
+    <div class="score">
+      <div class="score-label">TAX REVENUE / GDP</div>
+      <div class="score-num">13% → 7%</div>
+      <div class="score-detail">Halved by 2022, broad-based<a class="cite" tabindex="0" data-source="IGC, 2024: 'real tax revenue as a share of GDP… from a high of 13% in 2015 to 7.2% in 2022.' Decline accelerated after war onset.">³⁷</a></div>
+    </div>
+    <div class="score alarm">
+      <div class="score-label">TIGRAY POVERTY</div>
+      <div class="score-num">27 → 45%</div>
+      <div class="score-detail">In one year, per UNDP<a class="cite" tabindex="0" data-source="UNDP via The New Humanitarian, Aug 2023. Tigray poverty rate rose from 27% to 45% in conflict period.">³⁸</a></div>
+    </div>
+    <div class="score">
+      <div class="score-label">HEALTH FACILITIES</div>
+      <div class="score-num">92%</div>
+      <div class="score-detail">In Tigray only partially functioning<a class="cite" tabindex="0" data-source="WHO HeRAMS report, 5 Sep 2023. Of 853 facilities assessed: 92% partially functioning, 8% non-functioning, 0% fully functioning.">³⁹</a></div>
+    </div>
+    <div class="score">
+      <div class="score-label">HEALTH-SYSTEM DAMAGE</div>
+      <div class="score-num">$3.78B</div>
+      <div class="score-detail">Tigray alone, looting/vandalism<a class="cite" tabindex="0" data-source="PMC peer-reviewed study, 2024. Cost of war-related looting/vandalism to Tigray's public health system: $3.78B economic cost; $511M direct loss.">⁴⁰</a></div>
+    </div>
+  </div>
+
+  <p class="lede" style="margin-top: 32px;">A government collecting <strong>7% of GDP in taxes</strong> cannot rebuild $20 billion of destroyed roads, schools, and hospitals. It cannot subsidize fuel through a float. It cannot replace a departing donor. The state's fiscal capacity collapsed during the war and has not recovered. <strong>That is why every shock that followed — the float, Hormuz, USAID — cut so deep.</strong> Ethiopia entered the storms with no buffer.</p>
+
+  <p class="lede">Oxford's Initiative on Peace and Recovery in Ethiopia projects cumulative economic losses from the conflicts will reach <strong>$125 billion by 2027</strong> — leaving the economy <strong>19% smaller</strong> than it would have been on the pre-war trajectory.<a class="cite" tabindex="0" data-source="Oxford Initiative on Peace and Recovery in Ethiopia. Cumulative loss vs. counterfactual: ~$125B by 2027; economy 19% smaller than no-conflict baseline.">⁴¹</a> And the fighting has not fully stopped — Amhara, Oromia, and other regions remain in active or simmering conflict.</p>
+</section>
+
+<!-- ============ 07 / FLOAT ============ -->
+<section class="frame reveal">
+  <div class="frame-num">07 / THE FLOAT</div>
+  <div class="eyebrow">July 2024 · National Bank of Ethiopia</div>
+  <h2 class="headline">THE BIRR LOST HALF<br>ITS VALUE IN TWO WEEKS.</h2>
+
+  <div class="mega">
+    <div class="mega-num-box">
+      <div class="mega-label">JULY 2024</div>
+      <div class="mega-num">57</div>
+      <div class="mega-foot">Birr per US dollar. Managed rate.</div>
+    </div>
+    <div class="mega-num-box alarm">
+      <div class="mega-label">MAY 2026</div>
+      <div class="mega-num">136</div>
+      <div class="mega-foot">Official rate. Parallel market: 160.</div>
+    </div>
+  </div>
+
+  <p class="lede">Every dollar of imported fuel, fertilizer, wheat, and medicine now costs more than twice as many birr. The reform unlocked IMF financing and a debt deal.<a class="cite" tabindex="0" data-source="Africa Practice · July 2025. Floating the birr was a precondition for IMF program & debt restructuring.">¹⁹</a> It also <strong>halved the dollar value of every wage in the country</strong>.</p>
+</section>
+
+<!-- ============ 08 / HORMUZ ============ -->
+<section class="frame reveal">
+  <div class="frame-num">08 / HORMUZ</div>
+  <div class="eyebrow">Retail fuel price · Birr per litre, Addis Ababa</div>
+  <h2 class="headline">THEN THE STRAIT <span class="accent">CLOSED</span>.</h2>
+  <p class="lede">February 28, 2026: military conflict shuts the Strait of Hormuz.<a class="cite" tabindex="0" data-source="Wikipedia / Atlantic Council · April 2026. Strait closed Feb 2026 amid Iran–US/Israel war.">²⁰</a> <strong>Ethiopia's diesel cargoes stranded in the Gulf</strong>. Spot-market premium jumps from $9 to $93 per barrel — paid in dollars, settled in halved birr.<a class="cite" tabindex="0" data-source="Capital Newspaper · 2 April 2026. Spot-market premium $9.25 → $92.88 per barrel.">²¹</a></p>
+
+  <div class="fuelchart">
+    <div class="fc-row">
+      <div class="fc-label">PETROL · MAR</div>
+      <div class="fc-bar"><div class="fc-fill" style="width: 41%">132 ETB</div></div>
+      <div class="fc-change flat">—</div>
+    </div>
+    <div class="fc-row">
+      <div class="fc-label">PETROL · APR 1</div>
+      <div class="fc-bar"><div class="fc-fill" style="width: 44%">142 ETB</div></div>
+      <div class="fc-change up">+8%</div>
+    </div>
+    <div class="fc-row">
+      <div class="fc-label">PETROL · MAY 4</div>
+      <div class="fc-bar"><div class="fc-fill" style="width: 52%">167.50 ETB</div></div>
+      <div class="fc-change up">+27%</div>
+    </div>
+    <div class="fc-row">
+      <div class="fc-label">DIESEL · MAY 4</div>
+      <div class="fc-bar"><div class="fc-fill" style="width: 56%">180.46 ETB</div></div>
+      <div class="fc-change up">+29%</div>
+    </div>
+    <div class="fc-row">
+      <div class="fc-label">KEROSENE · APR</div>
+      <div class="fc-bar"><div class="fc-fill" style="width: 47%">151 ETB</div></div>
+      <div class="fc-change flat">—</div>
+    </div>
+    <div class="fc-row">
+      <div class="fc-label">KEROSENE · MAY 4</div>
+      <div class="fc-bar"><div class="fc-fill alarm" style="width: 100%">320.66 ETB</div></div>
+      <div class="fc-change up">+112%</div>
+    </div>
+  </div>
+
+  <p class="lede" style="margin-top: 32px;">Kerosene is <strong>the fuel of poverty</strong> — used for cooking and lighting in rural areas and off-grid neighborhoods. It doubled in 30 days.</p>
+</section>
+
+<!-- ============ 09 / USAID ============ -->
+<section class="frame reveal">
+  <div class="frame-num">09 / THE LAST SHOCK</div>
+  <div class="eyebrow">January 2025 · Trump executive order suspends foreign aid</div>
+  <h2 class="headline">THEN THE LARGEST DONOR<br>WALKED <span class="accent">AWAY</span>.</h2>
+  <p class="lede">Ethiopia was the <strong>biggest recipient of US aid in sub-Saharan Africa</strong> — $1.8 billion in FY2023, $1.33 billion in FY2024.<a class="cite" tabindex="0" data-source="USAFacts / ForeignAssistance.gov · Jan 2026. Ethiopia FY23 $1.8B, FY24 $1.33B obligated. Africa Data Hub: $16.69B cumulative 2001–2024.">²⁶</a> On January 20, 2025, the Trump executive order paused all foreign aid for a 90-day review. USAID was effectively dismantled. Most programs never restarted.<a class="cite" tabindex="0" data-source="Real Instituto Elcano · Dec 2025. State/Rubio confirmed >80% of USAID programs cancelled. Rescissions Act of 2025 cut $9B.">²⁷</a> The squeeze had a third shock waiting.</p>
+
+  <div class="mega">
+    <div class="mega-num-box">
+      <div class="mega-label">2001–2024 CUMULATIVE</div>
+      <div class="mega-num">$16.7B</div>
+      <div class="mega-foot">Total USAID to Ethiopia. Largest in sub-Saharan Africa.</div>
+    </div>
+    <div class="mega-num-box alarm">
+      <div class="mega-label">SINCE JAN 2025</div>
+      <div class="mega-num">−80%</div>
+      <div class="mega-foot">Of USAID programs cancelled. Food aid stranded in warehouses.</div>
+    </div>
+  </div>
+
+  <div class="eyebrow" style="margin-top: 8px;">What stopped, and who depended on it</div>
+  <div class="scoreboard">
+    <div class="score">
+      <div class="score-label">FOOD AID HALTED</div>
+      <div class="score-num">2.4M</div>
+      <div class="score-detail">Tigrayans on US-provided grain<a class="cite" tabindex="0" data-source="PBS News / AP · 13 March 2025. 2.4M Tigrayans dependent on humanitarian grain, mostly US.">²⁸</a></div>
+    </div>
+    <div class="score">
+      <div class="score-label">JEOP SUSPENDED</div>
+      <div class="score-num">2.0M</div>
+      <div class="score-detail">Cut off from Joint Emergency Operation<a class="cite" tabindex="0" data-source="ACAPS · March 2025. JEOP food assistance to ~2M halted; payment system non-functional.">²⁹</a></div>
+    </div>
+    <div class="score alarm">
+      <div class="score-label">PSNP AT RISK</div>
+      <div class="score-num">8M</div>
+      <div class="score-detail">In productive safety net program<a class="cite" tabindex="0" data-source="ACAPS · 13 March 2025. USAID/BHA largest bilateral donor of PSNP, ~8M beneficiaries.">³⁰</a></div>
+    </div>
+    <div class="score">
+      <div class="score-label">DEATHS REPORTED</div>
+      <div class="score-num">8</div>
+      <div class="score-detail">At one Aksum IDP center alone<a class="cite" tabindex="0" data-source="PHR · June 2025. Tigray health worker: 8 deaths at Askum IDP site after mobile clinics shut, including a pregnant woman.">³¹</a></div>
+    </div>
+  </div>
+
+  <!-- TESTIMONY 3 -->
+  <div class="testimony">
+    <div class="testimony-inner">
+      <span class="testimony-mark">"</span>
+      <p class="testimony-quote">We have little humanitarian support. <em>It's not conflicts that will ultimately kill us, but famine.</em> We will just die in silence.</p>
+      <div class="testimony-meta">
+        <span><strong>NIREAYO WUBET</strong>, 88 — TIGRAYAN VILLAGER, HITSATS. SHELTERING SINCE FLEEING CONFLICT FOUR YEARS AGO.</span>
+        <span>AL JAZEERA / 23 JAN 2026</span>
+      </div>
+    </div>
+  </div>
+
+  <p class="lede" style="margin-top: 32px;">USAID's exit hits a country whose macro reform program was <strong>built on the assumption of continued external assistance</strong>.<a class="cite" tabindex="0" data-source="IMF Country Report 26/20: 'Authorities' longer-term assumption of sustained, significant external budget support poses budgetary planning and fiscal financing risks.'">³²</a> The IMF flagged the risk in its 2026 review. Other Western donors are also cutting — UK, France, Germany, Netherlands all reduced aid budgets in 2024–25.<a class="cite" tabindex="0" data-source="ISS / IFs forecast · March 2026. Germany cut €4.8B 2022–25, UK 0.5%→0.3% GNI by 2027. OECD: ODA decline 9–17% in 2025, 16–28% for sub-Saharan Africa.">³³</a> The OECD forecasts a <strong>16–28% drop in development aid to sub-Saharan Africa</strong> in 2025 alone.</p>
+
+  <p class="lede">For Ethiopia, this means the float, the fuel shock, and the aid collapse arrived in eighteen months — three structural breaks at once. The macro reform was supposed to wean the country off aid gradually. The wean became an amputation.</p>
+</section>
+
+<!-- ============ 10 / MAP ============ -->
+<section class="frame reveal">
+  <div class="frame-num">10 / NOT ONE ETHIOPIA</div>
+  <h2 class="headline">THE SQUEEZE LANDS<br>UNEVENLY.</h2>
+  <p class="lede">Addis Ababa is not the country. 80% of Ethiopians live elsewhere — in regions hit by drought, conflict, displacement, and uneven access to services. Click a region. Pick a metric.</p>
+
+  <div class="map-controls" role="tablist" aria-label="Choose map metric">
+    <button class="active" data-metric="poverty" role="tab" aria-selected="true">MULTIDIMENSIONAL POVERTY</button>
+    <button data-metric="food" role="tab" aria-selected="false">FOOD INSECURITY</button>
+    <button data-metric="conflict" role="tab" aria-selected="false">CONFLICT / DISPLACEMENT</button>
+  </div>
+
+  <div class="map-wrap">
+    <div class="map-svg-wrap">
+      <svg viewBox="0 0 600 500" xmlns="http://www.w3.org/2000/svg" id="map-svg" role="img" aria-label="Map of Ethiopia by region">
+        <!-- Stylized regional shapes (simplified blocks) -->
+        <!-- Tigray (north) -->
+        <path id="r-tigray" class="map-region" data-region="tigray" tabindex="0" role="button" aria-label="Tigray region"
+          d="M 200 60 L 320 60 L 340 120 L 320 160 L 240 170 L 200 130 Z"/>
+        <text class="map-label" x="265" y="110">TIGRAY</text>
+
+        <!-- Afar (NE) -->
+        <path id="r-afar" class="map-region" data-region="afar" tabindex="0" role="button" aria-label="Afar region"
+          d="M 340 120 L 460 130 L 480 220 L 410 250 L 360 220 L 320 160 Z"/>
+        <text class="map-label" x="400" y="190">AFAR</text>
+
+        <!-- Amhara (N central) -->
+        <path id="r-amhara" class="map-region" data-region="amhara" tabindex="0" role="button" aria-label="Amhara region"
+          d="M 130 130 L 240 170 L 320 160 L 360 220 L 290 270 L 200 270 L 130 220 Z"/>
+        <text class="map-label" x="240" y="220">AMHARA</text>
+
+        <!-- Benishangul (W) -->
+        <path id="r-benishangul" class="map-region" data-region="benishangul" tabindex="0" role="button" aria-label="Benishangul-Gumuz region"
+          d="M 50 200 L 130 220 L 130 290 L 70 290 Z"/>
+        <text class="map-label" x="95" y="255" font-size="8">BENISHANGUL</text>
+
+        <!-- Addis Ababa city -->
+        <circle id="r-addis" class="map-region" data-region="addis" tabindex="0" role="button" aria-label="Addis Ababa"
+          cx="280" cy="285" r="14"/>
+        <text class="map-label" x="280" y="289" fill="#ffffff" style="pointer-events: none;">A.A.</text>
+
+        <!-- Oromia (large central) -->
+        <path id="r-oromia" class="map-region" data-region="oromia" tabindex="0" role="button" aria-label="Oromia region"
+          d="M 70 290 L 200 270 L 290 270 L 360 220 L 410 250 L 480 280 L 460 360 L 380 380 L 280 380 L 180 370 L 100 340 Z"/>
+        <text class="map-label" x="280" y="335">OROMIA</text>
+
+        <!-- SNNP / South -->
+        <path id="r-snnp" class="map-region" data-region="snnp" tabindex="0" role="button" aria-label="Southern Nations / SNNP region"
+          d="M 100 340 L 280 380 L 270 440 L 130 430 Z"/>
+        <text class="map-label" x="200" y="410" font-size="9">SOUTHERN</text>
+
+        <!-- Somali (E) -->
+        <path id="r-somali" class="map-region" data-region="somali" tabindex="0" role="button" aria-label="Somali region"
+          d="M 380 380 L 460 360 L 480 280 L 550 290 L 570 400 L 500 460 L 410 440 L 380 400 Z"/>
+        <text class="map-label" x="475" y="380">SOMALI</text>
+
+        <!-- Gambela -->
+        <path id="r-gambela" class="map-region" data-region="gambela" tabindex="0" role="button" aria-label="Gambela region"
+          d="M 30 290 L 70 290 L 100 340 L 60 360 Z"/>
+        <text class="map-label" x="65" y="325" font-size="8">GAMBELA</text>
+      </svg>
+    </div>
+    <div class="map-info">
+      <div class="map-info-region" id="map-region-name">SOMALI</div>
+      <div class="map-info-pop" id="map-region-pop">POPULATION ~6.5M / PASTORALIST</div>
+      <div class="map-stat">
+        <div class="map-stat-label" id="map-stat-1-label">MULTIDIMENSIONAL POVERTY</div>
+        <div class="map-stat-num bad" id="map-stat-1-num">90%</div>
+        <div class="map-stat-foot" id="map-stat-1-foot">Highest in the country.</div>
+      </div>
+      <div class="map-stat">
+        <div class="map-stat-label">CONTEXT</div>
+        <div class="map-stat-foot" id="map-context" style="margin-top: 4px;">Hit by the 2020–23 drought and recurring conflict; 27% of Ethiopia's IDPs are here.</div>
+      </div>
+      <div class="map-legend">
+        <span>LOW</span>
+        <div class="map-legend-bar legend-poverty" id="map-legend-bar"></div>
+        <span>HIGH</span>
+      </div>
+    </div>
+  </div>
+
+  <p class="lede" style="margin-top: 24px; font-size: 16px;">Sources: OPHI/UNDP Multidimensional Poverty Index 2021<a class="cite" tabindex="0" data-source="OPHI/UNDP MPI 2021 via PMC review, 2025. Somali 90%, Afar 84.7%, Oromia 71.5%, Amhara 69.3%.">²²</a>; FEWS NET 2024–25 food security outlook<a class="cite" tabindex="0" data-source="FEWS NET Sep 2024 outlook; FAO/WFP June 2024 hunger hot spot report. ~13M in food crisis.">²³</a>; ReliefWeb / WHO PHSA April 2024<a class="cite" tabindex="0" data-source="WHO Public Health Situation Analysis Ethiopia April 2024. IDPs by region; Tigray 92% facilities only partially functioning.">²⁴</a>.</p>
+</section>
+
+<!-- ============ 11 / CASCADE ============ -->
+<section class="frame reveal">
+  <div class="frame-num">11 / CASCADE</div>
+  <h2 class="headline">THREE CHANNELS.<br>ALL OPEN.</h2>
+
+  <div class="triptych">
+    <div class="panel">
+      <div class="panel-num">i</div>
+      <div class="panel-title">Direct hit</div>
+      <p class="panel-desc">Kerosene doubles. Cooking fuel for the rural poor and off-grid urban households. A regressive tax on people already living on a few dollars a day.</p>
+    </div>
+    <div class="panel">
+      <div class="panel-num">ii</div>
+      <div class="panel-title">Transport into food</div>
+      <p class="panel-desc">Diesel runs the trucks moving grain to market, the buses, the irrigation pumps. Food inflation hit 13.5% in April. The pass-through is still working.<a class="cite" tabindex="0" data-source="Birr Metrics · April 2026 inflation print. Headline 11.7%, food 13.5%.">²⁵</a></p>
+    </div>
+    <div class="panel">
+      <div class="panel-num">iii</div>
+      <div class="panel-title">Fertilizer</div>
+      <p class="panel-desc">The Gulf produces nearly half the world's urea. Prices up 50% in the first weeks of the crisis. Lower yields or higher food later in 2026 — likely both.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 12 / SEQUENCE ============ -->
+<section class="frame reveal">
+  <div class="frame-num">12 / SEQUENCE</div>
+  <h2 class="headline">HOW THE SHOCKS LANDED.</h2>
+
+  <div class="timeline">
+    <div class="tl-row major">
+      <div class="tl-date">NOV 2020 – NOV 2022</div>
+      <div class="tl-content">
+        <div class="tl-title">The Tigray War</div>
+        <div class="tl-desc">Up to 1M dead. $28.7B in damage and lost output (26% of GDP). Tax revenue collapses from 13% to 7% of GDP. Tigray poverty doubles to 45%. The state's fiscal capacity is broken.</div>
+      </div>
+    </div>
+    <div class="tl-row major">
+      <div class="tl-date">JUL 2024</div>
+      <div class="tl-content">
+        <div class="tl-title">Birr Floated</div>
+        <div class="tl-desc">−100% vs USD in two weeks. IMF financing and debt restructuring follow.</div>
+      </div>
+    </div>
+    <div class="tl-row">
+      <div class="tl-date">2024–25</div>
+      <div class="tl-content">
+        <div class="tl-title">Inflation peaks above 26%</div>
+        <div class="tl-desc">Imported goods double in price.</div>
+      </div>
+    </div>
+    <div class="tl-row major">
+      <div class="tl-date">JAN 20 2025</div>
+      <div class="tl-content">
+        <div class="tl-title">USAID frozen, then dismantled</div>
+        <div class="tl-desc">Trump executive order pauses all foreign aid. Ethiopia loses its largest external donor — $1.33B/year. 80%+ of programs ultimately cancelled. Food aid halts to 2.4M Tigrayans.</div>
+      </div>
+    </div>
+    <div class="tl-row major">
+      <div class="tl-date">MAY 2025</div>
+      <div class="tl-content">
+        <div class="tl-title">Healthcare workers strike</div>
+        <div class="tl-desc">70% of services halt. 140+ doctors arrested. EHPA suspended. $3–5/month increment offered.</div>
+      </div>
+    </div>
+    <div class="tl-row">
+      <div class="tl-date">JUN 2025</div>
+      <div class="tl-content">
+        <div class="tl-title">Fuel subsidy ends</div>
+        <div class="tl-desc">2025 cumulative fuel hikes reach ~43% by year-end.</div>
+      </div>
+    </div>
+    <div class="tl-row">
+      <div class="tl-date">DEC 2025</div>
+      <div class="tl-content">
+        <div class="tl-title">Inflation falls to single digits</div>
+        <div class="tl-desc">First moment of relief. The reform appears to be working.</div>
+      </div>
+    </div>
+    <div class="tl-row major">
+      <div class="tl-date">FEB 28 2026</div>
+      <div class="tl-content">
+        <div class="tl-title">Strait of Hormuz closes</div>
+        <div class="tl-desc">Largest oil supply disruption in IEA history. Brent past $120/barrel.</div>
+      </div>
+    </div>
+    <div class="tl-row">
+      <div class="tl-date">APR 2026</div>
+      <div class="tl-content">
+        <div class="tl-title">Inflation rebounds to 11.7%</div>
+        <div class="tl-desc">Disinflation reverses. Food inflation at 13.5%.</div>
+      </div>
+    </div>
+    <div class="tl-row major">
+      <div class="tl-date">MAY 4 2026</div>
+      <div class="tl-content">
+        <div class="tl-title">Kerosene +112% in 30 days</div>
+        <div class="tl-desc">Sharpest fuel adjustment in Ethiopian memory. Petrol +17.6%. Diesel +10.7%.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 13 / WHAT'S MISSING ============ -->
+<section class="frame reveal">
+  <div class="frame-num">13 / WHAT THIS MISSES</div>
+  <h2 class="headline">A PARTIAL PICTURE.</h2>
+
+  <div class="missing">
+    <h3>An honest accounting of the gaps</h3>
+    <p>This piece tells one story — the squeeze on formal-sector wages, the currency, and fuel — and it tells it with city-centric data. That's not the whole picture, and pretending otherwise would be dishonest. The bullets below name what's underweighted or absent, and why it matters.</p>
+
+    <div class="missing-list">
+      <div class="missing-item">
+        <div class="missing-item-title">— REMITTANCES</div>
+        <div class="missing-item-text">The Ethiopian diaspora sends home <strong>$5–7 billion a year</strong>, more than coffee export earnings. Many "low-wage" households are subsidized from abroad. Without that flow, the squeeze would look far worse.</div>
+      </div>
+      <div class="missing-item">
+        <div class="missing-item-title">— THE INFORMAL SECTOR</div>
+        <div class="missing-item-text">Roughly 54% of employment is informal. Salary surveys don't see it. The "median wage" of $50 mostly captures the formal slice — the informal economy runs on day rates, kind, and barter.</div>
+      </div>
+      <div class="missing-item">
+        <div class="missing-item-title">— ONGOING CONFLICTS</div>
+        <div class="missing-item-text">The Tigray War gets a section here, but Amhara's Fano insurgency (2023–present), the Oromia OLA conflict, and ethnic violence in Benishangul-Gumuz are touched only in the map. Documented drone strikes, mass displacement, and continuing harm don't get the space they deserve.</div>
+      </div>
+      <div class="missing-item">
+        <div class="missing-item-title">— CLIMATE STRESS</div>
+        <div class="missing-item-text">The 2020–23 Horn of Africa drought decimated pastoralist livelihoods in Somali, Afar, southern Oromia. Fertilizer shocks amplify a longer climate stress on yields the figures here barely touch.</div>
+      </div>
+      <div class="missing-item">
+        <div class="missing-item-title">— SUBSISTENCE AGRICULTURE</div>
+        <div class="missing-item-text">63% of the workforce farms small plots, mostly outside the cash economy. Their lives don't move with the kerosene price the same way Addis lives do — but fertilizer, fuel, and food-import dynamics still cascade in.</div>
+      </div>
+      <div class="missing-item">
+        <div class="missing-item-title">— DATA UNCERTAINTY</div>
+        <div class="missing-item-text">Wage estimates vary 2–4× across sources. Median $50, average $190 — both real, both for different things. Numbers are presented with hover citations; treat ranges as honest, not precise.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ KICKER ============ -->
+<section class="kicker">
+  <div class="kicker-inner">
+    <p class="kicker-quote">THE MACROECONOMY IS DOING WHAT IT WAS SUPPOSED TO DO.<br><span class="accent">NONE OF IT SHOWS UP IN THE KEROSENE PRICE.</span></p>
+    <div class="kicker-meta">
+      <span>END / MAY 2026</span>
+      <span>SOURCES — IMF · WORLD BANK · NUMBEO · BIRR METRICS · AL JAZEERA · AMNESTY · HRW · OPHI · FEWS NET</span>
+      <span>—</span>
+    </div>
+  </div>
+</section>
+
+<script>
+// ============ DATA ============
+const RATE_PRE = 57;   // ETB/USD before float
+const RATE_POST = 136; // ETB/USD May 2026
+let view = 'post'; // 'pre' or 'post'
+
+// All wages stored in ETB. Doctors and others didn't get nominal raises matching the float,
+// so their USD value collapsed.
+const WAGES = {
+  factory:        { name: 'Factory worker',      etb: 2000 },
+  median:         { name: 'Median worker',       etb: 3000 },
+  kerosene_seller:{ name: 'Smallholder farmer',  etb: 2200 },
+  hotel:          { name: 'Hotel receptionist',  etb: 5500 },
+  teacher:        { name: 'Teacher',             etb: 3800 },
+  doctor_general: { name: 'General doctor',      etb: 12000 },
+  doctor_spec:    { name: 'Specialist doctor',   etb: 10500 },
+  bank:           { name: 'Bank employee',       etb: 48000 },
+  dev:            { name: 'Software engineer',   etb: 95000 },
+  exec:           { name: 'Bank executive',      etb: 500000 }
+};
+
+// Local rent (1BR, USD/month) by city
+const RENTS = {
+  addis:   175,
+  adama:   90,
+  dire:    100,
+  mekelle: 80,
+  rural:   60
+};
+
+// Per-person essentials (May 2026 USD)
+const FOOD_PERSON = 100; // monthly local-style groceries, single
+const TRANSPORT_PERSON = 22; // ~110 minibus rides/mo
+const KEROSENE_HH = 18;  // monthly per household, all sizes (small fixed for cooking)
+
+// Prices in ETB (May 2026)
+const PRICE_PETROL = 167.50; // ETB/L
+const PRICE_KERO = 320.66;   // ETB/L
+const PRICE_BUS = 8;         // ETB/ride
+
+// ============ RATE / TOGGLE ============
+function rate() { return view === 'pre' ? RATE_PRE : RATE_POST; }
+function etbToUsd(etb) { return etb / rate(); }
+function fmt(n) { return Math.round(n).toLocaleString('en-US'); }
+function fmtMoney(n) {
+  if (n >= 1000) return '$' + Math.round(n).toLocaleString('en-US');
+  return '$' + Math.round(n);
+}
+
+document.getElementById('btn-pre').addEventListener('click', () => setView('pre'));
+document.getElementById('btn-post').addEventListener('click', () => setView('post'));
+function setView(v) {
+  view = v;
+  document.getElementById('btn-pre').classList.toggle('active', v === 'pre');
+  document.getElementById('btn-post').classList.toggle('active', v === 'post');
+  document.getElementById('btn-pre').setAttribute('aria-pressed', v === 'pre');
+  document.getElementById('btn-post').setAttribute('aria-pressed', v === 'post');
+  document.getElementById('view-readout').textContent = v === 'pre' ? 'JULY 2024 BIRR' : 'MAY 2026 BIRR';
+  document.getElementById('rate-num').textContent = rate() + ' ETB / USD';
+  renderHero();
+  renderLadder('ladder-main', false);
+  renderLadder('ladder-doctors', true);
+  renderStacks();
+  renderCalculator();
+}
+
+// ============ HERO ============
+function renderHero() {
+  const median = etbToUsd(3000);
+  document.getElementById('hero-wage').textContent = '$' + Math.round(median);
+}
+
+// ============ LADDER ============
+const LADDER_MAIN = ['factory','median','hotel','teacher','bank','dev'];
+const LADDER_DOC  = ['doctor_spec','doctor_general','hotel','teacher','bank','exec'];
+const FLAGGED = new Set(['doctor_general','doctor_spec']);
+
+function renderLadder(elId, withDoctors) {
+  const el = document.getElementById(elId);
+  const list = withDoctors ? LADDER_DOC : LADDER_MAIN;
+  // Find max for scaling
+  const usdValues = list.map(k => etbToUsd(WAGES[k].etb));
+  const maxUsd = Math.max(...usdValues);
+  el.innerHTML = '';
+  list.forEach(k => {
+    const w = WAGES[k];
+    const usd = etbToUsd(w.etb);
+    const pct = Math.max(4, (usd / maxUsd) * 100);
+    const flagged = FLAGGED.has(k);
+    const row = document.createElement('div');
+    row.className = 'rung';
+    row.innerHTML = `
+      <div class="rung-label ${flagged ? 'flagged' : ''}">${w.name}</div>
+      <div class="rung-bar"><div class="rung-fill ${flagged ? 'flagged' : ''}" style="width: ${pct}%">${fmtMoney(usd)}</div></div>
+      <div class="rung-num">${fmt(w.etb)} ETB</div>
+    `;
+    el.appendChild(row);
+  });
+}
+
+// ============ HOUSEHOLD STACKS ============
+const STACK_PROFILES = [
+  { key: 'doctor_general', label: 'GENERAL DOCTOR' },
+  { key: 'bank', label: 'BANK EMPLOYEE' },
+  { key: 'exec', label: 'BANK EXECUTIVE' }
+];
+
+function renderStacks() {
+  const el = document.getElementById('stacks');
+  el.innerHTML = '';
+  // Reference essentials for single person, Addis
+  const ess = {
+    rent: 175,
+    food: 100,
+    transport: 22,
+    kerosene: 18
+  };
+  const totalEss = ess.rent + ess.food + ess.transport + ess.kerosene; // 315
+
+  STACK_PROFILES.forEach(p => {
+    const w = WAGES[p.key];
+    const wage = etbToUsd(w.etb);
+    const stack = document.createElement('div');
+    stack.className = 'stack';
+
+    // For each person, work out how each segment fits *into the wage* (capped at wage).
+    // If essentials > wage, we show segments as % of wage with the deficit as 'over' bar.
+    const segs = [];
+    let remaining = wage;
+    let displayBudget = Math.max(wage, totalEss); // bar fills total = displayBudget
+
+    [
+      { k: 'rent', label: 'RENT', cls: 'rent' },
+      { k: 'food', label: 'FOOD', cls: 'food' },
+      { k: 'transport', label: 'TRANSPORT', cls: 'transport' },
+      { k: 'kerosene', label: 'KEROSENE', cls: 'kerosene' }
+    ].forEach(s => {
+      segs.push({ label: s.label, cls: s.cls, val: ess[s.k] });
+    });
+
+    if (wage >= totalEss) {
+      segs.push({ label: 'LEFT OVER', cls: 'left', val: wage - totalEss });
+    } else {
+      segs.push({ label: 'DEFICIT', cls: 'over', val: totalEss - wage });
+    }
+
+    const totalDisplay = segs.reduce((a,b) => a + b.val, 0);
+
+    let html = `
+      <div class="stack-name">${p.label}</div>
+      <div class="stack-wage">${fmtMoney(wage)} / MO · ${fmt(w.etb)} ETB</div>
+      <div class="stack-bar">
+    `;
+    segs.forEach(s => {
+      const pct = (s.val / totalDisplay) * 100;
+      const usdLabel = '$' + Math.round(s.val);
+      html += `<div class="stack-seg ${s.cls}" style="height: ${pct}%; min-height: ${pct < 3 ? 0 : 22}px;">
+        <span class="seg-label">${s.label}</span>
+        <span class="seg-pct">${usdLabel}</span>
+      </div>`;
+    });
+    html += `</div>`;
+    // Footer
+    if (wage >= totalEss) {
+      const left = wage - totalEss;
+      const pctLeft = Math.round((left / wage) * 100);
+      html += `<div class="stack-foot"><span class="strong">${pctLeft}%</span> of wage left after essentials.</div>`;
+    } else {
+      const def = totalEss - wage;
+      const pctDef = Math.round((def / totalEss) * 100);
+      html += `<div class="stack-foot"><span class="strong">${pctDef}%</span> short. Essentials exceed the wage by <span class="strong">$${Math.round(def)}</span>.</div>`;
+    }
+    stack.innerHTML = html;
+    el.appendChild(stack);
+  });
+}
+
+// ============ CALCULATOR ============
+const profEl = document.getElementById('prof');
+const cityEl = document.getElementById('city');
+const sizeEl = document.getElementById('size');
+[profEl, cityEl, sizeEl].forEach(s => s.addEventListener('change', renderCalculator));
+
+function renderCalculator() {
+  const prof = profEl.value;
+  const city = cityEl.value;
+  const size = parseInt(sizeEl.value, 10);
+
+  const w = WAGES[prof];
+  const usd = etbToUsd(w.etb);
+  document.getElementById('calc-wage-usd').textContent = fmtMoney(usd);
+  document.getElementById('calc-wage-etb').textContent = fmt(w.etb) + ' ETB';
+
+  // Rent burden
+  const rentUsd = RENTS[city] * (size === 1 ? 1 : size === 2 ? 1.1 : size === 4 ? 1.4 : 1.7);
+  const burdenPct = (rentUsd / usd) * 100;
+  const fillEl = document.getElementById('burden-fill');
+  fillEl.style.width = Math.min(100, burdenPct) + '%';
+  fillEl.classList.toggle('over', burdenPct > 100);
+  let txt;
+  if (burdenPct > 100) {
+    txt = `Rent alone is <span class="red">${Math.round(burdenPct)}%</span> of the wage. Essentials don't fit.`;
+  } else if (burdenPct > 50) {
+    txt = `<span class="b">${Math.round(burdenPct)}%</span> of the wage goes to rent. Heavy burden.`;
+  } else {
+    txt = `<span class="b">${Math.round(burdenPct)}%</span> of the wage goes to rent.`;
+  }
+  document.getElementById('burden-text').innerHTML = txt;
+
+  // Days of wage = 1 liter petrol
+  // wage per day = w.etb / 30 days. Petrol/L = 167.50 ETB
+  const wagePerDay = w.etb / 30;
+  const daysForPetrol = PRICE_PETROL / wagePerDay;
+  let petrolDisplay;
+  if (daysForPetrol >= 1) {
+    petrolDisplay = daysForPetrol.toFixed(1) + ' DAYS';
+  } else {
+    const hrs = daysForPetrol * 24;
+    petrolDisplay = hrs >= 1 ? hrs.toFixed(1) + ' HRS' : (hrs * 60).toFixed(0) + ' MIN';
+  }
+  document.getElementById('buy-petrol').textContent = petrolDisplay;
+
+  // Minibus rides per month if entirely transport
+  const buses = Math.floor(w.etb / PRICE_BUS);
+  document.getElementById('buy-bus').textContent = fmt(buses);
+
+  // Liters of kerosene
+  const liters = Math.floor(w.etb / PRICE_KERO);
+  document.getElementById('buy-kero').textContent = fmt(liters) + ' L';
+
+  // Months of groceries (single person, $100/mo)
+  const groceriesEtb = FOOD_PERSON * rate();
+  const months = w.etb / groceriesEtb;
+  let monthDisplay;
+  if (months >= 1) monthDisplay = months.toFixed(1);
+  else monthDisplay = (months * 30).toFixed(0) + ' DAYS';
+  document.getElementById('buy-food').textContent = months >= 1 ? monthDisplay : monthDisplay;
+  if (months >= 1) document.getElementById('buy-food').textContent = monthDisplay;
+}
+
+// ============ MAP ============
+const REGIONS = {
+  tigray:      { name: 'TIGRAY',           pop: '~7M / NORTH', poverty: 48, food: 75, conflict: 90, povTxt: 'Vulnerability rate. Multidimensional poverty estimates lower than the country average — but conflict has reset the baseline.', foodTxt: 'After 2020–22 war, food stocks exhausted. 4.5M needed food assistance in 2024.', conflictTxt: '92% of health facilities only partially functioning post-war. Hundreds of thousands displaced.' },
+  amhara:      { name: 'AMHARA',           pop: '~22M / N. CENTRAL', poverty: 69, food: 61, conflict: 80, povTxt: '69.3% multidimensional poverty (OPHI/UNDP).', foodTxt: 'Highest food insecurity prevalence in 2025 systematic review. 3.5M needed food aid in 2024.', conflictTxt: 'Active Fano insurgency since 2023. Drone strikes documented; state of emergency.' },
+  oromia:      { name: 'OROMIA',           pop: '~38M / CENTRAL', poverty: 71, food: 42, conflict: 60, povTxt: '71.5% multidimensional poverty (OPHI/UNDP).', foodTxt: 'Pastoral south hit by drought; insurgency disrupts markets in west.', conflictTxt: 'OLA insurgency in west; sporadic ethnic violence; significant IDP populations.' },
+  somali:      { name: 'SOMALI',           pop: '~6.5M / EAST', poverty: 90, food: 80, conflict: 70, povTxt: 'Highest in Ethiopia. Pastoralist livelihoods, low service penetration.', foodTxt: '2020–23 drought decimated livestock. Recurring crisis.', conflictTxt: '27% of Ethiopia\'s IDPs are here. Border tensions, drought displacement.' },
+  afar:        { name: 'AFAR',             pop: '~2M / NE', poverty: 85, food: 78, conflict: 65, povTxt: '84.7% multidimensional poverty.', foodTxt: 'Pastoralist livelihoods devastated; livestock holdings low to negligible.', conflictTxt: 'Spillover from Tigray war; high IDP burden.' },
+  snnp:        { name: 'SOUTHERN',         pop: '~15M / SOUTH', poverty: 58, food: 51, conflict: 30, povTxt: 'Vulnerability to poverty 58% (one of the highest historically).', foodTxt: 'Acute malnutrition prevalence > 10% in many woredas.', conflictTxt: 'Localized unrest (Sidama, others) but lower than north.' },
+  benishangul: { name: 'BENISHANGUL',      pop: '~1.2M / WEST', poverty: 70, food: 50, conflict: 75, povTxt: 'Estimates limited; high multidimensional poverty.', foodTxt: 'Conflict displaces farmers from harvest cycles.', conflictTxt: 'Ethnic violence since 2020; documented massacres.' },
+  gambela:     { name: 'GAMBELA',          pop: '~0.5M / WEST', poverty: 75, food: 60, conflict: 50, povTxt: 'Small region, very limited services.', foodTxt: 'Acute malnutrition > 15% in some areas.', conflictTxt: 'Cross-border tensions with South Sudan.' },
+  addis:       { name: 'ADDIS ABABA',      pop: '~5.7M / CAPITAL', poverty: 12, food: 20, conflict: 5, povTxt: 'Lowest in country. The slice this site mostly describes.', foodTxt: 'Urban poor still affected by inflation; food assistance limited.', conflictTxt: 'Generally stable. Strikes & political crackdowns documented.' }
+};
+
+let currentMetric = 'poverty';
+let currentRegion = 'somali';
+
+document.querySelectorAll('.map-controls button').forEach(b => {
+  b.addEventListener('click', () => {
+    document.querySelectorAll('.map-controls button').forEach(x => {
+      x.classList.remove('active');
+      x.setAttribute('aria-selected', 'false');
+    });
+    b.classList.add('active');
+    b.setAttribute('aria-selected', 'true');
+    currentMetric = b.dataset.metric;
+    paintMap();
+    paintInfo();
+  });
+});
+
+document.querySelectorAll('.map-region').forEach(el => {
+  const handle = () => {
+    document.querySelectorAll('.map-region').forEach(r => r.classList.remove('active'));
+    el.classList.add('active');
+    currentRegion = el.dataset.region;
+    paintInfo();
+  };
+  el.addEventListener('click', handle);
+  el.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handle(); }
+  });
+});
+
+function paintMap() {
+  const colors = {
+    poverty: { lo: [245, 230, 211], hi: [196, 30, 30], legend: 'legend-poverty' },
+    food:    { lo: [232, 227, 207], hi: [90, 58, 20],  legend: 'legend-food' },
+    conflict:{ lo: [240, 234, 219], hi: [42, 26, 26],  legend: 'legend-conflict' }
+  };
+  const c = colors[currentMetric];
+  document.getElementById('map-legend-bar').className = 'map-legend-bar ' + c.legend;
+  document.querySelectorAll('.map-region').forEach(el => {
+    const r = REGIONS[el.dataset.region];
+    const v = r[currentMetric] / 100;
+    const rgb = [
+      Math.round(c.lo[0] + (c.hi[0] - c.lo[0]) * v),
+      Math.round(c.lo[1] + (c.hi[1] - c.lo[1]) * v),
+      Math.round(c.lo[2] + (c.hi[2] - c.lo[2]) * v),
+    ];
+    el.style.fill = `rgb(${rgb.join(',')})`;
+  });
+}
+
+function paintInfo() {
+  const r = REGIONS[currentRegion];
+  document.getElementById('map-region-name').textContent = r.name;
+  document.getElementById('map-region-pop').textContent = r.pop;
+  const labels = {
+    poverty:  ['MULTIDIMENSIONAL POVERTY', '%', r.povTxt],
+    food:     ['FOOD INSECURITY (HHS AFFECTED)', '%', r.foodTxt],
+    conflict: ['CONFLICT / DISPLACEMENT INDEX', '/100', r.conflictTxt]
+  };
+  const [label, suffix, foot] = labels[currentMetric];
+  document.getElementById('map-stat-1-label').textContent = label;
+  const num = r[currentMetric];
+  document.getElementById('map-stat-1-num').textContent = num + suffix;
+  document.getElementById('map-stat-1-num').classList.toggle('bad', num >= 50);
+  document.getElementById('map-stat-1-foot').textContent = foot;
+  document.getElementById('map-context').textContent = r.povTxt;
+}
+
+// ============ INIT ============
+function init() {
+  renderHero();
+  renderLadder('ladder-main', false);
+  renderLadder('ladder-doctors', true);
+  renderStacks();
+  renderCalculator();
+  paintMap();
+  paintInfo();
+  // active region
+  document.querySelector('[data-region="somali"]').classList.add('active');
+}
+init();
+
+// ============ REVEAL ============
+const io = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); });
+}, { threshold: 0.1, rootMargin: '0px 0px -60px 0px' });
+document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+window.addEventListener('load', () => {
+  document.querySelectorAll('.hero-stats.reveal').forEach(el => el.classList.add('in'));
+});
+</script>
+
+</body>
+</html>
