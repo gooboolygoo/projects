@@ -1,0 +1,23 @@
+{
+  "generated_at": "2026-05-10T04:10:11.962Z",
+  "model": "claude-haiku-4-5",
+  "url": "https://gooboolygoo.github.io/projects/ethiopia-economy/",
+  "hashtags": [
+    "ethiopia",
+    "economics",
+    "dataviz",
+    "costoflivingcrisis",
+    "webdev"
+  ],
+  "x": {
+    "tweet": "A teacher earning $43 a month can't afford rent. A doctor who trained for years earns $80-110 and strikes led to arrests. Ethiopia's wage and cost crisis is real. Here's the data.",
+    "reply_lead": "live here →"
+  },
+  "vertical_caption": "Teachers earn $43/month. Rent is $100+. Three converging shocks—currency devaluation, subsidy cuts, and global oil crisis—are squeezing Ethiopian households. See the numbers.",
+  "shorts_description_lead": "Ethiopia's wage base is tiny. When the birr floats, fuel gets expensive, and global oil shocks hit, even formal workers fall into crisis. A visual breakdown of how three separate pressures landed on the same household budget.",
+  "video": {
+    "title": "Ethiopia's Cost-of-Living Squeeze",
+    "script": "A teacher earns forty-three dollars a month. Rent costs a hundred. That gap is the problem. Ethiopia's wage ladder already sat below the cost of basic urban life. Then three shocks hit at once. The birr floated, making imports expensive. Subsidies dropped. And a global oil crisis pushed fuel prices even higher. Now inflation's back in double digits. The economy grows, but households are in crisis. Here's how the numbers actually stack up.",
+    "word_count": 73
+  }
+}
