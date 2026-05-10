@@ -1,0 +1,678 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Ethiopia's Cost-of-Living Shock</title>
+  <meta name="description" content="A sober visual explainer for U.S. readers on wages, prices, the birr float, and the Strait of Hormuz oil shock in Ethiopia." />
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f6f7f4;
+      --surface: #ffffff;
+      --surface-2: #eef1ee;
+      --text: #17201d;
+      --muted: #5d6a65;
+      --faint: #8a9691;
+      --border: #d9dfdc;
+      --border-strong: #bdc8c3;
+      --blue: #245b73;
+      --blue-soft: #dfeaf0;
+      --amber: #9a5b13;
+      --amber-soft: #f3e7d4;
+      --red: #9c3328;
+      --red-soft: #f0dcd8;
+      --green: #38654a;
+      --green-soft: #dfeadf;
+      --shadow: rgba(21, 31, 27, 0.08);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        color-scheme: dark;
+        --bg: #101716;
+        --surface: #17211f;
+        --surface-2: #1e2a27;
+        --text: #edf3ef;
+        --muted: #a9b6b1;
+        --faint: #7e8b86;
+        --border: #2f3d39;
+        --border-strong: #485753;
+        --blue: #89b8cc;
+        --blue-soft: #19303b;
+        --amber: #d8a55f;
+        --amber-soft: #382713;
+        --red: #df887f;
+        --red-soft: #3a1e1c;
+        --green: #9fc5a9;
+        --green-soft: #1d3326;
+        --shadow: rgba(0, 0, 0, 0.25);
+      }
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at 15% 0%, color-mix(in srgb, var(--blue) 8%, transparent), transparent 38rem),
+        radial-gradient(circle at 85% 15%, color-mix(in srgb, var(--amber) 7%, transparent), transparent 34rem),
+        var(--bg);
+      color: var(--text);
+      font: 16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a { color: inherit; }
+    .wrap { max-width: 1080px; margin: 0 auto; padding: 0 22px; }
+
+    header {
+      padding: 4.5rem 0 2rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .eyebrow {
+      color: var(--blue);
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      margin-bottom: 1rem;
+      text-transform: uppercase;
+    }
+    h1 {
+      font-size: clamp(2.5rem, 6vw, 5rem);
+      letter-spacing: -0.055em;
+      line-height: 0.98;
+      margin: 0;
+      max-width: 920px;
+    }
+    .lede {
+      color: var(--muted);
+      font-size: clamp(1.05rem, 2vw, 1.35rem);
+      line-height: 1.45;
+      margin: 1.25rem 0 0;
+      max-width: 760px;
+    }
+    .note {
+      color: var(--faint);
+      font-size: 0.9rem;
+      margin-top: 1rem;
+      max-width: 760px;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1px;
+      margin: 2rem 0 0;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      background: var(--border);
+      box-shadow: 0 16px 50px var(--shadow);
+    }
+    .stat {
+      background: var(--surface);
+      padding: 1.15rem;
+      min-height: 145px;
+    }
+    .stat .label {
+      color: var(--muted);
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+    .stat .value {
+      color: var(--text);
+      font-size: clamp(1.9rem, 4vw, 3.2rem);
+      font-weight: 780;
+      letter-spacing: -0.05em;
+      line-height: 1;
+      margin: 0.75rem 0 0.45rem;
+      font-variant-numeric: tabular-nums;
+    }
+    .stat.stress .value { color: var(--red); }
+    .stat.warning .value { color: var(--amber); }
+    .stat .detail { color: var(--muted); font-size: 0.9rem; line-height: 1.35; }
+
+    main { padding: 2.5rem 0 4rem; }
+    section {
+      display: grid;
+      grid-template-columns: minmax(120px, 180px) 1fr;
+      gap: 2rem;
+      padding: 3.25rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .section-kicker {
+      color: var(--blue);
+      font-size: 0.75rem;
+      font-weight: 800;
+      letter-spacing: 0.14em;
+      padding-top: 0.4rem;
+      text-transform: uppercase;
+    }
+    h2 {
+      font-size: clamp(1.85rem, 4vw, 3.3rem);
+      letter-spacing: -0.045em;
+      line-height: 1.05;
+      margin: 0 0 1rem;
+      max-width: 780px;
+    }
+    p {
+      color: var(--muted);
+      font-size: 1.04rem;
+      margin: 0 0 1rem;
+      max-width: 760px;
+    }
+    strong { color: var(--text); }
+
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      box-shadow: 0 14px 38px var(--shadow);
+      margin: 1.5rem 0;
+      overflow: hidden;
+    }
+    .panel-head {
+      border-bottom: 1px solid var(--border);
+      padding: 1rem 1.15rem;
+    }
+    .panel-label {
+      color: var(--muted);
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+    .panel-title {
+      font-size: 1.05rem;
+      font-weight: 740;
+      margin-top: 0.25rem;
+    }
+
+    .bar-list { padding: 1.15rem; }
+    .bar-row {
+      display: grid;
+      grid-template-columns: 160px 1fr 110px;
+      gap: 1rem;
+      align-items: center;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .bar-row:last-child { border-bottom: 0; }
+    .bar-label { font-weight: 690; }
+    .bar-sub { color: var(--faint); display: block; font-size: 0.78rem; font-weight: 500; margin-top: 0.1rem; }
+    .track {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      height: 1.8rem;
+      overflow: hidden;
+    }
+    .fill {
+      align-items: center;
+      background: var(--blue);
+      border-radius: inherit;
+      color: white;
+      display: flex;
+      font-size: 0.78rem;
+      font-weight: 760;
+      height: 100%;
+      justify-content: flex-end;
+      min-width: 2.6rem;
+      padding-right: 0.65rem;
+      white-space: nowrap;
+    }
+    .fill.low { background: var(--red); }
+    .fill.mid { background: var(--amber); color: #16100a; }
+    .fill.high { background: var(--green); }
+    .bar-value {
+      color: var(--muted);
+      font-size: 0.86rem;
+      font-variant-numeric: tabular-nums;
+      text-align: right;
+    }
+
+    .callout {
+      background: var(--red-soft);
+      border: 1px solid color-mix(in srgb, var(--red) 35%, var(--border));
+      border-radius: 16px;
+      color: var(--text);
+      margin: 1.25rem 0;
+      padding: 1.1rem 1.2rem;
+      max-width: 760px;
+    }
+    .callout .label {
+      color: var(--red);
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      margin-bottom: 0.4rem;
+      text-transform: uppercase;
+    }
+    .callout p { color: var(--text); font-size: 0.98rem; margin: 0; }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.15rem;
+      box-shadow: 0 10px 28px var(--shadow);
+    }
+    .card h3 {
+      font-size: 1.05rem;
+      margin: 0 0 0.75rem;
+    }
+    .card dl { margin: 0; }
+    .card div {
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      gap: 1rem;
+      justify-content: space-between;
+      padding: 0.5rem 0;
+    }
+    .card div:last-child { border-bottom: 0; }
+    dt { color: var(--muted); }
+    dd {
+      color: var(--text);
+      font-weight: 740;
+      margin: 0;
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    .budget {
+      display: grid;
+      gap: 0.8rem;
+      padding: 1.15rem;
+    }
+    .budget-row {
+      display: grid;
+      grid-template-columns: 190px 1fr 90px;
+      gap: 1rem;
+      align-items: center;
+    }
+    .budget-label { color: var(--muted); font-weight: 650; }
+    .budget-amount { color: var(--text); font-weight: 780; text-align: right; }
+    .budget .track { height: 2rem; border-radius: 10px; }
+    .budget .fill { border-radius: 9px; justify-content: flex-start; padding-left: 0.65rem; padding-right: 0; }
+
+    .timeline {
+      display: grid;
+      gap: 0.9rem;
+      margin: 1.5rem 0;
+      max-width: 820px;
+    }
+    .event {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-left: 5px solid var(--blue);
+      border-radius: 14px;
+      padding: 1rem 1.1rem;
+      box-shadow: 0 10px 26px var(--shadow);
+    }
+    .event.warning { border-left-color: var(--amber); }
+    .event.stress { border-left-color: var(--red); }
+    .event-date {
+      color: var(--muted);
+      font-size: 0.76rem;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+    .event-title {
+      font-size: 1.05rem;
+      font-weight: 780;
+      margin: 0.15rem 0 0.25rem;
+    }
+    .event p { font-size: 0.95rem; margin: 0; }
+
+    .channels {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      margin-top: 1.25rem;
+    }
+    .channel {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1rem;
+    }
+    .channel-number {
+      color: var(--amber);
+      font-size: 0.8rem;
+      font-weight: 840;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+    .channel h3 { font-size: 1rem; margin: 0.35rem 0; }
+    .channel p { font-size: 0.93rem; margin: 0; }
+
+    .closing {
+      background: linear-gradient(135deg, var(--surface), var(--surface-2));
+      border: 1px solid var(--border-strong);
+      border-radius: 20px;
+      margin-top: 1.4rem;
+      padding: 1.4rem;
+      max-width: 820px;
+    }
+    .closing p {
+      color: var(--text);
+      font-size: clamp(1.12rem, 2vw, 1.4rem);
+      line-height: 1.45;
+      margin: 0;
+    }
+
+    footer {
+      color: var(--muted);
+      font-size: 0.9rem;
+      padding: 2rem 0 4rem;
+    }
+    footer h2 {
+      color: var(--text);
+      font-size: 1.3rem;
+      letter-spacing: -0.02em;
+    }
+    .sources {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.6rem 1.5rem;
+      margin: 1rem 0 1.5rem;
+      padding: 0;
+      list-style: none;
+    }
+    .sources li {
+      border-top: 1px solid var(--border);
+      padding-top: 0.6rem;
+    }
+    .back {
+      color: var(--blue);
+      display: inline-block;
+      font-weight: 720;
+      text-decoration: none;
+    }
+    .back:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+    @media (max-width: 860px) {
+      .stats, .cards, .channels, .sources { grid-template-columns: 1fr; }
+      section { grid-template-columns: 1fr; gap: 0.75rem; padding: 2.5rem 0; }
+      .section-kicker { padding-top: 0; }
+      .bar-row, .budget-row {
+        grid-template-columns: 1fr;
+        gap: 0.45rem;
+      }
+      .bar-value, .budget-amount { text-align: left; }
+      header { padding-top: 3rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="eyebrow">Ethiopia economy snapshot / May 2026</div>
+      <h1>Ethiopia's cost-of-living shock</h1>
+      <p class="lede">A fast-growing economy can still feel like a crisis at street level. This page explains how low wages, a weaker birr, rising living costs, and the Strait of Hormuz oil shock are converging on Ethiopian households.</p>
+      <p class="note">Figures are approximate, dated, and meant to show scale. Exchange-rate conversions use about 157 Ethiopian birr per U.S. dollar.</p>
+
+      <div class="stats" aria-label="Key Ethiopia economy indicators">
+        <div class="stat">
+          <div class="label">Exchange rate</div>
+          <div class="value">157</div>
+          <div class="detail">birr per U.S. dollar, around May 1, 2026</div>
+        </div>
+        <div class="stat warning">
+          <div class="label">Inflation</div>
+          <div class="value">11.7%</div>
+          <div class="detail">April 2026 CPI, back in double digits after fuel shortages</div>
+        </div>
+        <div class="stat stress">
+          <div class="label">Petrol</div>
+          <div class="value">142+</div>
+          <div class="detail">birr per liter, with later reporting near 167 birr</div>
+        </div>
+        <div class="stat">
+          <div class="label">Growth</div>
+          <div class="value">9.2%</div>
+          <div class="detail">IMF 2026 real GDP projection, despite household stress</div>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section>
+        <div class="section-kicker">01 / Wages</div>
+        <div>
+          <h2>The first pressure point is pay.</h2>
+          <p>For many U.S. readers, the hardest part to grasp is the size of the monthly wage base. A salary that sounds small in dollars is not a side detail. It determines how quickly a fuel or food shock becomes a household emergency.</p>
+          <p>Formal wage data varies by source and often misses smallholder farmers and informal workers. But the ladder below gives the shape of the problem: many essential jobs sit below, or only slightly above, the cost of a very basic urban life.</p>
+
+          <div class="panel">
+            <div class="panel-head">
+              <div class="panel-label">Monthly pay, approximate</div>
+              <div class="panel-title">A simplified wage ladder</div>
+            </div>
+            <div class="bar-list">
+              <div class="bar-row">
+                <div class="bar-label">Factory worker <span class="bar-sub">low-wage formal work</span></div>
+                <div class="track"><div class="fill low" style="width: 8%">$13</div></div>
+                <div class="bar-value">~2,000 ETB</div>
+              </div>
+              <div class="bar-row">
+                <div class="bar-label">Civil servant floor <span class="bar-sub">public sector minimum</span></div>
+                <div class="track"><div class="fill low" style="width: 18%">$38</div></div>
+                <div class="bar-value">6,000 ETB</div>
+              </div>
+              <div class="bar-row">
+                <div class="bar-label">Teacher <span class="bar-sub">average estimate</span></div>
+                <div class="track"><div class="fill low" style="width: 20%">$43</div></div>
+                <div class="bar-value">~6,700 ETB</div>
+              </div>
+              <div class="bar-row">
+                <div class="bar-label">Doctor <span class="bar-sub">public-sector pressure point</span></div>
+                <div class="track"><div class="fill mid" style="width: 35%">$80-110</div></div>
+                <div class="bar-value">~12,000 ETB</div>
+              </div>
+              <div class="bar-row">
+                <div class="bar-label">Software engineer <span class="bar-sub">urban skilled role</span></div>
+                <div class="track"><div class="fill high" style="width: 72%">$220-380</div></div>
+                <div class="bar-value">35k-60k ETB</div>
+              </div>
+              <div class="bar-row">
+                <div class="bar-label">Country director <span class="bar-sub">top formal tier</span></div>
+                <div class="track"><div class="fill high" style="width: 100%">$830-1,400</div></div>
+                <div class="bar-value">130k-220k ETB</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="callout">
+            <div class="label">Why doctors matter</div>
+            <p>Health workers became a public symbol of the squeeze in 2025: years of training, very low state pay after the currency shock, and a strike met with arrests and only a tiny raise. It is not a separate story. It is the wage crisis in its sharpest form.</p>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="section-kicker">02 / Prices</div>
+        <div>
+          <h2>Cost-of-living numbers describe two different Ethiopias.</h2>
+          <p>International cost indexes often measure a middle-class or expat basket: private rent, imported groceries, internet, ride-hailing, restaurants. Many Ethiopians live on far less by sharing housing, cooking at home, using minibuses, and staying out of imported-goods markets.</p>
+          <p>The squeeze appears when even modest costs start moving out of reach: cooking fuel, transport, grain, rent, medicine, and school-related expenses.</p>
+
+          <div class="cards">
+            <article class="card">
+              <h3>Housing</h3>
+              <dl>
+                <div><dt>Local apartment</dt><dd>$100-250</dd></div>
+                <div><dt>Furnished urban rent</dt><dd>$300-800</dd></div>
+                <div><dt>Outside Addis</dt><dd>$50-150</dd></div>
+              </dl>
+            </article>
+            <article class="card">
+              <h3>Food</h3>
+              <dl>
+                <div><dt>Local meal</dt><dd>$1-3</dd></div>
+                <div><dt>Monthly groceries</dt><dd>$80-246</dd></div>
+                <div><dt>Imported premium</dt><dd>40-60%</dd></div>
+              </dl>
+            </article>
+            <article class="card">
+              <h3>Transport and fuel</h3>
+              <dl>
+                <div><dt>Minibus ride</dt><dd>$0.10-0.20</dd></div>
+                <div><dt>Public pass</dt><dd>$10-21</dd></div>
+                <div><dt>Petrol, May 2026</dt><dd>142+ ETB/L</dd></div>
+              </dl>
+            </article>
+          </div>
+
+          <div class="panel">
+            <div class="panel-head">
+              <div class="panel-label">Monthly scale</div>
+              <div class="panel-title">A wage can vanish before rent enters the picture</div>
+            </div>
+            <div class="budget">
+              <div class="budget-row">
+                <div class="budget-label">Teacher pay estimate</div>
+                <div class="track"><div class="fill low" style="width: 6%">$43</div></div>
+                <div class="budget-amount">~6,700 ETB</div>
+              </div>
+              <div class="budget-row">
+                <div class="budget-label">Frugal local budget</div>
+                <div class="track"><div class="fill mid" style="width: 35%">$250-300</div></div>
+                <div class="budget-amount">39k-47k ETB</div>
+              </div>
+              <div class="budget-row">
+                <div class="budget-label">Cost-index budget</div>
+                <div class="track"><div class="fill low" style="width: 100%">$800+</div></div>
+                <div class="budget-amount">125k+ ETB</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="section-kicker">03 / Shocks</div>
+        <div>
+          <h2>Three shocks are landing on the same household budget.</h2>
+          <p>The current pressure is not caused by one event. Ethiopia entered 2026 after a major exchange-rate reform and a fuel-subsidy phaseout. Then the Strait of Hormuz crisis raised the global price of the imported fuel Ethiopia depends on.</p>
+
+          <div class="timeline">
+            <article class="event">
+              <div class="event-date">July 2024</div>
+              <div class="event-title">The birr is floated</div>
+              <p>The official exchange rate moves from about 57 birr per dollar toward market levels. Imported fuel, fertilizer, medicine, wheat, and machinery become much more expensive in local currency.</p>
+            </article>
+            <article class="event warning">
+              <div class="event-date">2025</div>
+              <div class="event-title">Subsidies are reduced</div>
+              <p>The government continues fuel-price reforms linked to the IMF program. Lower subsidies improve public finances, but they also expose households to more of the global fuel price.</p>
+            </article>
+            <article class="event stress">
+              <div class="event-date">Feb-May 2026</div>
+              <div class="event-title">The Strait of Hormuz shock hits</div>
+              <p>A closure and military conflict around a key oil chokepoint push Brent crude above $120 per barrel. Ethiopia imports nearly all petroleum, so the shock arrives through fuel costs, freight, food, and the subsidy bill.</p>
+            </article>
+            <article class="event stress">
+              <div class="event-date">April 2026</div>
+              <div class="event-title">Inflation returns to double digits</div>
+              <p>After easing into single digits, headline inflation rebounds to 11.7%. Fuel shortages and transport costs make the disinflation story fragile.</p>
+            </article>
+          </div>
+
+          <div class="panel">
+            <div class="panel-head">
+              <div class="panel-label">Fuel price, reported retail levels</div>
+              <div class="panel-title">Pump prices rose even with subsidy support</div>
+            </div>
+            <div class="bar-list">
+              <div class="bar-row">
+                <div class="bar-label">Petrol, March <span class="bar-sub">after early 2026 hike</span></div>
+                <div class="track"><div class="fill mid" style="width: 73%">132 ETB/L</div></div>
+                <div class="bar-value">baseline</div>
+              </div>
+              <div class="bar-row">
+                <div class="bar-label">Petrol, April <span class="bar-sub">reported national price</span></div>
+                <div class="track"><div class="fill mid" style="width: 79%">142 ETB/L</div></div>
+                <div class="bar-value">+8%</div>
+              </div>
+              <div class="bar-row">
+                <div class="bar-label">Petrol, May reports <span class="bar-sub">latest reported range</span></div>
+                <div class="track"><div class="fill low" style="width: 93%">167 ETB/L</div></div>
+                <div class="bar-value">+27%</div>
+              </div>
+              <div class="bar-row">
+                <div class="bar-label">Kerosene, May reports <span class="bar-sub">cooking and lighting fuel</span></div>
+                <div class="track"><div class="fill low" style="width: 100%">321 ETB/L</div></div>
+                <div class="bar-value">+112%</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="section-kicker">04 / Spread</div>
+        <div>
+          <h2>An oil shock becomes a household shock through everyday routes.</h2>
+          <p>Fuel is not just what a driver buys at the pump. It is embedded in bus fares, food transport, fertilizer, electricity backup, construction materials, and imported goods. That is why a disruption far from Ethiopia can show up as a market price in Addis Ababa or a cooking-fuel bill in a rural home.</p>
+
+          <div class="channels">
+            <article class="channel">
+              <div class="channel-number">Channel 1</div>
+              <h3>Cooking and lighting</h3>
+              <p>Kerosene price jumps hit poorer and off-grid households directly because the fuel is used at home, not only in vehicles.</p>
+            </article>
+            <article class="channel">
+              <div class="channel-number">Channel 2</div>
+              <h3>Food transport</h3>
+              <p>Diesel runs trucks, buses, pumps, and tractors. Higher diesel costs can travel into grain, vegetables, and commuting.</p>
+            </article>
+            <article class="channel">
+              <div class="channel-number">Channel 3</div>
+              <h3>Fertilizer and imports</h3>
+              <p>Energy shocks raise the cost of fertilizer and imported inputs, increasing the risk of higher food prices later in the year.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="section-kicker">05 / Meaning</div>
+        <div>
+          <h2>The macro story and the household story are moving in different directions.</h2>
+          <p>Ethiopia can have strong GDP growth, better export receipts, IMF support, and rebuilding reserves while many families experience the reform period as a worsening daily squeeze. Both can be true at the same time.</p>
+          <p>The practical test is not only whether the national program is technically on track. It is whether wages, fuel, food, rent, and medicine stop moving faster than households can adapt.</p>
+
+          <div class="closing">
+            <p>The clearest way to understand the crisis is this: stabilization may be visible in macroeconomic charts before it is visible in a family's fuel bill.</p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <h2>Sources and method</h2>
+      <p>Figures are rounded and selected for scale, not precision forecasting. Wage data combines public-sector schedules and salary surveys; living-cost figures come from cost-of-living indexes and local reporting; fuel and inflation figures use 2026 reporting and official releases where available.</p>
+      <ul class="sources">
+        <li>National Bank of Ethiopia, indicative exchange-rate data, May 2026.</li>
+        <li>Ethiopian Statistics Service CPI release and April 2026 inflation reporting.</li>
+        <li>IMF World Economic Outlook and Ethiopia ECF review material, 2026.</li>
+        <li>World Bank Ethiopia economic outlook and poverty context.</li>
+        <li>Fuel-price reporting from Capital Market Ethiopia, Addis Insight, and Business Insider Africa, 2026.</li>
+        <li>Salary and cost-of-living references from WageIndicator, MaxisHR, Numbeo, LivingCost, and related surveys.</li>
+      </ul>
+      <a class="back" href="../">&larr; more projects</a>
+    </footer>
+  </div>
+</body>
+</html>
