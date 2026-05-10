@@ -1,0 +1,23 @@
+{
+  "generated_at": "2026-05-10T04:42:52.721Z",
+  "model": "claude-haiku-4-5",
+  "url": "https://gooboolygoo.github.io/projects/the-squeeze/",
+  "hashtags": [
+    "datajournalism",
+    "ethiopia",
+    "economics",
+    "datavis",
+    "webdev"
+  ],
+  "x": {
+    "tweet": "In Ethiopia right now, doctors earn less than hotel receptionists. A currency halved, fuel doubled, wages stayed flat. What does a paycheck actually buy? 🧮",
+    "reply_lead": "explore the squeeze →"
+  },
+  "vertical_caption": "Ethiopia's currency halved. Fuel doubled. Doctors earn less than receptionists now. Pick a job, a city, a household size — see what your actual wage buys at 2026 prices 🧮",
+  "shorts_description_lead": "What happens when a currency halves and fuel doubles overnight? Explore Ethiopia's economic squeeze through real wages and real costs — pick your profession and see the math.",
+  "video": {
+    "title": "What Your Wage Actually Buys",
+    "script": "Ethiopia's currency halved in two weeks. Fuel doubled in thirty days. Doctors went on strike because they earn less than receptionists. But what does any of this actually mean for people trying to live? This is an interactive autopsy of four economic shocks hitting 132 million people at once. Pick a profession. Pick a city. Pick your household size. Then see the math. What your wage buys at May 2026 prices, versus what it would have bought before the float. The squeeze is real, and it's calculated. Link in the description.",
+    "word_count": 91
+  }
+}
