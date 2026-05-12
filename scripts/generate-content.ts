@@ -17,6 +17,7 @@ type Meta = {
   blurb: string;
   tags?: string[];
   donate?: boolean;
+  canonical_url?: string;
 };
 
 type Promo = {
@@ -52,11 +53,19 @@ async function loadMeta(slug: string): Promise<Meta> {
   if (!parsed?.title || !parsed?.blurb) {
     throw new Error(`sites/${slug}/meta.yml missing required title/blurb`);
   }
+  const canonicalUrl =
+    typeof parsed.canonical_url === "string" && parsed.canonical_url.trim().length > 0
+      ? parsed.canonical_url.trim()
+      : undefined;
+  if (canonicalUrl && !/^https?:\/\//i.test(canonicalUrl)) {
+    throw new Error(`sites/${slug}/meta.yml canonical_url must be an absolute http(s) URL`);
+  }
   return {
     title: parsed.title,
     blurb: parsed.blurb,
     tags: Array.isArray(parsed.tags) ? parsed.tags.map(String) : [],
     donate: parsed.donate !== false,
+    canonical_url: canonicalUrl,
   };
 }
 
@@ -325,7 +334,7 @@ async function generatePromo(slug: string, client: Anthropic): Promise<Promo> {
   const meta = await loadMeta(slug);
   const html = await readFile(join(SITES_DIR, slug, "index.html"), "utf8");
   const pageText = htmlToText(html);
-  const url = `${SITE_BASE_URL}/${slug}/`;
+  const url = meta.canonical_url ?? `${SITE_BASE_URL}/${slug}/`;
 
   let data: ToolInput;
   try {
