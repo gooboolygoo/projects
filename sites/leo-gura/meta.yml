@@ -6,4 +6,6 @@ tags:
   - self-help
   - skepticism
 donate: true
+# Leo page is emitted as site root index.html → https://snakeoilsalesmen.org/ and https://gooboolygoo.github.io/projects/
+publish_at_root: true
 canonical_url: https://snakeoilsalesmen.org/

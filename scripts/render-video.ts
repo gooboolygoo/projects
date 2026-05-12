@@ -23,7 +23,7 @@ type Promo = {
   video: { title: string; script: string; word_count: number };
 };
 
-type Meta = { title: string; blurb: string };
+type Meta = { title: string; blurb: string; publish_at_root?: boolean };
 
 async function exists(p: string): Promise<boolean> {
   try {
@@ -51,7 +51,11 @@ async function loadMeta(slug: string): Promise<Meta> {
   if (!parsed?.title || !parsed?.blurb) {
     throw new Error(`sites/${slug}/meta.yml missing required title/blurb`);
   }
-  return { title: parsed.title, blurb: parsed.blurb };
+  return {
+    title: parsed.title,
+    blurb: parsed.blurb,
+    publish_at_root: parsed.publish_at_root === true,
+  };
 }
 
 async function renderForSlug(args: {
@@ -83,9 +87,11 @@ async function renderForSlug(args: {
   console.log(`[video][${slug}] 2/4 capturing site screenshots`);
   let captureUrl: string;
   if (source === "live") {
-    captureUrl = `${SITE_BASE_URL}/${slug}/`;
+    captureUrl = meta.publish_at_root ? `${SITE_BASE_URL}/` : `${SITE_BASE_URL}/${slug}/`;
   } else {
-    const localIndex = join(PUBLIC_DIR, slug, "index.html");
+    const localIndex = meta.publish_at_root
+      ? join(PUBLIC_DIR, "index.html")
+      : join(PUBLIC_DIR, slug, "index.html");
     if (!(await exists(localIndex))) {
       throw new Error(
         `Local source missing: ${localIndex}. Run \`npm run build\` first, or use --source live.`,
