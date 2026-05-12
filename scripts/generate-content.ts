@@ -10,6 +10,8 @@ const SITES_DIR = join(ROOT, "sites");
 const SITE_BASE_URL = "https://gooboolygoo.github.io/projects";
 const AUTHOR_HANDLE = "gooboolygoo";
 const MODEL = "claude-haiku-4-5";
+/** Tool JSON + ~85-word script can exceed 2.5k output tokens on long-context calls. */
+const PROMO_MAX_OUTPUT_TOKENS = 8192;
 const SLUG_RE = /^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/;
 
 type Meta = {
@@ -97,14 +99,21 @@ CRITICAL RULES:
 - Never include hashtags inline in any text. Hashtags go in the dedicated "hashtags" field only.
 - Never use the author's handle ("${AUTHOR_HANDLE}") as a hashtag — personal handles get no community reach.
 
-Return everything via the publish_promo tool. Do not write anything else.`;
+Return everything via the publish_promo tool. The tool must include every required field in a single call — especially vertical_caption and shorts_description_lead. If you are near the output limit, shorten video.script (minimum ~60 words) rather than omitting any field. Do not write anything else.`;
 
 const USER_PROMPT_TEMPLATE = (args: {
   slug: string;
   url: string;
   meta: Meta;
   pageText: string;
-}) => `Project slug: ${args.slug}
+  pageTextMaxChars: number;
+  retryHint?: string;
+}) => {
+  const snippet = args.pageText.slice(0, args.pageTextMaxChars);
+  const retryBlock = args.retryHint
+    ? `\n\n### Fix required\n${args.retryHint}\n`
+    : "";
+  return `Project slug: ${args.slug}
 Live URL (for your context only — DO NOT echo into output): ${args.url}
 Title: ${args.meta.title}
 Author's blurb: ${args.meta.blurb}
@@ -112,8 +121,8 @@ Tags: ${args.meta.tags?.join(", ") || "(none)"}
 
 Rendered text content of the page (HTML stripped):
 """
-${args.pageText.slice(0, 4000)}
-"""
+${snippet}
+"""${retryBlock}
 
 Draft promotional copy for this project. The pipeline will compose the final per-platform posts by stitching your copy with the URL and hashtags in the right place for each platform — so KEEP YOUR FIELDS CLEAN OF URLS AND HASHTAGS.
 
@@ -149,11 +158,12 @@ video.title
 
 video.script
   Voiceover script for a 30-second vertical video. Target 75-85 words for
-  pacing. Open with a hook in the first 2 seconds. End with a soft CTA
+  pacing (hard cap 100 words if needed to fit the tool response). Open with a hook in the first 2 seconds. End with a soft CTA
   (e.g. "link in the description" or "tap the link"). Plain prose. No
   emoji. No stage directions. No section markers.
 
 Return everything via the publish_promo tool now.`;
+};
 
 const TOOL_SCHEMA = {
   name: "publish_promo",
@@ -301,18 +311,27 @@ async function callClaudeOnce(args: {
   url: string;
   meta: Meta;
   pageText: string;
+  pageTextMaxChars: number;
+  retryHint?: string;
 }): Promise<{ data: ToolInput; stopReason: string | null }> {
-  const { client, slug, url, meta, pageText } = args;
+  const { client, slug, url, meta, pageText, pageTextMaxChars, retryHint } = args;
   const response = await client.messages.create({
     model: MODEL,
-    max_tokens: 2500,
+    max_tokens: PROMO_MAX_OUTPUT_TOKENS,
     system: SYSTEM_PROMPT,
     tools: [TOOL_SCHEMA as unknown as Anthropic.Tool],
     tool_choice: { type: "tool", name: "publish_promo" },
     messages: [
       {
         role: "user",
-        content: USER_PROMPT_TEMPLATE({ slug, url, meta, pageText }),
+        content: USER_PROMPT_TEMPLATE({
+          slug,
+          url,
+          meta,
+          pageText,
+          pageTextMaxChars,
+          retryHint,
+        }),
       },
     ],
   });
@@ -321,6 +340,11 @@ async function callClaudeOnce(args: {
   if (!toolUse || toolUse.type !== "tool_use") {
     throw new Error(
       `Claude did not return a tool_use block. stop_reason=${response.stop_reason}`,
+    );
+  }
+  if (response.stop_reason === "max_tokens") {
+    throw new Error(
+      "Claude hit max_tokens while emitting the tool (response truncated).",
     );
   }
   const data = validateToolInput(toolUse.input);
@@ -336,13 +360,48 @@ async function generatePromo(slug: string, client: Anthropic): Promise<Promo> {
   const pageText = htmlToText(html);
   const url = meta.canonical_url ?? `${SITE_BASE_URL}/${slug}/`;
 
-  let data: ToolInput;
-  try {
-    ({ data } = await callClaudeOnce({ client, slug, url, meta, pageText }));
-  } catch (err) {
-    const msg = err instanceof Error ? err.message : String(err);
-    console.error(`  [retry] first attempt failed: ${msg}`);
-    ({ data } = await callClaudeOnce({ client, slug, url, meta, pageText }));
+  const attempts: {
+    pageTextMaxChars: number;
+    retryHint?: string;
+  }[] = [
+    { pageTextMaxChars: 4000 },
+    {
+      pageTextMaxChars: 1800,
+      retryHint:
+        "Last publish_promo was incomplete or invalid. Call publish_promo again with every required field. Keep video.script at or below 72 words. Do not omit vertical_caption or shorts_description_lead.",
+    },
+    {
+      pageTextMaxChars: 900,
+      retryHint:
+        "Second failure. Use ONLY title + blurb + first ~900 chars of page for context. publish_promo MUST include vertical_caption, shorts_description_lead, x.tweet, x.reply_lead, hashtags (3-5), video.title, video.script (≤65 words).",
+    },
+  ];
+
+  let data: ToolInput | undefined;
+  let lastErr: unknown;
+  for (let i = 0; i < attempts.length; i++) {
+    const a = attempts[i]!;
+    try {
+      ({ data } = await callClaudeOnce({
+        client,
+        slug,
+        url,
+        meta,
+        pageText,
+        pageTextMaxChars: a.pageTextMaxChars,
+        retryHint: a.retryHint,
+      }));
+      break;
+    } catch (err) {
+      lastErr = err;
+      const msg = err instanceof Error ? err.message : String(err);
+      if (i < attempts.length - 1) {
+        console.error(`  [retry ${i + 1}/${attempts.length}] ${msg}`);
+      }
+    }
+  }
+  if (data === undefined) {
+    throw lastErr instanceof Error ? lastErr : new Error(String(lastErr));
   }
   const wordCount = data.video.script.trim().split(/\s+/).length;
 
