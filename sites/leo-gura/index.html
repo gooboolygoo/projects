@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Leo Gura — The Snake Oil Index</title>
+<meta name="description" content="An evidence-based examination of the public claims made by Leo Gura, founder of Actualized.org. Part of an ongoing catalog of self-help and spiritual figures whose claims do not survive basic scrutiny.">
+
+<!-- Open Graph for sharing -->
+<meta property="og:title" content="Leo Gura — The Snake Oil Index">
+<meta property="og:description" content="An evidence-based examination of the public claims made by Leo Gura, founder of Actualized.org.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://gooboolygoo.github.io/projects/leo-gura/">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,300;8..60,400;8..60,500;8..60,600;8..60,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --ink: #1a1a1a;
+    --paper: #f4f1ea;
+    --paper-deep: #ebe6da;
+    --rule: #c9c2b1;
+    --rule-strong: #8a8473;
+    --muted: #5c574c;
+    --accent: #a8281c;
+    --accent-deep: #7a1c14;
+    --serif: 'Source Serif 4', 'Iowan Old Style', Georgia, 'Times New Roman', serif;
+    --mono: 'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+
+  body {
+    font-family: var(--serif);
+    background: var(--paper);
+    color: var(--ink);
+    line-height: 1.55;
+    font-size: 18px;
+    font-weight: 400;
+  }
+
+  a { color: var(--ink); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+  a:hover { color: var(--accent); }
+
+  /* ---------- Masthead ---------- */
+  .masthead {
+    border-bottom: 2px solid var(--ink);
+    padding: 18px 0 14px;
+    background: var(--paper);
+  }
+  .masthead-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 32px;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 24px;
+  }
+  .wordmark {
+    font-family: var(--serif);
+    font-weight: 600;
+    font-size: 22px;
+    letter-spacing: -0.01em;
+    line-height: 1;
+  }
+  .wordmark .amp { color: var(--accent); font-style: italic; }
+  .nav {
+    display: flex;
+    gap: 28px;
+    font-family: var(--mono);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+  }
+  .nav a { text-decoration: none; color: var(--muted); }
+  .nav a:hover { color: var(--ink); }
+
+  .strapline {
+    border-bottom: 1px solid var(--rule);
+    background: var(--paper);
+  }
+  .strapline-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 10px 32px;
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--muted);
+  }
+
+  /* ---------- Layout ---------- */
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 32px;
+  }
+
+  .article {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 280px;
+    gap: 64px;
+    padding: 56px 0 80px;
+  }
+
+  @media (max-width: 880px) {
+    .article { grid-template-columns: 1fr; gap: 40px; }
+    .masthead-inner, .strapline-inner, .container { padding-left: 20px; padding-right: 20px; }
+  }
+
+  /* ---------- Headline section ---------- */
+  .kicker {
+    font-family: var(--mono);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--accent);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .kicker::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--rule);
+    max-width: 200px;
+  }
+
+  h1.headline {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: clamp(40px, 6vw, 68px);
+    line-height: 1.02;
+    letter-spacing: -0.025em;
+    margin-bottom: 24px;
+    color: var(--ink);
+  }
+  h1.headline em { font-style: italic; font-weight: 400; }
+
+  .deck {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: 22px;
+    line-height: 1.45;
+    color: var(--muted);
+    margin-bottom: 32px;
+    max-width: 720px;
+  }
+
+  .byline {
+    font-family: var(--mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--muted);
+    padding-top: 20px;
+    border-top: 1px solid var(--rule);
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+    margin-bottom: 48px;
+  }
+  .byline span strong { color: var(--ink); font-weight: 500; }
+
+  /* ---------- Video ---------- */
+  .video-block { margin-bottom: 48px; }
+  .video-frame {
+    position: relative;
+    padding-bottom: 56.25%;
+    height: 0;
+    background: var(--ink);
+    overflow: hidden;
+  }
+  .video-frame iframe {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    border: 0;
+  }
+  .video-caption {
+    font-family: var(--mono);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    padding: 12px 0 0;
+    border-top: 1px solid var(--rule);
+    margin-top: 12px;
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  /* ---------- Lede ---------- */
+  .lede {
+    font-family: var(--serif);
+    font-size: 21px;
+    line-height: 1.6;
+    margin-bottom: 48px;
+    padding: 28px 32px;
+    background: var(--paper-deep);
+    border-left: 3px solid var(--accent);
+  }
+  .lede::first-line { font-variant: small-caps; letter-spacing: 0.05em; }
+
+  /* ---------- Body sections ---------- */
+  h2.section {
+    font-family: var(--serif);
+    font-weight: 600;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    padding-bottom: 12px;
+    border-bottom: 2px solid var(--ink);
+    margin: 56px 0 28px;
+  }
+
+  p.body { margin-bottom: 18px; max-width: 680px; }
+  p.body strong { font-weight: 600; }
+
+  /* ---------- Claims ---------- */
+  .claim {
+    border-top: 1px solid var(--rule);
+    padding: 28px 0 32px;
+  }
+  .claim:last-of-type { border-bottom: 1px solid var(--rule); }
+
+  .claim-head {
+    display: flex;
+    align-items: baseline;
+    gap: 20px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+  }
+  .claim-num {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--accent);
+    font-weight: 500;
+    letter-spacing: 0.05em;
+  }
+  .claim-verdict {
+    font-family: var(--mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    padding: 3px 9px;
+    margin-left: auto;
+    border: 1px solid currentColor;
+  }
+  .v-false { color: var(--accent-deep); }
+  .v-unsupported { color: #6b5a0c; }
+  .v-unfalsifiable { color: var(--muted); }
+
+  .claim-title {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: 24px;
+    line-height: 1.25;
+    letter-spacing: -0.01em;
+    margin-bottom: 14px;
+    color: var(--ink);
+    width: 100%;
+  }
+
+  .claim-body {
+    font-size: 17px;
+    line-height: 1.6;
+    color: var(--ink);
+    max-width: 680px;
+    margin-bottom: 10px;
+  }
+  .claim-body + .claim-body { margin-top: 14px; }
+  .claim-source {
+    font-family: var(--mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    margin-top: 14px;
+  }
+  .claim-source a { color: var(--muted); text-decoration-color: var(--rule); }
+  .claim-source a:hover { color: var(--accent); }
+
+  /* ---------- Questions ---------- */
+  .questions {
+    counter-reset: q;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 0;
+    border-top: 1px solid var(--rule);
+    border-left: 1px solid var(--rule);
+  }
+  .question {
+    counter-increment: q;
+    padding: 24px;
+    border-right: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+    background: var(--paper);
+  }
+  .question::before {
+    content: 'Q' counter(q);
+    display: block;
+    font-family: var(--mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--accent);
+    margin-bottom: 10px;
+  }
+  .question p {
+    font-family: var(--serif);
+    font-size: 18px;
+    line-height: 1.4;
+    font-style: italic;
+  }
+
+  /* ---------- Sources ---------- */
+  .sources {
+    list-style: none;
+    border-top: 1px solid var(--rule);
+  }
+  .sources li {
+    border-bottom: 1px solid var(--rule);
+    padding: 16px 0;
+    display: grid;
+    grid-template-columns: 32px 1fr auto;
+    gap: 16px;
+    align-items: baseline;
+  }
+  .sources .num {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .sources .title { font-size: 16px; line-height: 1.45; }
+  .sources .title a { color: var(--ink); text-decoration-color: var(--rule); }
+  .sources .title a:hover { color: var(--accent); }
+  .sources .meta {
+    font-family: var(--mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+
+  /* ---------- Sidebar ---------- */
+  .sidebar {
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  .sidebar-block {
+    padding: 20px;
+    background: var(--paper-deep);
+    margin-bottom: 20px;
+  }
+  .sidebar-block h3 {
+    font-family: var(--mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--accent);
+    margin-bottom: 14px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--rule);
+    font-weight: 500;
+  }
+  .sidebar-block dl { display: grid; grid-template-columns: 1fr; gap: 12px; }
+  .sidebar-block dt {
+    font-family: var(--mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--muted);
+    margin-bottom: 2px;
+  }
+  .sidebar-block dd { font-size: 15px; line-height: 1.4; }
+
+  .pull-quote {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 20px;
+    line-height: 1.4;
+    padding: 24px 0;
+    border-top: 2px solid var(--ink);
+    border-bottom: 2px solid var(--ink);
+    margin-bottom: 20px;
+  }
+  .pull-quote-source {
+    font-family: var(--mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--muted);
+    margin-top: 12px;
+    font-style: normal;
+  }
+
+  /* ---------- Footer ---------- */
+  footer {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 48px 0 40px;
+    margin-top: 80px;
+  }
+  footer .container { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 48px; }
+  @media (max-width: 720px) {
+    footer .container { grid-template-columns: 1fr; gap: 32px; }
+  }
+  footer h4 {
+    font-family: var(--mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--paper-deep);
+    margin-bottom: 16px;
+    font-weight: 500;
+  }
+  footer p, footer a { color: var(--paper); font-size: 14px; line-height: 1.6; }
+  footer a { text-decoration-color: rgba(244, 241, 234, 0.4); }
+  footer a:hover { color: var(--accent); text-decoration-color: var(--accent); }
+  .colophon {
+    font-family: var(--serif);
+    font-size: 16px;
+    line-height: 1.6;
+  }
+  .footer-meta {
+    border-top: 1px solid rgba(244, 241, 234, 0.2);
+    padding-top: 24px;
+    margin-top: 40px;
+    font-family: var(--mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--paper-deep);
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  /* ---------- Disclaimer banner ---------- */
+  .disclaimer {
+    background: #fef9e7;
+    border-bottom: 1px solid #d4c976;
+    padding: 10px 32px;
+    font-family: var(--mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: #6b5a0c;
+    text-align: center;
+  }
+
+  ::selection { background: var(--accent); color: var(--paper); }
+</style>
+</head>
+<body>
+
+<div class="disclaimer">
+  This site publishes opinion and commentary on publicly available statements. All conclusions are the authors' own.
+</div>
+
+<header class="masthead">
+  <div class="masthead-inner">
+    <div class="wordmark">The Snake Oil <span class="amp">&amp;</span> Index</div>
+    <nav class="nav">
+      <a href="#">Entries</a>
+      <a href="#method">Method</a>
+      <a href="#about">About</a>
+      <a href="#contact">Tips</a>
+    </nav>
+  </div>
+</header>
+
+<div class="strapline">
+  <div class="strapline-inner">
+    <span>Vol. 1 &middot; Entry 001</span>
+    <span>Spiritual &amp; self-development</span>
+    <span>Updated May 2026</span>
+  </div>
+</div>
+
+<div class="container">
+  <article class="article">
+
+    <main>
+      <div class="kicker">Entry 001 — under review</div>
+
+      <h1 class="headline">Leo Gura and the business of <em>infinite consciousness</em>.</h1>
+
+      <p class="deck">For more than a decade, the founder of Actualized.org has built a paid empire on a single claim: that he has personally attained absolute truth. The claim is unfalsifiable. The supporting claims are not.</p>
+
+      <div class="byline">
+        <span>By <strong>The Editors</strong></span>
+        <span>Published <strong>11 May 2026</strong></span>
+        <span><strong>6</strong> primary sources</span>
+        <span>Reading time <strong>~12 min</strong></span>
+      </div>
+
+      <div class="video-block">
+        <div class="video-frame">
+          <iframe
+            src="https://www.youtube.com/embed/aQTWor_2nu4?start=2413"
+            title="Professor Dave Explains — Quantum Mysticism is Stupid (Deepak Chopra, Spirit Science, Actualized.org)"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen></iframe>
+        </div>
+        <div class="video-caption">
+          <span>Source · Professor Dave Explains, March 2021</span>
+          <span>Cued to 40:13 (Actualized.org segment)</span>
+        </div>
+      </div>
+
+      <p class="lede">
+        Leo Gura sells the secret of existence. The price ranges from a free YouTube subscription to a $399 online course; the heaviest practice he recommends to followers is repeated high-dose 5-MeO-DMT, one of the most potent psychedelic compounds known. The case for his expertise consists almost entirely of his own testimony about his own inner experience. Where his claims touch ground that can be checked — physics, the safety pharmacology of the drug, the standards of evidence for any other transformative intervention — they fail, or no evidence has been offered at all.
+      </p>
+
+      <h2 class="section" id="claims">Claims under review</h2>
+
+      <p class="body">What follows is a working list of public statements Gura has made on his YouTube channel, in his courses, and on the Actualized.org forums. Each is paraphrased fairly, sourced to the original where possible, and assessed against publicly available evidence. Categories are defined in <a href="#method">Method</a>.</p>
+
+      <div class="claim">
+        <div class="claim-head">
+          <span class="claim-num">Claim 01</span>
+          <span class="claim-verdict v-unfalsifiable">Unfalsifiable</span>
+        </div>
+        <h3 class="claim-title">That he has personally attained "God-realization" and become infinite consciousness.</h3>
+        <p class="claim-body">Across Gura's videos and forum posts, he describes having attained "God-realization" or "infinite consciousness" — a state in which he is, in his words, identical to the totality of existence — primarily through repeated high-dose 5-MeO-DMT sessions. Professor Dave Explains transcribes him saying it in his own voice: "Yes, Leo is god." "He is omniscient."</p>
+        <p class="claim-body">The claim is unfalsifiable by construction. The evidential basis is one person's self-report of an inner state, with no external verification possible. The framing also forecloses disagreement: doubt about the claim is reframed as proof of the doubter's lower stage of consciousness, a closed loop that is impervious to any conceivable observation. Independent practitioners who have engaged with Gura's material, including the meditation teacher Roger Thisdell, map his described experiences within established psychedelic phenomenology rather than as a singular metaphysical achievement; users on Gura's own forum note that he displays personal preferences and biases while in "God Mode" that are difficult to reconcile with the omniscient state he reports.</p>
+        <p class="claim-source">Source: <a href="https://www.youtube.com/watch?v=aQTWor_2nu4&t=2413s">Professor Dave Explains, 40:13–44:30</a> · <a href="https://www.actualized.org/forum/topic/86235-a-critique-of-actualizedorg-and-leo-gura/">Critique thread on Actualized.org forum</a></p>
+      </div>
+
+      <div class="claim">
+        <div class="claim-head">
+          <span class="claim-num">Claim 02</span>
+          <span class="claim-verdict v-false">Demonstrably false</span>
+        </div>
+        <h3 class="claim-title">That mainstream science is fundamentally wrong because quantum physics shows consciousness creates reality.</h3>
+        <p class="claim-body">Much of Gura's theoretical edifice rests on the assertion that physical reality is not real and that quantum physics has proved consciousness creates the material world. This is the central claim Professor Dave isolates in the Actualized.org segment: "Physical reality isn't real. It's all consciousness."</p>
+        <p class="claim-body">The physics does not say this. The "observer" in the canonical double-slit experiment is a measurement device — a photon detector, a beam splitter — not a conscious mind, and the interference pattern collapses identically whether or not a human is present to read the apparatus. No mainstream interpretation of quantum mechanics (Copenhagen, Many-Worlds, Bohmian, decoherence-based, QBism) requires consciousness to play any role in wave function collapse. The misreading that Gura repeats traces back to a popular but rejected misinterpretation of work by John von Neumann and Eugene Wigner from the 1930s and 1960s, long since superseded by decoherence theory. Professor Dave's video walks through the specific lineage of the confusion.</p>
+        <p class="claim-source">Source: <a href="https://www.youtube.com/watch?v=aQTWor_2nu4">Professor Dave Explains, 03:00–25:00</a> on quantum mysticism generally; 40:13 on Gura specifically</p>
+      </div>
+
+      <div class="claim">
+        <div class="claim-head">
+          <span class="claim-num">Claim 03</span>
+          <span class="claim-verdict v-unsupported">No evidence</span>
+        </div>
+        <h3 class="claim-title">That his paid courses reliably produce life transformation or awakening.</h3>
+        <p class="claim-body">The Ultimate Life Purpose Course is sold at $399 (list price $499) and consists of 25+ hours of video instruction promising "an authentic life purpose," "years saved off your search," and a comprehensive roadmap. One-on-one coaching is marketed at $2,640 for three months. Higher-priced advanced products and retreats are also referenced across Actualized.org.</p>
+        <p class="claim-body">No outcome data has been published. There is no controlled comparison to alternative interventions, no follow-up survey of student results at six months or a year, no attrition statistics, no independent verification of testimonials. The course page presents a curated, self-selected sample of customer emails — the standard structure of testimonial marketing. Against the evidentiary bar expected of any psychotherapy modality or behavior-change program making comparable claims (manualised therapies, executive coaching with measured outcomes, randomised trials of self-help interventions), the supporting evidence is testimonial only.</p>
+        <p class="claim-body">A money-back guarantee is offered, but it requires that the customer "complete the course" and submit completed worksheets within 50 days — a structure that selects for already-engaged customers and works against the audience whose money is most at risk.</p>
+        <p class="claim-source">Source: <a href="https://www.actualized.org/life-purpose-course">Actualized.org — The Ultimate Life Purpose Course</a> (course catalog and testimonial page)</p>
+      </div>
+
+      <div class="claim">
+        <div class="claim-head">
+          <span class="claim-num">Claim 04</span>
+          <span class="claim-verdict v-false">Safety concern</span>
+        </div>
+        <h3 class="claim-title">That 5-MeO-DMT is a safe, reliable path to truth — including for unsupervised use.</h3>
+        <p class="claim-body">Gura openly recommends 5-MeO-DMT to followers as the most direct chemical route to the consciousness states he describes, and discusses self-administration in his videos. Many of those followers are people in psychological distress drawn to Actualized.org for help.</p>
+        <p class="claim-body">The peer-reviewed safety literature is more cautious than the recommendation. The 2024 systematic review in <em>Frontiers in Psychiatry</em> of all human 5-MeO-DMT clinical trials to date reported a favourable short-term safety profile in research settings — but the entire evidence base it surveys is three trials with seventy-eight participants, all in supervised clinical environments with medical screening, contraindication review, and trained facilitators. The review explicitly notes that long-term effects are unknown and calls for larger studies with longer follow-up. The 2023 review in <em>Psychopharmacology</em> classifies 5-MeO-DMT as "an atypical psychedelic with unique pharmacology, phenomenology and risk" and details concerns including serotonin syndrome when co-administered with SSRIs or MAOIs (medications widely taken by people seeking spiritual relief), respiratory and cardiovascular effects, and acute psychological adverse events including panic, fear of insanity, and sense of impending death. The systematic review by Vis et al. on hallucinogen persisting perception disorder documents the long-term perceptual disturbances that are a recognised class-wide risk.</p>
+        <p class="claim-body">None of the protective conditions in those clinical trials — screening, medical oversight, drug-interaction review — are present in self-administration from a YouTube playlist.</p>
+        <p class="claim-source">Source: <a href="https://www.frontiersin.org/journals/psychiatry/articles/10.3389/fpsyt.2024.1477996/full">Frontiers in Psychiatry, 2024 systematic review</a> · <a href="https://link.springer.com/article/10.1007/s00213-023-06517-1">Psychopharmacology, 2023 review</a> · <a href="https://doi.org/10.3389/fnins.2021.675768">Vis et al., HPPD systematic review</a></p>
+      </div>
+
+      <h2 class="section" id="pattern">The pattern</h2>
+
+      <p class="body">Considered together, the claims above form a recognisable structure that recurs across many self-styled spiritual teachers selling expensive transformations: an unfalsifiable core, a layer of scientific-sounding misreadings, an absence of outcome data, and a recommended practice whose actual risk profile is downplayed. The Snake Oil Index tracks five questions every reader can apply to any teacher, this one or another.</p>
+
+      <div class="questions">
+        <div class="question"><p>What would convince this teacher they were wrong?</p></div>
+        <div class="question"><p>Does anyone independent vouch for the specific claims?</p></div>
+        <div class="question"><p>How does the financial structure work?</p></div>
+        <div class="question"><p>How are former students and critics treated?</p></div>
+        <div class="question"><p>Are the testable claims actually true?</p></div>
+      </div>
+
+      <h2 class="section" id="sources">Primary sources</h2>
+
+      <ol class="sources">
+        <li>
+          <span class="num">01</span>
+          <span class="title"><a href="https://www.youtube.com/watch?v=aQTWor_2nu4">Professor Dave Explains — "Quantum Mysticism is Stupid (Deepak Chopra, Spirit Science, Actualized.org)"</a>, 19 March 2021. Leo Gura segment from 40:13.</span>
+          <span class="meta">YouTube</span>
+        </li>
+        <li>
+          <span class="num">02</span>
+          <span class="title"><a href="https://www.actualized.org/life-purpose-course">Actualized.org — "The Ultimate Life Purpose Course"</a>. Course catalog, pricing, and testimonial page.</span>
+          <span class="meta">Catalog</span>
+        </li>
+        <li>
+          <span class="num">03</span>
+          <span class="title"><a href="https://www.actualized.org/forum/topic/86235-a-critique-of-actualizedorg-and-leo-gura/">Actualized.org Forum — "A Critique of Actualized.org and Leo Gura"</a>. Community discussion documenting bias and contradictions in "God Mode" claims.</span>
+          <span class="meta">Forum</span>
+        </li>
+        <li>
+          <span class="num">04</span>
+          <span class="title"><a href="https://www.frontiersin.org/journals/psychiatry/articles/10.3389/fpsyt.2024.1477996/full">"Short-term safety and tolerability profile of 5-methoxy-N,N-dimethyltryptamine in human subjects: a systematic review of clinical trials."</a> <em>Frontiers in Psychiatry</em>, 2024.</span>
+          <span class="meta">Journal</span>
+        </li>
+        <li>
+          <span class="num">05</span>
+          <span class="title"><a href="https://link.springer.com/article/10.1007/s00213-023-06517-1">"5-MeO-DMT: an atypical psychedelic with unique pharmacology, phenomenology and risk?"</a> <em>Psychopharmacology</em>, 2023.</span>
+          <span class="meta">Journal</span>
+        </li>
+        <li>
+          <span class="num">06</span>
+          <span class="title">Vis PJ, Goudriaan AE, ter Meulen BC, Blom JD. <a href="https://doi.org/10.3389/fnins.2021.675768">"On perception and consciousness in HPPD: A systematic review."</a> <em>Frontiers in Neuroscience</em>, 2021.</span>
+          <span class="meta">Journal</span>
+        </li>
+      </ol>
+
+      <h2 class="section" id="method">Method &amp; what this site is not</h2>
+
+      <p class="body"><strong>What we do.</strong> Each entry catalogs public statements made by a single public figure who sells goods or services premised on those statements. We paraphrase fairly, link to original sources, and assess each claim using publicly available evidence. We invite corrections.</p>
+
+      <p class="body"><strong>Verdict categories.</strong> <em>Demonstrably false</em> means the claim contradicts publicly available evidence we cite. <em>No evidence</em> means the claim is in principle checkable but has no supporting evidence offered. <em>Unfalsifiable</em> means the claim is constructed so that no possible observation could disconfirm it. <em>Safety concern</em> means the claim, if acted on, carries documented risk of harm.</p>
+
+      <p class="body"><strong>What we are not.</strong> We are not a court. We do not allege crimes, fraud, or unlawful conduct. We do not investigate private behavior. We offer opinion and commentary on public statements, protected as such, and we welcome legal correspondence at the address in the colophon.</p>
+
+      <p class="body"><strong>Corrections.</strong> If anything on this page is inaccurate, write to <a href="mailto:corrections@snakeoilsalesmen.org">corrections@snakeoilsalesmen.org</a> with a source. We will fix verifiable errors promptly and mark the change.</p>
+
+    </main>
+
+    <aside class="sidebar">
+
+      <div class="sidebar-block">
+        <h3>Subject at a glance</h3>
+        <dl>
+          <dt>Name</dt><dd>Leo Gura</dd>
+          <dt>Operates as</dt><dd>Actualized.org</dd>
+          <dt>Channel founded</dt><dd>2013</dd>
+          <dt>Primary platform</dt><dd>YouTube — 1,097,000+ subscribers, 104M+ views</dd>
+          <dt>Sells</dt><dd>Online courses, one-on-one coaching, advanced video products</dd>
+          <dt>Price range</dt><dd>$399 (Life Purpose Course) — $2,640 (three months private coaching)</dd>
+        </dl>
+      </div>
+
+      <div class="pull-quote">
+        "More money can be made by catering to human frailties than by helping people to avoid them."
+        <div class="pull-quote-source">Thaler &amp; Sunstein, Nudge</div>
+      </div>
+
+      <div class="sidebar-block">
+        <h3>If you're considering buying</h3>
+        <p>The five questions in the main text apply to any teacher. Before any purchase, write down your own answers and see what's left.</p>
+      </div>
+
+      <div class="sidebar-block">
+        <h3>Submit a tip</h3>
+        <p>Suggest a subject for future review, or send sources about a current entry, at <a href="mailto:tips@snakeoilsalesmen.org">tips@snakeoilsalesmen.org</a>.</p>
+      </div>
+
+    </aside>
+  </article>
+</div>
+
+<footer>
+  <div class="container">
+    <div class="colophon" id="about">
+      <h4>About</h4>
+      <p>The Snake Oil Index is a public catalog of self-help and spiritual figures whose public claims do not survive scrutiny. We publish opinion and commentary on publicly available statements, in the tradition of consumer-protection journalism, because — as Thaler and Sunstein noted — no one in the market is paid to tell people not to buy snake oil.</p>
+    </div>
+    <div>
+      <h4>Sections</h4>
+      <p><a href="#claims">Claims</a><br><a href="#pattern">The pattern</a><br><a href="#sources">Sources</a><br><a href="#method">Method</a></p>
+    </div>
+    <div id="contact">
+      <h4>Contact</h4>
+      <p><a href="mailto:tips@snakeoilsalesmen.org">tips@</a><br><a href="mailto:corrections@snakeoilsalesmen.org">corrections@</a><br><a href="mailto:legal@snakeoilsalesmen.org">legal@</a></p>
+    </div>
+  </div>
+  <div class="container">
+    <div class="footer-meta">
+      <span>snakeoilsalesmen.org</span>
+      <span>Opinion &amp; commentary</span>
+      <span>&copy; 2026</span>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
