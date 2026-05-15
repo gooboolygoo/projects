@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>I Can Do It Too</title>
+  <meta name="description" content="Filter by age, country, education, and prior failures to find people who reached outlier success who were just like you when they started." />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            serif: ['ui-serif', 'Georgia', 'Cambria', 'Times New Roman', 'Times', 'serif']
+          }
+        }
+      }
+    };
+  </script>
+  <script src="data.js"></script>
+</head>
+<body class="bg-stone-50 text-stone-900 antialiased">
+
+  <header class="border-b border-stone-200 bg-white">
+    <div class="mx-auto max-w-5xl px-6 py-10">
+      <p class="text-xs font-medium uppercase tracking-widest text-stone-500">Social proof for the rest of us</p>
+      <h1 class="mt-2 font-serif text-5xl tracking-tight text-stone-900">I Can Do It Too</h1>
+      <p class="mt-3 max-w-2xl text-lg text-stone-600">
+        Find people who reached outlier success who were just like you when they started. Same age. Same country. Same education. Same number of failures behind them.
+      </p>
+    </div>
+  </header>
+
+  <main class="mx-auto max-w-5xl px-6 py-8">
+
+    <section class="rounded-lg border border-stone-200 bg-white p-6 shadow-sm">
+      <h2 class="text-xs font-medium uppercase tracking-widest text-stone-500">Show me people who…</h2>
+
+      <div class="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-5">
+        <label class="block">
+          <span class="text-sm font-medium text-stone-700">Were my age</span>
+          <input id="age-input" type="number" min="14" max="80" placeholder="e.g. 24"
+            class="mt-1 block w-full rounded-md border border-stone-300 px-3 py-2 shadow-sm focus:border-stone-500 focus:outline-none focus:ring-1 focus:ring-stone-500" />
+        </label>
+
+        <label class="block">
+          <span class="text-sm font-medium text-stone-700">From my country</span>
+          <select id="country-input"
+            class="mt-1 block w-full rounded-md border border-stone-300 px-3 py-2 shadow-sm focus:border-stone-500 focus:outline-none focus:ring-1 focus:ring-stone-500">
+            <option value="">Any country</option>
+          </select>
+        </label>
+
+        <label class="block">
+          <span class="text-sm font-medium text-stone-700">With my education</span>
+          <select id="education-input"
+            class="mt-1 block w-full rounded-md border border-stone-300 px-3 py-2 shadow-sm focus:border-stone-500 focus:outline-none focus:ring-1 focus:ring-stone-500">
+            <option value="">Any education</option>
+            <option value="no_college">No college</option>
+            <option value="dropout">College dropout</option>
+            <option value="bachelors">Bachelor's degree</option>
+            <option value="graduate">Graduate degree</option>
+          </select>
+        </label>
+
+        <label class="block">
+          <span class="text-sm font-medium text-stone-700">In a field</span>
+          <select id="category-input"
+            class="mt-1 block w-full rounded-md border border-stone-300 px-3 py-2 shadow-sm focus:border-stone-500 focus:outline-none focus:ring-1 focus:ring-stone-500">
+            <option value="">Any field</option>
+          </select>
+        </label>
+
+        <label class="block">
+          <span class="text-sm font-medium text-stone-700">Failures before success</span>
+          <select id="failures-input"
+            class="mt-1 block w-full rounded-md border border-stone-300 px-3 py-2 shadow-sm focus:border-stone-500 focus:outline-none focus:ring-1 focus:ring-stone-500">
+            <option value="">Doesn't matter</option>
+            <option value="yes">Had prior failures</option>
+            <option value="no">No prior failures</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="mt-5 flex flex-wrap items-center gap-3 text-sm text-stone-600">
+        <label class="flex items-center gap-2">
+          <span id="age-tolerance-label">Age tolerance: ±2 years</span>
+          <input id="age-tolerance" type="range" min="0" max="10" value="2" class="w-32 accent-stone-700" />
+        </label>
+        <button id="reset-btn" class="ml-auto text-stone-500 underline hover:text-stone-900">Clear filters</button>
+      </div>
+    </section>
+
+    <section class="mt-10">
+      <h2 id="results-heading" class="font-serif text-2xl text-stone-900"></h2>
+      <p id="results-sub" class="mt-1 text-sm text-stone-500"></p>
+      <div id="results" class="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2"></div>
+      <p id="empty-state" class="mt-8 hidden rounded-md border border-dashed border-stone-300 bg-white p-8 text-center text-stone-500">
+        No exact matches. Try loosening the filters. Sometimes the people closest to you didn't look like you on paper.
+      </p>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,326 @@
+# Seed list of people who reached outlier success.
+# Lines starting with '#' are ignored. People already in data.js (matched by
+# slug) are skipped automatically by enrich.py.
+
+# Founders, US foundational tech
+Mark Zuckerberg
+Bill Gates
+Steve Jobs
+Steve Wozniak
+Larry Page
+Sergey Brin
+Jeff Bezos
+Reed Hastings
+Marc Randolph
+Elon Musk
+Larry Ellison
+Michael Dell
+Jerry Yang
+David Filo
+Pierre Omidyar
+Marc Benioff
+Reid Hoffman
+Peter Thiel
+Max Levchin
+Andy Bechtolsheim
+Vinod Khosla
+Jensen Huang
+Chris Malachowsky
+Curtis Priem
+
+# Founders, US social, consumer, marketplace
+Jack Dorsey
+Evan Williams
+Biz Stone
+Kevin Systrom
+Mike Krieger
+Evan Spiegel
+Bobby Murphy
+Brian Chesky
+Joe Gebbia
+Nathan Blecharczyk
+Travis Kalanick
+Garrett Camp
+Logan Green
+John Zimmer
+Drew Houston
+Arash Ferdowsi
+Stewart Butterfield
+Cal Henderson
+Ben Silbermann
+Whitney Wolfe Herd
+Andrew Mason
+Eric Lefkofsky
+Mark Pincus
+David Karp
+Aaron Levie
+Dustin Moskovitz
+Justin Rosenstein
+Apoorva Mehta
+Steve Huffman
+Alexis Ohanian
+Adam D'Angelo
+Niraj Shah
+Steve Conine
+Marc Lore
+Anthony Casalena
+Adam Neumann
+Miguel McKelvey
+
+# Founders, fintech, crypto, payments
+Patrick Collison
+John Collison
+Vlad Tenev
+Baiju Bhatt
+Henrique Dubugras
+Pedro Franceschi
+Brian Armstrong
+Jed McCaleb
+Jeremy Allaire
+
+# Founders, AI, dev tools, SaaS
+Sam Altman
+Greg Brockman
+Ilya Sutskever
+Dario Amodei
+Daniela Amodei
+Alexandr Wang
+Aidan Gomez
+Dylan Field
+Evan Wallace
+Tom Preston-Werner
+Chris Wanstrath
+Mitchell Hashimoto
+Olivier Pomel
+Frédéric Kerrest
+Todd McKinnon
+Eric Yuan
+Tony Xu
+Bret Taylor
+Aneel Bhusri
+Daniel Dines
+Jyoti Bansal
+
+# Founders, gaming and media
+Gabe Newell
+John Carmack
+Tim Sweeney
+Jason Citron
+Stan Vishnevskiy
+Justin Kan
+Emmett Shear
+Kevin Lin
+Steve Chen
+Chad Hurley
+Jawed Karim
+
+# Founders, consumer goods, lifestyle, legacy
+Sara Blakely
+Phil Knight
+Yvon Chouinard
+Tory Burch
+Jessica Alba
+Howard Schultz
+Mary Kay Ash
+Anne Wojcicki
+Linda Avey
+Adi Tatarko
+Ryan Petersen
+Joe Lonsdale
+Patrick Soon-Shiong
+Jimmy Wales
+
+# Founders, Europe
+Daniel Ek
+Niklas Zennström
+Janus Friis
+Tobi Lütke
+Markus Persson
+Sebastian Siemiatkowski
+Niklas Adalberth
+Nikolay Storonsky
+Vlad Yatsenko
+Anne Boden
+Tom Blomfield
+Taavet Hinrikus
+Kristo Käärmann
+Ilkka Paananen
+Mikko Kodisoja
+Mikko Kuusi
+Niklas Östberg
+Oliver Samwer
+Marc Samwer
+Alexander Samwer
+Frédéric Mazzella
+Octave Klaba
+Xavier Niel
+James Dyson
+Richard Branson
+Anita Roddick
+Ingvar Kamprad
+
+# Founders, Israel and Middle East
+Daniel Schreiber
+Eyal Waldman
+Yoni Assia
+Adam Foroughi
+Mohammed Alabbar
+Pavel Durov
+
+# Founders, China
+Jack Ma
+Joe Tsai
+Pony Ma
+Robin Li
+Lei Jun
+Liu Qiangdong
+Zhang Yiming
+Wang Xing
+Cheng Wei
+Colin Huang
+
+# Founders, India
+Sachin Bansal
+Binny Bansal
+Vijay Shekhar Sharma
+Bhavish Aggarwal
+Deepinder Goyal
+Ritesh Agarwal
+Byju Raveendran
+Nithin Kamath
+Falguni Nayar
+Kunal Shah
+
+# Founders, Southeast Asia
+Anthony Tan
+Hooi Ling Tan
+Forrest Li
+Nadiem Makarim
+William Tanuwijaya
+Patrick Grove
+
+# Founders, Australia
+Melanie Perkins
+Cliff Obrecht
+Mike Cannon-Brookes
+Scott Farquhar
+
+# Founders, Latin America
+David Vélez
+Marcos Galperin
+Hernán Kazah
+
+# Founders, Africa
+Strive Masiyiwa
+Aliko Dangote
+Tope Awotona
+
+# Education and online learning
+Luis von Ahn
+Sebastian Thrun
+Daphne Koller
+Andrew Ng
+
+# AI and research labs
+Demis Hassabis
+Mustafa Suleyman
+
+# Messaging and communications
+Jan Koum
+Brian Acton
+Markus Frind
+Sean Rad
+
+# Misc tech founders
+Ben Chestnut
+Drew Curtis
+Bob Parsons
+
+# Athletes
+Michael Jordan
+LeBron James
+Kobe Bryant
+Magic Johnson
+Larry Bird
+Shaquille O'Neal
+Kareem Abdul-Jabbar
+Stephen Curry
+Tom Brady
+Peyton Manning
+Serena Williams
+Roger Federer
+Rafael Nadal
+Tiger Woods
+Lionel Messi
+Cristiano Ronaldo
+Pelé
+Diego Maradona
+Muhammad Ali
+Mike Tyson
+Usain Bolt
+Simone Biles
+Michael Phelps
+Wayne Gretzky
+Naomi Osaka
+
+# Musicians
+Taylor Swift
+Beyoncé
+Jay-Z
+Drake
+Adele
+Rihanna
+Ed Sheeran
+Eminem
+Michael Jackson
+Madonna
+Prince
+Elvis Presley
+Bob Marley
+Bruno Mars
+Kanye West
+
+# Authors
+J.K. Rowling
+Stephen King
+Maya Angelou
+Toni Morrison
+Agatha Christie
+George R.R. Martin
+Haruki Murakami
+Chimamanda Ngozi Adichie
+Roald Dahl
+
+# Scientists
+Albert Einstein
+Marie Curie
+Isaac Newton
+Charles Darwin
+Stephen Hawking
+Nikola Tesla
+Jonas Salk
+Rosalind Franklin
+Ada Lovelace
+Katherine Johnson
+
+# Directors and actors
+Steven Spielberg
+Christopher Nolan
+Greta Gerwig
+Quentin Tarantino
+Martin Scorsese
+Denzel Washington
+Meryl Streep
+Tom Hanks
+Viola Davis
+Spike Lee
+
+# Media, culture, and other outliers
+Oprah Winfrey
+Walt Disney
+Harland Sanders
+Vera Wang
+Julia Child
+Banksy
+Greta Thunberg
+Anna Wintour
