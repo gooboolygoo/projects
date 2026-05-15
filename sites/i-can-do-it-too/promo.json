@@ -1,0 +1,23 @@
+{
+  "generated_at": "2026-05-15T19:19:46.416Z",
+  "model": "claude-haiku-4-5",
+  "url": "https://gooboolygoo.github.io/projects/i-can-do-it-too/",
+  "hashtags": [
+    "socialproof",
+    "inspiration",
+    "founders",
+    "buildinpublic",
+    "indiedev"
+  ],
+  "x": {
+    "tweet": "You're not the first person to make it. The person who did was probably exactly where you are right now—same age, same background, same string of failures. Meet them.",
+    "reply_lead": "find your proof points"
+  },
+  "vertical_caption": "Ever wondered if someone like you actually made it big? This finds founders and creators who started exactly where you are—same age, same country, same early failures. Reality check in 30 seconds.",
+  "shorts_description_lead": "Find people who reached outlier success who looked just like you when they started. Filter by age, country, education, and prior failures to discover your real proof points.",
+  "video": {
+    "title": "Find Your Success Look-Alike",
+    "script": "There's someone who made it to the top who was exactly like you six months ago. Same age, same flaws, same failures stacking up. The difference? They didn't think it was impossible because they found proof it was possible. This is social proof without the hype. Filter by your age, your country, your education, your failures. Find the person closest to you in every way. See what they did differently. That's you in six months. Check it out.",
+    "word_count": 78
+  }
+}
