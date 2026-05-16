@@ -1,0 +1,1015 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FORMICA.SYS // colony information system v2.6</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=VT323&family=IBM+Plex+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0e08;
+    --bg-deep: #050704;
+    --phos: #7cff5b;
+    --phos-dim: #4ca838;
+    --phos-faint: #2a5a1c;
+    --amber: #ffb84a;
+    --red: #ff4040;
+    --cyan: #5be4ff;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    background: var(--bg-deep);
+    color: var(--phos);
+    font-family: 'IBM Plex Mono', 'Courier New', monospace;
+    line-height: 1.5;
+    overflow-x: hidden;
+    min-height: 100vh;
+  }
+
+  body {
+    background: radial-gradient(ellipse at center, #0a1208 0%, #050704 70%, #000 100%);
+    position: relative;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(0deg, rgba(0,0,0,0.15) 0px, rgba(0,0,0,0.15) 1px, transparent 1px, transparent 3px);
+    pointer-events: none;
+    z-index: 100;
+  }
+
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.5) 100%);
+    pointer-events: none;
+    z-index: 99;
+  }
+
+  @keyframes flicker { 0%, 100% { opacity: 1; } 50% { opacity: 0.97; } }
+
+  .crt {
+    animation: flicker 0.15s infinite;
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 24px 32px 60px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .term-bar {
+    border: 1px solid var(--phos-dim);
+    padding: 6px 12px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    margin-bottom: 16px;
+    background: rgba(124, 255, 91, 0.04);
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .blink { animation: blink 1s steps(2) infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  .banner {
+    font-family: 'VT323', monospace;
+    font-size: 14px;
+    line-height: 1.1;
+    color: var(--phos);
+    white-space: pre;
+    margin-bottom: 8px;
+    text-shadow: 0 0 8px rgba(124, 255, 91, 0.6);
+    overflow-x: auto;
+  }
+
+  .header-meta {
+    border-top: 1px solid var(--phos-faint);
+    border-bottom: 1px solid var(--phos-faint);
+    padding: 12px 0;
+    margin-bottom: 24px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    font-size: 11px;
+    gap: 16px;
+  }
+
+  @media (max-width: 700px) {
+    .header-meta { grid-template-columns: 1fr 1fr; }
+  }
+
+  .header-meta div { color: var(--phos-dim); }
+  .header-meta strong { color: var(--phos); font-weight: 400; display: block; }
+
+  .title-block { margin: 16px 0 24px; }
+
+  h1 {
+    font-family: 'VT323', monospace;
+    font-size: clamp(36px, 5vw, 56px);
+    font-weight: 400;
+    color: var(--amber);
+    text-shadow: 0 0 12px rgba(255, 184, 74, 0.5);
+    line-height: 1;
+    letter-spacing: 0.02em;
+  }
+
+  .h1-sub {
+    font-size: 13px;
+    color: var(--phos-dim);
+    margin-top: 8px;
+  }
+
+  .cursor::after {
+    content: '_';
+    animation: blink 1s steps(2) infinite;
+    color: var(--phos);
+  }
+
+  .deck {
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+
+  @media (max-width: 1000px) {
+    .deck { grid-template-columns: 1fr; }
+  }
+
+  .screen {
+    position: relative;
+    border: 1px solid var(--phos);
+    background: #000;
+    box-shadow: 0 0 0 4px var(--bg-deep), 0 0 0 5px var(--phos-faint), 0 0 30px rgba(124, 255, 91, 0.15) inset;
+  }
+
+  .screen-head {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    padding: 6px 10px;
+    background: var(--phos);
+    color: var(--bg-deep);
+    font-weight: 700;
+    letter-spacing: 0.05em;
+  }
+
+  .screen-head span:first-child::before { content: '◆ '; }
+
+  canvas {
+    display: block;
+    width: 100%;
+    height: auto;
+    background: #000;
+  }
+
+  .screen-foot {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    padding: 6px 10px;
+    background: rgba(124, 255, 91, 0.08);
+    border-top: 1px solid var(--phos-faint);
+    color: var(--phos-dim);
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .live { color: var(--red); text-shadow: 0 0 8px rgba(255, 64, 64, 0.6); }
+  .live::before { content: '● '; animation: blink 1s steps(2) infinite; }
+
+  .panel {
+    border: 1px solid var(--phos-dim);
+    background: rgba(124, 255, 91, 0.03);
+  }
+
+  .panel-head {
+    background: var(--phos-dim);
+    color: var(--bg-deep);
+    font-size: 11px;
+    font-weight: 700;
+    padding: 6px 10px;
+    letter-spacing: 0.05em;
+  }
+
+  .panel-body { padding: 14px 12px; }
+
+  .ctrl { margin-bottom: 12px; }
+
+  .ctrl-head {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    margin-bottom: 4px;
+    color: var(--phos-dim);
+  }
+
+  .ctrl-head .nm::before { content: '> '; color: var(--phos); }
+  .ctrl-head .val { color: var(--amber); text-shadow: 0 0 6px rgba(255, 184, 74, 0.4); }
+
+  input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 14px;
+    background: transparent;
+    outline: none;
+    cursor: pointer;
+  }
+
+  input[type="range"]::-webkit-slider-runnable-track {
+    height: 14px;
+    background: repeating-linear-gradient(90deg, var(--phos-faint) 0px, var(--phos-faint) 2px, transparent 2px, transparent 4px), var(--bg-deep);
+    border: 1px solid var(--phos-dim);
+  }
+
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 8px;
+    height: 18px;
+    background: var(--phos);
+    border: none;
+    margin-top: -3px;
+    box-shadow: 0 0 8px var(--phos);
+    cursor: pointer;
+  }
+
+  input[type="range"]::-moz-range-track {
+    height: 14px;
+    background: repeating-linear-gradient(90deg, var(--phos-faint) 0px, var(--phos-faint) 2px, transparent 2px, transparent 4px), var(--bg-deep);
+    border: 1px solid var(--phos-dim);
+  }
+
+  input[type="range"]::-moz-range-thumb {
+    width: 8px;
+    height: 18px;
+    background: var(--phos);
+    border: none;
+    box-shadow: 0 0 8px var(--phos);
+    cursor: pointer;
+    border-radius: 0;
+  }
+
+  .divider {
+    border-top: 1px dashed var(--phos-faint);
+    margin: 16px 0 10px;
+    padding-top: 8px;
+    font-size: 10px;
+    color: var(--phos-dim);
+    letter-spacing: 0.1em;
+  }
+
+  .btns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px;
+  }
+
+  button {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    padding: 6px 8px;
+    background: var(--bg-deep);
+    border: 1px solid var(--phos-dim);
+    color: var(--phos);
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    transition: all 0.08s;
+  }
+
+  button:hover {
+    background: var(--phos);
+    color: var(--bg-deep);
+    box-shadow: 0 0 10px var(--phos);
+  }
+
+  button.alert { color: var(--amber); border-color: var(--amber); }
+  button.alert:hover { background: var(--amber); color: var(--bg-deep); box-shadow: 0 0 10px var(--amber); }
+
+  button.danger { color: var(--red); border-color: var(--red); }
+  button.danger:hover { background: var(--red); color: var(--bg-deep); box-shadow: 0 0 10px var(--red); }
+
+  button.full { grid-column: 1 / -1; }
+
+  .scenarios { display: flex; flex-direction: column; gap: 4px; }
+  .scenarios button { text-align: left; }
+  .scenarios button::before { content: '[ ] '; }
+  .scenarios button.active { background: var(--phos); color: var(--bg-deep); }
+  .scenarios button.active::before { content: '[*] '; }
+
+  .readouts {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-bottom: 32px;
+  }
+
+  @media (max-width: 700px) {
+    .readouts { grid-template-columns: 1fr 1fr; }
+  }
+
+  .readout {
+    border: 1px solid var(--phos-dim);
+    padding: 10px 12px;
+    background: rgba(124, 255, 91, 0.03);
+    position: relative;
+  }
+
+  .readout::before {
+    content: '';
+    position: absolute;
+    top: 3px; right: 3px;
+    width: 5px; height: 5px;
+    background: var(--phos);
+    box-shadow: 0 0 6px var(--phos);
+    animation: blink 2s steps(2) infinite;
+  }
+
+  .ro-label {
+    font-size: 10px;
+    color: var(--phos-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+  .ro-label::before { content: '$ '; color: var(--phos); }
+
+  .ro-value {
+    font-family: 'VT323', monospace;
+    font-size: 36px;
+    line-height: 1;
+    color: var(--amber);
+    margin-top: 4px;
+    text-shadow: 0 0 12px rgba(255, 184, 74, 0.4);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .ro-unit {
+    font-size: 11px;
+    color: var(--phos-dim);
+    margin-left: 4px;
+  }
+
+  .docs {
+    border: 1px solid var(--phos-dim);
+    margin-top: 24px;
+  }
+
+  .docs-head {
+    background: var(--phos-dim);
+    color: var(--bg-deep);
+    padding: 6px 12px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .docs-body {
+    padding: 24px 28px;
+    font-size: 14px;
+    line-height: 1.7;
+    max-width: 800px;
+  }
+
+  .docs-body h2 {
+    font-family: 'VT323', monospace;
+    font-size: 28px;
+    font-weight: 400;
+    color: var(--amber);
+    margin-top: 24px;
+    margin-bottom: 8px;
+    text-shadow: 0 0 8px rgba(255, 184, 74, 0.3);
+  }
+
+  .docs-body h2:first-child { margin-top: 0; }
+  .docs-body h2::before { content: '## '; color: var(--phos-dim); }
+
+  .docs-body p { margin-bottom: 14px; color: var(--phos); }
+  .docs-body em {
+    color: var(--cyan);
+    font-style: normal;
+    text-shadow: 0 0 6px rgba(91, 228, 255, 0.3);
+  }
+  .docs-body strong { color: var(--amber); font-weight: 400; }
+  .docs-body .prompt::before { content: '$> '; color: var(--phos-dim); }
+
+  .quote-box {
+    border-left: 2px solid var(--amber);
+    padding: 8px 0 8px 16px;
+    margin: 16px 0;
+    color: var(--amber);
+    font-family: 'VT323', monospace;
+    font-size: 20px;
+    line-height: 1.3;
+  }
+
+  .quote-box::before { content: '/* '; color: var(--phos-dim); }
+  .quote-box::after { content: ' */'; color: var(--phos-dim); }
+
+  footer {
+    margin-top: 32px;
+    border-top: 1px dashed var(--phos-faint);
+    padding-top: 12px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: var(--phos-faint);
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .glow-phos { text-shadow: 0 0 8px rgba(124, 255, 91, 0.5); }
+</style>
+</head>
+<body>
+
+<div class="crt">
+
+  <div class="term-bar">
+    <span class="glow-phos">FORMICA.SYS v2.6.1 <span class="blink">_</span></span>
+    <span class="glow-phos">USER: researcher@colony-lab</span>
+    <span class="glow-phos">TTY: /dev/sim0</span>
+    <span class="glow-phos">RUN: <span id="clock">00:00:00</span></span>
+  </div>
+
+  <pre class="banner">
+ ███████╗ ██████╗ ██████╗ ███╗   ███╗██╗ ██████╗ █████╗   ███████╗██╗   ██╗███████╗
+ ██╔════╝██╔═══██╗██╔══██╗████╗ ████║██║██╔════╝██╔══██╗  ██╔════╝╚██╗ ██╔╝██╔════╝
+ █████╗  ██║   ██║██████╔╝██╔████╔██║██║██║     ███████║  ███████╗ ╚████╔╝ ███████╗
+ ██╔══╝  ██║   ██║██╔══██╗██║╚██╔╝██║██║██║     ██╔══██║  ╚════██║  ╚██╔╝  ╚════██║
+ ██║     ╚██████╔╝██║  ██║██║ ╚═╝ ██║██║╚██████╗██║  ██║  ███████║   ██║   ███████║
+ ╚═╝      ╚═════╝ ╚═╝  ╚═╝╚═╝     ╚═╝╚═╝ ╚═════╝╚═╝  ╚═╝  ╚══════╝   ╚═╝   ╚══════╝
+        STIGMERGIC INFORMATION PROCESSING IN DECENTRALIZED LIVING SYSTEMS</pre>
+
+  <div class="header-meta">
+    <div>module<strong>colony-emergence</strong></div>
+    <div>topic<strong>stigmergy</strong></div>
+    <div>model<strong>2-layer pheromone field</strong></div>
+    <div>license<strong>educational use</strong></div>
+  </div>
+
+  <div class="title-block">
+    <h1>colony.run()</h1>
+    <div class="h1-sub">// no leader. no map. no plan. just chemistry and feet.<span class="cursor"></span></div>
+  </div>
+
+  <div class="deck">
+    <div class="screen">
+      <div class="screen-head">
+        <span>OUTPUT // colony_field_render</span>
+        <span id="scenarioTag">SINGLE_SOURCE</span>
+      </div>
+      <canvas id="sim" width="900" height="580"></canvas>
+      <div class="screen-foot">
+        <span class="live">LIVE</span>
+        <span>FOOD_PHEROMONE: <span style="color:var(--amber)">▮▮▮</span>  HOME_PHEROMONE: <span style="color:var(--cyan)">▮▮▮</span>  AGENT: <span style="color:var(--phos)">▮</span></span>
+        <span id="fpsTag">60 fps</span>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head">─── PARAMS ───</div>
+      <div class="panel-body">
+
+        <div class="ctrl">
+          <div class="ctrl-head"><span class="nm">population</span><span class="val" id="popVal">120</span></div>
+          <input type="range" id="pop" min="20" max="400" value="120">
+        </div>
+
+        <div class="ctrl">
+          <div class="ctrl-head"><span class="nm">evap_rate</span><span class="val" id="evapVal">0.40%</span></div>
+          <input type="range" id="evap" min="1" max="200" value="40">
+        </div>
+
+        <div class="ctrl">
+          <div class="ctrl-head"><span class="nm">follow_str</span><span class="val" id="followVal">3.5</span></div>
+          <input type="range" id="follow" min="0" max="80" value="35">
+        </div>
+
+        <div class="ctrl">
+          <div class="ctrl-head"><span class="nm">wander</span><span class="val" id="noiseVal">0.30</span></div>
+          <input type="range" id="noise" min="0" max="100" value="30">
+        </div>
+
+        <div class="ctrl">
+          <div class="ctrl-head"><span class="nm">deposit</span><span class="val" id="depVal">8.0</span></div>
+          <input type="range" id="dep" min="1" max="30" value="8">
+        </div>
+
+        <div class="divider">─── SCENARIOS ───</div>
+        <div class="scenarios">
+          <button data-scenario="single" class="active">single source</button>
+          <button data-scenario="two">two sources</button>
+          <button data-scenario="obstacle">obstacle path</button>
+          <button data-scenario="depleting">depleting food</button>
+        </div>
+
+        <div class="divider">─── SYSTEM ───</div>
+        <div class="btns">
+          <button id="pauseBtn">pause</button>
+          <button id="clearBtn" class="alert">clear</button>
+          <button id="resetBtn" class="danger full">[ reset ]</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="readouts">
+    <div class="readout">
+      <div class="ro-label">foragers_active</div>
+      <div class="ro-value" id="mForagers">0</div>
+    </div>
+    <div class="readout">
+      <div class="ro-label">returning_w_food</div>
+      <div class="ro-value" id="mReturning">0</div>
+    </div>
+    <div class="readout">
+      <div class="ro-label">food_collected</div>
+      <div class="ro-value"><span id="mFood">0</span><span class="ro-unit">u</span></div>
+    </div>
+    <div class="readout">
+      <div class="ro-label">trail_density</div>
+      <div class="ro-value" id="mTrail">0.00</div>
+    </div>
+  </div>
+
+  <div class="docs">
+    <div class="docs-head">
+      <span>─── README.txt ───</span>
+      <span>4,217 bytes</span>
+    </div>
+    <div class="docs-body">
+
+      <h2>a computer made of ants</h2>
+      <p class="prompt">no ant carries a map. no ant has been told where the food is. no ant gives orders. and yet, within minutes, the colony has found the food, drawn a glowing highway to it, and quietly abandoned the routes it tried first.</p>
+      <p>biologists call this <em>information processing in living systems</em>. computation performed not by neurons but by bodies moving through a shared environment.</p>
+
+      <h2>the mechanism: stigmergy</h2>
+      <p>biologists named it <em>stigmergy</em>: indirect coordination through traces left in the environment. an ant returning with food deposits a chemical <strong>pheromone</strong> behind her. another ant smells it, tends to follow it, finds the food, and on her return, lays down her own pheromone. <strong>the trail thickens. more ants follow.</strong> the colony has, without realizing it, taken a vote.</p>
+
+      <div class="quote-box">
+        the colony is not the sum of its ants. it is the conversation between them, written in scent, read by feet.
+      </div>
+
+      <h2>two feedback loops in tension</h2>
+      <p>what you're watching above is two opposing forces negotiating a solution in real time:</p>
+      <p><strong>positive loop:</strong> every successful forager strengthens the trail she used. stronger trails attract more ants. <em>amplification.</em> but this alone would be a disaster: the first path discovered would lock in forever, even if it were the worst.</p>
+      <p><strong>negative loop:</strong> pheromones <em>evaporate</em>. trails not maintained fade. long, slow paths lose pheromone faster than ants can refresh them. short, fast paths get refreshed before they fade. <strong>the shortest path wins not because anyone measured it</strong>, but because it is the only one the chemistry can sustain.</p>
+
+      <h2>experiments to run</h2>
+      <p class="prompt">drop <em>evap_rate</em> to near zero. watch the colony commit to its first guess forever. memory without forgetting becomes its own kind of stupidity.</p>
+      <p class="prompt">push <em>evap_rate</em> up. the colony forgets faster than it learns. nothing forms. somewhere in between lies the colony's working intelligence.</p>
+      <p class="prompt">increase <em>wander</em>. individual ants look chaotic, but the collective often discovers food faster. exploration beats exploitation.</p>
+      <p class="prompt">load the <em>obstacle</em> scenario. an established route gets blocked. the colony reroutes within seconds. no one figured it out. they figured it out together, by not knowing.</p>
+
+      <h2>the quiet provocation</h2>
+      <p>if a colony of ants can compute optimal paths, route around damage, and balance exploration against exploitation, all without any single ant understanding what it is doing, <em>then perhaps intelligence was never the special property of brains</em>. perhaps it was always the property of <strong>feedback</strong>.</p>
+
+    </div>
+  </div>
+
+  <footer>
+    <span>EOF // formica.sys</span>
+    <span>module: living_systems</span>
+    <span>buffer: clean</span>
+  </footer>
+
+</div>
+
+<script>
+const canvas = document.getElementById('sim');
+const ctx = canvas.getContext('2d');
+const W = canvas.width;
+const H = canvas.height;
+
+const CELL = 4;
+const GW = Math.floor(W / CELL);
+const GH = Math.floor(H / CELL);
+
+let foodPher = new Float32Array(GW * GH);
+let homePher = new Float32Array(GW * GH);
+
+const params = {
+  popSize: 120,
+  evapRate: 0.004,
+  followStrength: 3.5,
+  wanderNoise: 0.30,
+  deposition: 8.0,
+  maxPher: 100,
+};
+
+let ants = [];
+let foodSources = [];
+let obstacles = [];
+let nest = { x: W / 2, y: H / 2, r: 16 };
+let foodCollected = 0;
+let paused = false;
+let scenario = 'single';
+let startTime = Date.now();
+
+class Ant {
+  constructor() {
+    this.x = nest.x + (Math.random() - 0.5) * 4;
+    this.y = nest.y + (Math.random() - 0.5) * 4;
+    this.angle = Math.random() * Math.PI * 2;
+    this.speed = 1.2 + Math.random() * 0.3;
+    this.hasFood = false;
+    this.lifeSinceFood = 0;
+  }
+
+  step() {
+    const sensorDist = 9;
+    const sensorAngle = 0.5;
+    const sense = (offset) => {
+      const a = this.angle + offset;
+      const sx = this.x + Math.cos(a) * sensorDist;
+      const sy = this.y + Math.sin(a) * sensorDist;
+      const gx = Math.floor(sx / CELL);
+      const gy = Math.floor(sy / CELL);
+      if (gx < 0 || gx >= GW || gy < 0 || gy >= GH) return -1;
+      return this.hasFood ? homePher[gy * GW + gx] : foodPher[gy * GW + gx];
+    };
+
+    const L = sense(-sensorAngle);
+    const C = sense(0);
+    const R = sense(sensorAngle);
+
+    let turn = 0;
+    if (C >= L && C >= R) turn = 0;
+    else if (L > R) turn = -sensorAngle;
+    else if (R > L) turn = sensorAngle;
+
+    this.angle += turn * (params.followStrength / 10);
+    this.angle += (Math.random() - 0.5) * params.wanderNoise;
+
+    if (this.hasFood) {
+      const dx = nest.x - this.x, dy = nest.y - this.y;
+      const d = Math.hypot(dx, dy);
+      if (d < 50) {
+        const targetAngle = Math.atan2(dy, dx);
+        this.angle = this.lerpAngle(this.angle, targetAngle, 0.3);
+      }
+    } else {
+      for (const f of foodSources) {
+        if (f.amount <= 0) continue;
+        const dx = f.x - this.x, dy = f.y - this.y;
+        const d = Math.hypot(dx, dy);
+        if (d < 40) {
+          const targetAngle = Math.atan2(dy, dx);
+          this.angle = this.lerpAngle(this.angle, targetAngle, 0.4);
+        }
+      }
+    }
+
+    const nx = this.x + Math.cos(this.angle) * this.speed;
+    const ny = this.y + Math.sin(this.angle) * this.speed;
+
+    if (nx < 4 || nx > W - 4) {
+      this.angle = Math.PI - this.angle + (Math.random() - 0.5) * 0.3;
+    } else if (ny < 4 || ny > H - 4) {
+      this.angle = -this.angle + (Math.random() - 0.5) * 0.3;
+    } else if (this.hitObstacle(nx, ny)) {
+      this.angle += Math.PI / 2 + (Math.random() - 0.5) * 0.5;
+    } else {
+      this.x = nx;
+      this.y = ny;
+    }
+
+    this.lifeSinceFood++;
+    const decay = Math.exp(-this.lifeSinceFood / 800);
+    const amount = params.deposition * decay;
+    const gx = Math.floor(this.x / CELL);
+    const gy = Math.floor(this.y / CELL);
+    if (gx >= 0 && gx < GW && gy >= 0 && gy < GH) {
+      const idx = gy * GW + gx;
+      if (this.hasFood) {
+        foodPher[idx] = Math.min(params.maxPher, foodPher[idx] + amount);
+      } else {
+        homePher[idx] = Math.min(params.maxPher, homePher[idx] + amount * 0.6);
+      }
+    }
+
+    if (!this.hasFood) {
+      for (const f of foodSources) {
+        if (f.amount <= 0) continue;
+        if (Math.hypot(this.x - f.x, this.y - f.y) < f.r) {
+          this.hasFood = true;
+          this.angle += Math.PI;
+          this.lifeSinceFood = 0;
+          if (f.depleting) f.amount -= 1;
+          break;
+        }
+      }
+    } else {
+      if (Math.hypot(this.x - nest.x, this.y - nest.y) < nest.r) {
+        this.hasFood = false;
+        this.angle += Math.PI;
+        this.lifeSinceFood = 0;
+        foodCollected++;
+      }
+    }
+  }
+
+  hitObstacle(x, y) {
+    for (const o of obstacles) {
+      if (x > o.x && x < o.x + o.w && y > o.y && y < o.y + o.h) return true;
+    }
+    return false;
+  }
+
+  lerpAngle(a, b, t) {
+    let diff = b - a;
+    while (diff > Math.PI) diff -= Math.PI * 2;
+    while (diff < -Math.PI) diff += Math.PI * 2;
+    return a + diff * t;
+  }
+
+  draw() {
+    ctx.save();
+    ctx.translate(this.x, this.y);
+    ctx.rotate(this.angle);
+    if (this.hasFood) {
+      ctx.fillStyle = '#ffb84a';
+      ctx.fillRect(-2, -1.5, 4, 3);
+    } else {
+      ctx.fillStyle = '#7cff5b';
+      ctx.fillRect(-1.5, -1, 3, 2);
+    }
+    ctx.restore();
+  }
+}
+
+function resetColony() {
+  ants = [];
+  for (let i = 0; i < params.popSize; i++) ants.push(new Ant());
+  foodPher.fill(0);
+  homePher.fill(0);
+  foodCollected = 0;
+  startTime = Date.now();
+}
+
+function setScenario(s) {
+  scenario = s;
+  foodSources = [];
+  obstacles = [];
+  nest = { x: W / 2, y: H / 2, r: 16 };
+
+  document.querySelectorAll('.scenarios button').forEach(b => {
+    b.classList.toggle('active', b.dataset.scenario === s);
+  });
+
+  if (s === 'single') {
+    foodSources = [{ x: W * 0.18, y: H * 0.25, r: 22, amount: Infinity, depleting: false }];
+    document.getElementById('scenarioTag').textContent = 'SINGLE_SOURCE';
+  } else if (s === 'two') {
+    foodSources = [
+      { x: W * 0.15, y: H * 0.25, r: 20, amount: Infinity, depleting: false },
+      { x: W * 0.85, y: H * 0.78, r: 20, amount: Infinity, depleting: false },
+    ];
+    document.getElementById('scenarioTag').textContent = 'TWO_SOURCES';
+  } else if (s === 'obstacle') {
+    foodSources = [{ x: W * 0.85, y: H * 0.5, r: 22, amount: Infinity, depleting: false }];
+    obstacles = [
+      { x: W * 0.62, y: 0, w: 14, h: H * 0.4 },
+      { x: W * 0.62, y: H * 0.6, w: 14, h: H * 0.4 },
+    ];
+    document.getElementById('scenarioTag').textContent = 'OBSTACLE_PATH';
+  } else if (s === 'depleting') {
+    foodSources = [
+      { x: W * 0.18, y: H * 0.28, r: 20, amount: 400, depleting: true },
+      { x: W * 0.78, y: H * 0.72, r: 20, amount: 400, depleting: true },
+      { x: W * 0.82, y: H * 0.22, r: 20, amount: 400, depleting: true },
+    ];
+    document.getElementById('scenarioTag').textContent = 'DEPLETING_FOOD';
+  }
+  resetColony();
+}
+
+function updatePheromones() {
+  const decay = 1 - params.evapRate;
+  for (let i = 0; i < foodPher.length; i++) {
+    foodPher[i] *= decay;
+    homePher[i] *= decay;
+    if (foodPher[i] < 0.05) foodPher[i] = 0;
+    if (homePher[i] < 0.05) homePher[i] = 0;
+  }
+}
+
+function render() {
+  ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
+  ctx.fillRect(0, 0, W, H);
+
+  const img = ctx.createImageData(W, H);
+  const data = img.data;
+  for (let gy = 0; gy < GH; gy++) {
+    for (let gx = 0; gx < GW; gx++) {
+      const idx = gy * GW + gx;
+      const f = foodPher[idx];
+      const h = homePher[idx];
+      if (f < 0.5 && h < 0.5) continue;
+      const fI = Math.min(1, f / 40);
+      const hI = Math.min(1, h / 40);
+      const r = fI * 255 + hI * 91;
+      const g = fI * 184 + hI * 228;
+      const b = fI * 74 + hI * 255;
+      const a = Math.min(255, (fI + hI * 0.7) * 200);
+      for (let dy = 0; dy < CELL; dy++) {
+        for (let dx = 0; dx < CELL; dx++) {
+          const px = gx * CELL + dx;
+          const py = gy * CELL + dy;
+          const p = (py * W + px) * 4;
+          data[p] = Math.min(255, data[p] + r);
+          data[p + 1] = Math.min(255, data[p + 1] + g);
+          data[p + 2] = Math.min(255, data[p + 2] + b);
+          data[p + 3] = Math.max(data[p + 3], a);
+        }
+      }
+    }
+  }
+  const off = document.createElement('canvas');
+  off.width = W; off.height = H;
+  off.getContext('2d').putImageData(img, 0, 0);
+  ctx.globalCompositeOperation = 'screen';
+  ctx.drawImage(off, 0, 0);
+  ctx.globalCompositeOperation = 'source-over';
+
+  ctx.strokeStyle = 'rgba(124, 255, 91, 0.04)';
+  ctx.lineWidth = 1;
+  for (let x = 0; x < W; x += 40) {
+    ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke();
+  }
+  for (let y = 0; y < H; y += 40) {
+    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
+  }
+
+  ctx.fillStyle = '#1a3a10';
+  ctx.strokeStyle = '#7cff5b';
+  ctx.lineWidth = 1;
+  for (const o of obstacles) {
+    ctx.fillRect(o.x, o.y, o.w, o.h);
+    ctx.strokeRect(o.x, o.y, o.w, o.h);
+    ctx.strokeStyle = 'rgba(124, 255, 91, 0.4)';
+    for (let i = 0; i < o.h; i += 6) {
+      ctx.beginPath();
+      ctx.moveTo(o.x, o.y + i);
+      ctx.lineTo(o.x + o.w, o.y + i);
+      ctx.stroke();
+    }
+    ctx.strokeStyle = '#7cff5b';
+  }
+
+  for (const f of foodSources) {
+    if (f.amount <= 0) continue;
+    const alpha = f.depleting ? Math.min(1, f.amount / 400) : 1;
+    ctx.save();
+    ctx.shadowColor = '#ffb84a';
+    ctx.shadowBlur = 20;
+    ctx.strokeStyle = `rgba(255, 184, 74, ${alpha})`;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.arc(f.x, f.y, f.r * 0.6, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(f.x - f.r - 4, f.y); ctx.lineTo(f.x - f.r * 0.5, f.y);
+    ctx.moveTo(f.x + f.r * 0.5, f.y); ctx.lineTo(f.x + f.r + 4, f.y);
+    ctx.moveTo(f.x, f.y - f.r - 4); ctx.lineTo(f.x, f.y - f.r * 0.5);
+    ctx.moveTo(f.x, f.y + f.r * 0.5); ctx.lineTo(f.x, f.y + f.r + 4);
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+    ctx.fillStyle = `rgba(255, 184, 74, ${alpha})`;
+    ctx.font = '10px "IBM Plex Mono", monospace';
+    ctx.fillText('FOOD', f.x - 12, f.y - f.r - 8);
+    ctx.restore();
+  }
+
+  ctx.save();
+  ctx.shadowColor = '#ff4040';
+  ctx.shadowBlur = 16;
+  ctx.strokeStyle = '#ff4040';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.arc(nest.x, nest.y, nest.r, 0, Math.PI * 2);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.arc(nest.x, nest.y, nest.r * 0.6, 0, Math.PI * 2);
+  ctx.stroke();
+  ctx.fillStyle = '#ff4040';
+  ctx.beginPath();
+  ctx.arc(nest.x, nest.y, 2, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.shadowBlur = 0;
+  ctx.font = '10px "IBM Plex Mono", monospace';
+  ctx.fillStyle = '#ff4040';
+  ctx.fillText('NEST', nest.x - 12, nest.y - nest.r - 6);
+  ctx.restore();
+
+  for (const a of ants) a.draw();
+}
+
+function updateMetrics() {
+  let foragers = 0, returning = 0;
+  for (const a of ants) {
+    if (a.hasFood) returning++;
+    else foragers++;
+  }
+  let trailSum = 0;
+  for (let i = 0; i < foodPher.length; i++) trailSum += foodPher[i];
+  const avgTrail = trailSum / foodPher.length;
+
+  document.getElementById('mForagers').textContent = foragers;
+  document.getElementById('mReturning').textContent = returning;
+  document.getElementById('mFood').textContent = foodCollected;
+  document.getElementById('mTrail').textContent = avgTrail.toFixed(2);
+
+  const elapsed = Math.floor((Date.now() - startTime) / 1000);
+  const hh = String(Math.floor(elapsed / 3600)).padStart(2, '0');
+  const mm = String(Math.floor((elapsed % 3600) / 60)).padStart(2, '0');
+  const ss = String(elapsed % 60).padStart(2, '0');
+  document.getElementById('clock').textContent = `${hh}:${mm}:${ss}`;
+}
+
+let frame = 0;
+let lastFpsTime = performance.now();
+let fpsFrames = 0;
+
+function loop(t) {
+  if (!paused) {
+    for (const a of ants) a.step();
+    updatePheromones();
+    render();
+    if (frame % 10 === 0) updateMetrics();
+    frame++;
+    fpsFrames++;
+    if (t - lastFpsTime > 1000) {
+      document.getElementById('fpsTag').textContent = `${fpsFrames} fps`;
+      fpsFrames = 0;
+      lastFpsTime = t;
+    }
+  }
+  requestAnimationFrame(loop);
+}
+
+function bind(id, valId, transform, apply) {
+  const el = document.getElementById(id);
+  const vEl = document.getElementById(valId);
+  el.addEventListener('input', () => {
+    const v = parseFloat(el.value);
+    const t = transform(v);
+    apply(t);
+    vEl.textContent = formatValue(id, t);
+  });
+}
+
+function formatValue(id, t) {
+  if (id === 'pop') return Math.round(t);
+  if (id === 'evap') return (t * 100).toFixed(2) + '%';
+  if (id === 'follow') return t.toFixed(1);
+  if (id === 'noise') return t.toFixed(2);
+  if (id === 'dep') return t.toFixed(1);
+  return t;
+}
+
+bind('pop', 'popVal', v => v, v => {
+  params.popSize = Math.round(v);
+  while (ants.length < params.popSize) ants.push(new Ant());
+  while (ants.length > params.popSize) ants.pop();
+});
+bind('evap', 'evapVal', v => v / 10000, v => params.evapRate = v);
+bind('follow', 'followVal', v => v / 10, v => params.followStrength = v);
+bind('noise', 'noiseVal', v => v / 100, v => params.wanderNoise = v);
+bind('dep', 'depVal', v => v, v => params.deposition = v);
+
+document.getElementById('pauseBtn').addEventListener('click', (e) => {
+  paused = !paused;
+  e.target.textContent = paused ? 'resume' : 'pause';
+});
+document.getElementById('clearBtn').addEventListener('click', () => {
+  foodPher.fill(0);
+  homePher.fill(0);
+});
+document.getElementById('resetBtn').addEventListener('click', () => {
+  setScenario(scenario);
+});
+document.querySelectorAll('.scenarios button').forEach(btn => {
+  btn.addEventListener('click', () => setScenario(btn.dataset.scenario));
+});
+
+setScenario('single');
+requestAnimationFrame(loop);
+</script>
+
+</body>
+</html>
