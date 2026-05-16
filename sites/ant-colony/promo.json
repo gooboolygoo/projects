@@ -1,0 +1,23 @@
+{
+  "generated_at": "2026-05-16T03:41:11.496Z",
+  "model": "claude-haiku-4-5",
+  "url": "https://gooboolygoo.github.io/projects/ant-colony/",
+  "hashtags": [
+    "emergence",
+    "complexity",
+    "simulation",
+    "biology",
+    "stigmergy"
+  ],
+  "x": {
+    "tweet": "An ant colony has no boss, no map, no ant who knows the answer — yet it solves where to find food, how to allocate workers, all through local rules and pheromone trails. See how emergence works",
+    "reply_lead": "watch them think →"
+  },
+  "vertical_caption": "Ant colonies solve computational problems with zero management. No leader, no central plan — just ants following local rules that somehow create global order through pheromone communication. See stigmergy in action 🐜",
+  "shorts_description_lead": "How do ant colonies solve optimization problems with no leader or map? Watch two interactive simulations of stigmergy—the algorithm nature wrote millions of years ago.",
+  "video": {
+    "title": "How Ant Colonies Solve Problems",
+    "script": "An ant colony is a distributed computer. No single ant knows where food is or which tasks need doing. Yet somehow the colony figures it out. Ants do this by following simple local rules—seeking pheromone trails, running into each other, tuning task allocation on the fly. This is called stigmergy: computation through the environment. Watch it happen in real time. Link in the description.",
+    "word_count": 64
+  }
+}
