@@ -1,0 +1,23 @@
+{
+  "generated_at": "2026-05-16T03:54:31.189Z",
+  "model": "claude-haiku-4-5",
+  "url": "https://gooboolygoo.github.io/projects/ant-colony-with-roles/",
+  "hashtags": [
+    "stigmergy",
+    "emergence",
+    "complexityscience",
+    "simulation",
+    "webdev"
+  ],
+  "x": {
+    "tweet": "no ant knows where the food is. no ant gives orders. and yet, within minutes, the colony finds it, draws a glowing highway to it, and abandons the routes that don't work. watch information processing happen without a brain",
+    "reply_lead": "try the simulation ↓"
+  },
+  "vertical_caption": "No leader. No map. No plan. Just chemistry and feet. Watch an ant colony solve problems in real time using invisible pheromone trails. This is how distributed intelligence actually works 🐜",
+  "shorts_description_lead": "An interactive simulation showing how ant colonies process information and solve problems without any single ant understanding what's happening. Watch stigmergy in action.",
+  "video": {
+    "title": "How Ant Colonies Think",
+    "script": "No ant carries a map. No ant gives orders. And yet, within minutes, a colony finds food, draws a glowing highway to it, and abandons slower routes. This is stigmergy—information processing through chemical traces left in the environment. A forager returns with food, deposits pheromone, another ant smells it, follows it, finds the food, lays her own pheromone. The trail strengthens. More ants follow. But here's the genius: pheromones evaporate. Long, slow paths fade faster than ants can refresh them. Short paths win not because anyone measured them, but because they're the only ones chemistry can sustain. Intelligence emerging from feedback. Link in the description to run the simulation yourself.",
+    "word_count": 110
+  }
+}
