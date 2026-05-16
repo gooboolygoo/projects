@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>How Ant Colonies Think</title>
+  <meta name="description" content="Interactive simulations of information processing in ant colonies: pheromone-trail foraging (stigmergy) and emergent task allocation by encounter rate." />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            serif: ['ui-serif', 'Georgia', 'Cambria', 'Times New Roman', 'Times', 'serif']
+          }
+        }
+      }
+    };
+  </script>
+</head>
+<body class="bg-stone-50 text-stone-900 antialiased">
+
+  <header class="border-b border-stone-200 bg-white">
+    <div class="mx-auto max-w-4xl px-6 py-10">
+      <h1 class="font-serif text-5xl tracking-tight text-stone-900">How Ant Colonies Think</h1>
+      <p class="mt-4 max-w-2xl text-lg text-stone-600 leading-relaxed">
+        An ant colony solves real computational problems. Where to forage. How many workers to put on each job.
+        It does this with no leader, no map, and no ant aware of the answer. Each one just follows local rules.
+        Below: two interactive simulations of how.
+      </p>
+    </div>
+  </header>
+
+  <main class="mx-auto max-w-4xl px-6 py-12 space-y-20">
+
+    <section>
+      <h2 class="font-serif text-3xl text-stone-900">Finding food, with no map</h2>
+      <p class="mt-4 text-stone-700 leading-relaxed">
+        Each ant wanders. When it finds food, it walks back home dropping a <em>food</em> pheromone. When it leaves home, it drops a <em>home</em> pheromone. Other ants probabilistically steer toward stronger trails. No ant knows where the food is. The colony converges on the closest sources within seconds. Biologists call this <strong>stigmergy</strong>, communication through the environment.
+      </p>
+
+      <div class="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_220px]">
+        <div>
+          <canvas id="forage-canvas" width="540" height="540"
+            class="block w-full max-w-[540px] rounded-lg bg-black mx-auto"></canvas>
+          <p class="mt-2 text-xs text-stone-500 text-center">
+            <span class="inline-block h-2 w-2 rounded-full bg-amber-500 align-middle"></span> food pheromone
+            <span class="ml-3 inline-block h-2 w-2 rounded-full bg-sky-400 align-middle"></span> home pheromone
+            <span class="ml-3 inline-block h-2 w-2 rounded-full bg-yellow-300 align-middle"></span> ant carrying food
+            <span class="ml-3 inline-block h-2 w-2 rounded-full bg-stone-200 align-middle"></span> ant searching
+          </p>
+        </div>
+
+        <aside class="space-y-4 text-sm">
+          <div class="flex gap-2">
+            <button id="forage-toggle" class="flex-1 rounded-md bg-stone-900 px-3 py-2 font-medium text-white hover:bg-stone-700">Pause</button>
+            <button id="forage-reset" class="flex-1 rounded-md border border-stone-300 px-3 py-2 font-medium text-stone-700 hover:bg-stone-100">Reset</button>
+          </div>
+
+          <label class="block">
+            <span class="flex justify-between text-xs font-medium text-stone-600">
+              <span>Ants</span><span id="forage-ants-val">200</span>
+            </span>
+            <input id="forage-ants" type="range" min="50" max="500" step="10" value="200"
+              class="mt-1 w-full accent-stone-700" />
+          </label>
+
+          <label class="block">
+            <span class="flex justify-between text-xs font-medium text-stone-600">
+              <span>Evaporation</span><span id="forage-evap-val">0.6</span>
+            </span>
+            <input id="forage-evap" type="range" min="0.1" max="3" step="0.05" value="0.6"
+              class="mt-1 w-full accent-stone-700" />
+          </label>
+
+          <label class="block">
+            <span class="flex justify-between text-xs font-medium text-stone-600">
+              <span>Pheromone strength</span><span id="forage-deposit-val">0.7</span>
+            </span>
+            <input id="forage-deposit" type="range" min="0.2" max="2" step="0.05" value="0.7"
+              class="mt-1 w-full accent-stone-700" />
+          </label>
+
+          <label class="block">
+            <span class="flex justify-between text-xs font-medium text-stone-600">
+              <span>Random wander</span><span id="forage-wander-val">0.35</span>
+            </span>
+            <input id="forage-wander" type="range" min="0.05" max="1" step="0.025" value="0.35"
+              class="mt-1 w-full accent-stone-700" />
+          </label>
+
+          <label class="flex items-center gap-2 text-xs font-medium text-stone-600">
+            <input id="forage-show-phero" type="checkbox" checked class="accent-stone-700" />
+            Show pheromone field
+          </label>
+
+          <p class="text-xs text-stone-500">Click anywhere on the canvas to drop new food.</p>
+        </aside>
+      </div>
+
+      <div class="mt-6 space-y-2 text-stone-700 leading-relaxed">
+        <p><strong>Watch for:</strong> within ~20 seconds, bright orange trails connect the nest to the food sources. The trails to closer food get stronger because the round-trip is faster, so each unit of food deposits more pheromone per second.</p>
+        <p><strong>Try this:</strong> drag the evaporation slider up. Trails become less stable, but the colony reacts faster when food runs out and reroutes to a new source. There is no single right setting. Real ant species tune evaporation rates for their environment.</p>
+      </div>
+    </section>
+
+    <section>
+      <h2 class="font-serif text-3xl text-stone-900">Choosing what role to do</h2>
+      <p class="mt-4 text-stone-700 leading-relaxed">
+        Real harvester ants do four main jobs: foraging, nest maintenance, patrolling, and midden (trash) work. The proportion the colony needs shifts hour by hour as conditions change. Ants switch tasks based on how often they bump into ants doing each job. No supervisor reassigns them. Move the sliders below to set the colony's <em>target</em> demand, and watch it reorganize.
+      </p>
+
+      <div class="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_220px]">
+        <div>
+          <canvas id="role-canvas" width="540" height="380"
+            class="block w-full max-w-[540px] rounded-lg bg-stone-900 mx-auto"></canvas>
+          <p class="mt-2 text-xs text-stone-500 text-center">
+            <span class="inline-block h-2 w-2 rounded-full bg-amber-400 align-middle"></span> forager
+            <span class="ml-3 inline-block h-2 w-2 rounded-full bg-sky-400 align-middle"></span> nest worker
+            <span class="ml-3 inline-block h-2 w-2 rounded-full bg-rose-400 align-middle"></span> patroller
+            <span class="ml-3 inline-block h-2 w-2 rounded-full bg-lime-400 align-middle"></span> midden worker
+          </p>
+        </div>
+
+        <aside class="space-y-4 text-sm">
+          <div class="flex gap-2">
+            <button id="role-toggle" class="flex-1 rounded-md bg-stone-900 px-3 py-2 font-medium text-white hover:bg-stone-700">Pause</button>
+            <button id="role-reset" class="flex-1 rounded-md border border-stone-300 px-3 py-2 font-medium text-stone-700 hover:bg-stone-100">Reset</button>
+          </div>
+
+          <p class="text-xs font-medium uppercase tracking-wider text-stone-500">Target demand</p>
+
+          <label class="block">
+            <span class="flex justify-between text-xs font-medium"><span class="text-amber-700">Foragers</span><span id="role-tgt-forager-val">40%</span></span>
+            <input id="role-tgt-forager" type="range" min="0" max="100" value="40" class="mt-1 w-full accent-amber-500" />
+          </label>
+          <label class="block">
+            <span class="flex justify-between text-xs font-medium"><span class="text-sky-700">Nest</span><span id="role-tgt-nest-val">30%</span></span>
+            <input id="role-tgt-nest" type="range" min="0" max="100" value="30" class="mt-1 w-full accent-sky-500" />
+          </label>
+          <label class="block">
+            <span class="flex justify-between text-xs font-medium"><span class="text-rose-700">Patrol</span><span id="role-tgt-patrol-val">15%</span></span>
+            <input id="role-tgt-patrol" type="range" min="0" max="100" value="15" class="mt-1 w-full accent-rose-500" />
+          </label>
+          <label class="block">
+            <span class="flex justify-between text-xs font-medium"><span class="text-lime-700">Midden</span><span id="role-tgt-midden-val">15%</span></span>
+            <input id="role-tgt-midden" type="range" min="0" max="100" value="15" class="mt-1 w-full accent-lime-500" />
+          </label>
+        </aside>
+      </div>
+
+      <div class="mt-6 space-y-2 text-stone-700 leading-relaxed">
+        <p><strong>Watch for:</strong> the four bars at the top of the canvas (current counts) shifting toward the target lines. No ant has access to global counts. They estimate the colony's task distribution from their own local encounters.</p>
+        <p><strong>Try this:</strong> drag "Foragers" to zero. Within a few seconds nearly all the gold dots disappear, even though no central authority reassigned them. Then crank "Patrol" to 80. Watch the colony pivot.</p>
+      </div>
+    </section>
+
+    <section>
+      <p class="text-xs font-medium uppercase tracking-widest text-stone-500">Why this matters</p>
+      <h2 class="mt-2 font-serif text-3xl text-stone-900">The colony is the computer</h2>
+      <p class="mt-4 text-stone-700 leading-relaxed">
+        The colony is performing <em>information processing</em>. The shape of its pheromone trails is a live map of the food landscape. The distribution of its workers is a live read-out of the colony's current needs. Both are computed by thousands of identical, slow agents following simple local rules, with no controller and no global view.
+      </p>
+      <p class="mt-4 text-stone-700 leading-relaxed">
+        The same pattern shows up in immune systems (B-cells and T-cells signaling each other to mount a response), in neural circuits (no neuron understands speech, but the network does), and in markets (no trader knows the price, yet the price is computed). Local rules. Environmental memory. Slow positive feedback. A colony does not have a brain. It is one.
+      </p>
+    </section>
+
+  </main>
+
+  <script src="sim.js"></script>
+</body>
+</html>

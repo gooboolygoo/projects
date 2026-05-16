@@ -1,0 +1,9 @@
+title: How Ant Colonies Think
+blurb: Two interactive simulations of information processing in ant colonies. Watch pheromone trails emerge as ants forage, and watch task allocation self-tune as ants encounter each other.
+tags:
+  - complexity
+  - emergence
+  - biology
+  - simulation
+  - stigmergy
+donate: true
