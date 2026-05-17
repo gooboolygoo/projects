@@ -1,0 +1,2049 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BITS // Solomonoff Wordle</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0e14;
+    --bg-2: #11161f;
+    --bg-3: #1a2230;
+    --line: #2a3548;
+    --line-soft: #1f2937;
+    --text: #d4dae3;
+    --text-dim: #7a8696;
+    --text-faint: #4a5468;
+    --you: #ffb627;       /* amber, user */
+    --bot: #00d9ff;       /* cyan, bayesian */
+    --good: #4ade80;
+    --bad: #f87171;
+    --warn: #fbbf24;
+    --mono: 'IBM Plex Mono', 'Courier New', monospace;
+    --sans: 'IBM Plex Sans', system-ui, sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* CRT vibe, subtle */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      rgba(255,255,255,0.012) 0,
+      rgba(255,255,255,0.012) 1px,
+      transparent 1px,
+      transparent 3px
+    );
+    pointer-events: none;
+    z-index: 100;
+  }
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.4) 100%);
+    pointer-events: none;
+    z-index: 99;
+  }
+
+  /* ===== GENERATOR SELECTOR ===== */
+  .gen-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+  }
+  .gen-opt {
+    border: 1px solid var(--line);
+    background: var(--bg-2);
+    color: var(--text);
+    padding: 8px 10px;
+    cursor: pointer;
+    font-family: var(--mono);
+    font-size: 10px;
+    text-align: left;
+    transition: all 0.1s;
+    line-height: 1.3;
+  }
+  .gen-opt:hover { border-color: var(--text); }
+  .gen-opt.selected {
+    border-color: var(--you);
+    background: rgba(255,182,39,0.08);
+    color: var(--you);
+  }
+  .gen-opt .gen-name { font-weight: 600; display: block; }
+  .gen-opt .gen-sub { color: var(--text-faint); font-size: 9px; margin-top: 2px; display: block; }
+  .gen-opt.selected .gen-sub { color: rgba(255,182,39,0.7); }
+  .gen-warn {
+    margin-top: 10px;
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--warn);
+    line-height: 1.4;
+    min-height: 12px;
+  }
+
+  /* ===== CALIBRATE MODE ===== */
+  .cal-card {
+    border: 1px solid var(--line);
+    background: var(--bg-2);
+    padding: 20px;
+  }
+  .cal-prompt {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 12px;
+    text-align: center;
+  }
+  .cal-display {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .cal-side {
+    text-align: center;
+    padding: 14px;
+    border: 1px solid var(--line);
+    background: var(--bg-3);
+  }
+  .cal-side .lbl {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    margin-bottom: 4px;
+  }
+  .cal-side .val {
+    font-family: var(--mono);
+    font-size: 36px;
+    font-weight: 700;
+    line-height: 1;
+  }
+  .cal-side.you .lbl { color: var(--you); }
+  .cal-side.you .val { color: var(--you); }
+  .cal-side.bot .lbl { color: var(--bot); }
+  .cal-side.bot .val { color: var(--bot); }
+  .cal-side .sub {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-dim);
+    margin-top: 4px;
+  }
+
+  /* slider */
+  .cal-slider-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin: 16px 0;
+  }
+  .cal-slider-row .end {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text-dim);
+    font-weight: 600;
+    width: 60px;
+    text-align: center;
+  }
+  .cal-slider {
+    flex: 1;
+    -webkit-appearance: none;
+    appearance: none;
+    height: 6px;
+    background: linear-gradient(to right, var(--bot) 0%, var(--bg-3) 50%, var(--you) 100%);
+    border: 1px solid var(--line);
+    outline: none;
+    cursor: pointer;
+  }
+  .cal-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 22px;
+    height: 22px;
+    background: var(--text);
+    border: 2px solid var(--bg);
+    cursor: pointer;
+    border-radius: 0;
+  }
+  .cal-slider::-moz-range-thumb {
+    width: 22px;
+    height: 22px;
+    background: var(--text);
+    border: 2px solid var(--bg);
+    cursor: pointer;
+    border-radius: 0;
+  }
+
+  .cal-quick {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+    margin-top: 6px;
+  }
+  .cal-quick button {
+    font-family: var(--mono);
+    font-size: 11px;
+    padding: 8px 4px;
+    border: 1px solid var(--line);
+    background: var(--bg-2);
+    color: var(--text-dim);
+    cursor: pointer;
+    transition: all 0.1s;
+  }
+  .cal-quick button:hover {
+    border-color: var(--you);
+    color: var(--you);
+  }
+
+  .brier-history {
+    max-height: 200px;
+    overflow-y: auto;
+    border-top: 1px solid var(--line);
+    margin-top: 12px;
+  }
+  .brier-row {
+    display: grid;
+    grid-template-columns: 30px 50px 1fr 1fr 1fr;
+    padding: 6px 12px;
+    gap: 8px;
+    font-family: var(--mono);
+    font-size: 11px;
+    border-bottom: 1px solid var(--line-soft);
+    align-items: center;
+  }
+  .brier-row.head {
+    color: var(--text-faint);
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    background: var(--bg-3);
+    position: sticky;
+    top: 0;
+  }
+  .brier-row .you-cell { color: var(--you); text-align: right; }
+  .brier-row .bot-cell { color: var(--bot); text-align: right; }
+  .brier-row .bit-cell { text-align: center; font-weight: 700; }
+
+  /* ===== TICKER ===== */
+  .ticker {
+    background: #000;
+    border-bottom: 1px solid var(--line);
+    padding: 6px 0;
+    font-family: var(--mono);
+    font-size: 11px;
+    white-space: nowrap;
+    overflow: hidden;
+    position: relative;
+    z-index: 10;
+  }
+  .ticker-track {
+    display: inline-block;
+    animation: tickerscroll 60s linear infinite;
+    padding-left: 100%;
+  }
+  .ticker-track > span {
+    margin: 0 32px;
+    color: var(--text-dim);
+  }
+  .ticker-track .you { color: var(--you); }
+  .ticker-track .bot { color: var(--bot); }
+  .ticker-track .sep { color: var(--text-faint); }
+  @keyframes tickerscroll {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+  }
+
+  /* ===== HEADER ===== */
+  .header {
+    border-bottom: 1px solid var(--line);
+    padding: 18px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--bg-2);
+    position: relative;
+    z-index: 10;
+  }
+  .logo {
+    font-family: var(--mono);
+    font-weight: 700;
+    font-size: 18px;
+    letter-spacing: 0.05em;
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+  }
+  .logo .b { color: var(--you); }
+  .logo .i { color: var(--text); }
+  .logo .t { color: var(--bot); }
+  .logo .s { color: var(--text); }
+  .logo .sub {
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 400;
+    letter-spacing: 0.2em;
+    color: var(--text-faint);
+    text-transform: uppercase;
+  }
+  .header-right {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-dim);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    display: flex;
+    gap: 24px;
+    align-items: center;
+  }
+  .live-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--good);
+    margin-right: 8px;
+    animation: pulse 1.5s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  /* ===== MODE TABS ===== */
+  .modes {
+    display: flex;
+    border-bottom: 1px solid var(--line);
+    background: var(--bg);
+    position: relative;
+    z-index: 10;
+  }
+  .mode-tab {
+    flex: 1;
+    padding: 16px 24px;
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    cursor: pointer;
+    background: transparent;
+    color: var(--text-dim);
+    border: none;
+    border-right: 1px solid var(--line);
+    text-align: left;
+    transition: all 0.15s;
+    position: relative;
+  }
+  .mode-tab:last-child { border-right: none; }
+  .mode-tab:hover { color: var(--text); background: var(--bg-2); }
+  .mode-tab.active {
+    color: var(--text);
+    background: var(--bg-2);
+  }
+  .mode-tab.active::before {
+    content: '';
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 2px;
+    background: var(--you);
+  }
+  .mode-tab .num {
+    color: var(--text-faint);
+    margin-right: 8px;
+  }
+  .mode-tab .desc {
+    display: block;
+    font-size: 10px;
+    font-weight: 400;
+    color: var(--text-faint);
+    text-transform: none;
+    letter-spacing: 0.05em;
+    margin-top: 4px;
+  }
+  .mode-tab.active .desc { color: var(--text-dim); }
+
+  /* ===== MAIN ===== */
+  .main {
+    display: grid;
+    grid-template-columns: 1fr 360px;
+    min-height: calc(100vh - 130px);
+  }
+
+  .left-pane {
+    padding: 32px;
+    border-right: 1px solid var(--line);
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+    position: relative;
+    z-index: 5;
+  }
+
+  .right-pane {
+    background: var(--bg-2);
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    position: relative;
+    z-index: 5;
+  }
+
+  /* ===== READOUTS ===== */
+  .readout {
+    border: 1px solid var(--line);
+    background: var(--bg-2);
+  }
+  .readout-head {
+    border-bottom: 1px solid var(--line);
+    padding: 8px 12px;
+    background: var(--bg-3);
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    display: flex;
+    justify-content: space-between;
+  }
+  .readout-head .label { color: var(--text); }
+  .readout-body { padding: 16px; }
+
+  .right-pane .readout {
+    background: var(--bg-3);
+  }
+  .right-pane .readout-head { background: var(--bg-2); }
+
+  /* ===== DATA STREAM ===== */
+  .stream {
+    font-family: var(--mono);
+    font-size: 28px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    line-height: 1.4;
+    min-height: 52px;
+    word-break: break-all;
+    color: var(--text);
+  }
+  .stream .bit-0 { color: var(--text); }
+  .stream .bit-1 { color: var(--text); }
+  .stream .bit-new {
+    color: var(--you);
+    animation: bitpop 0.35s ease-out;
+  }
+  @keyframes bitpop {
+    0%   { color: var(--good); transform: translateY(-6px); opacity: 0; }
+    50%  { color: var(--good); transform: translateY(0); opacity: 1; }
+    100% { color: var(--you); transform: translateY(0); opacity: 1; }
+  }
+  .stream-empty {
+    color: var(--text-faint);
+    font-family: var(--sans);
+    font-style: italic;
+    font-weight: 400;
+    font-size: 14px;
+    letter-spacing: normal;
+  }
+  .stream-counter {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-faint);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-top: 8px;
+  }
+
+  /* ===== PREDICT MODE ===== */
+  .versus {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 16px;
+    align-items: stretch;
+  }
+  .player-card {
+    border: 1px solid var(--line);
+    background: var(--bg-2);
+    padding: 16px;
+    position: relative;
+  }
+  .player-card.you { border-color: rgba(255,182,39,0.35); }
+  .player-card.bot { border-color: rgba(0,217,255,0.35); }
+  .player-head {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .player-card.you .player-head { color: var(--you); }
+  .player-card.bot .player-head { color: var(--bot); }
+  .player-prediction {
+    font-family: var(--mono);
+    font-size: 56px;
+    font-weight: 700;
+    line-height: 1;
+    margin: 8px 0;
+  }
+  .player-card.you .player-prediction { color: var(--you); }
+  .player-card.bot .player-prediction { color: var(--bot); }
+  .player-prediction.pending {
+    color: var(--text-faint) !important;
+  }
+  .player-conf {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text-dim);
+  }
+  .vs-divider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text-faint);
+    letter-spacing: 0.2em;
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    padding: 0 4px;
+  }
+
+  /* ===== GUESS BUTTONS ===== */
+  .guess-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 8px;
+  }
+  .guess-btn {
+    font-family: var(--mono);
+    font-size: 28px;
+    font-weight: 700;
+    padding: 20px;
+    border: 1.5px solid var(--line);
+    background: var(--bg-2);
+    color: var(--text);
+    cursor: pointer;
+    transition: all 0.1s;
+    letter-spacing: 0.05em;
+  }
+  .guess-btn:hover:not(:disabled) {
+    border-color: var(--you);
+    background: rgba(255,182,39,0.08);
+    color: var(--you);
+    transform: translateY(-1px);
+  }
+  .guess-btn:active:not(:disabled) {
+    transform: translateY(0);
+  }
+  .guess-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+  .guess-btn .key-hint {
+    display: block;
+    font-size: 9px;
+    color: var(--text-faint);
+    margin-top: 6px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    font-weight: 400;
+  }
+
+  .action-row {
+    display: flex;
+    gap: 12px;
+    margin-top: 16px;
+    flex-wrap: wrap;
+  }
+  .btn {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 10px 16px;
+    border: 1px solid var(--line);
+    background: transparent;
+    color: var(--text-dim);
+    cursor: pointer;
+    transition: all 0.1s;
+  }
+  .btn:hover {
+    border-color: var(--text);
+    color: var(--text);
+  }
+  .btn.primary {
+    border-color: var(--you);
+    color: var(--you);
+  }
+  .btn.primary:hover {
+    background: var(--you);
+    color: var(--bg);
+  }
+  .btn.danger:hover {
+    border-color: var(--bad);
+    color: var(--bad);
+  }
+
+  /* ===== SCOREBOARD ===== */
+  .score-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+  }
+  .score-cell {
+    background: var(--bg-2);
+    padding: 14px 16px;
+  }
+  .score-label {
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    margin-bottom: 4px;
+  }
+  .score-value {
+    font-family: var(--mono);
+    font-size: 24px;
+    font-weight: 600;
+    line-height: 1.1;
+  }
+  .score-value.you { color: var(--you); }
+  .score-value.bot { color: var(--bot); }
+  .score-sub {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-dim);
+    margin-top: 2px;
+  }
+
+  /* ===== HISTORY LOG ===== */
+  .log {
+    font-family: var(--mono);
+    font-size: 11px;
+    max-height: 200px;
+    overflow-y: auto;
+    border-top: 1px solid var(--line);
+  }
+  .log-row {
+    display: grid;
+    grid-template-columns: 30px 1fr 60px 60px;
+    gap: 8px;
+    padding: 6px 12px;
+    border-bottom: 1px solid var(--line-soft);
+    align-items: center;
+  }
+  .log-row.header-row {
+    color: var(--text-faint);
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    background: var(--bg-3);
+    position: sticky;
+    top: 0;
+  }
+  .log-actual { text-align: center; font-weight: 700; }
+  .log-you, .log-bot { text-align: center; }
+  .log-correct { color: var(--good); }
+  .log-wrong { color: var(--bad); }
+  .log-row .actual-bit {
+    font-size: 14px;
+  }
+  .log::-webkit-scrollbar { width: 8px; }
+  .log::-webkit-scrollbar-track { background: var(--bg-3); }
+  .log::-webkit-scrollbar-thumb { background: var(--line); }
+
+  /* ===== IDENTIFY MODE ===== */
+  .hyp-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    max-height: 420px;
+    overflow-y: auto;
+    padding: 4px;
+  }
+  .hyp-list::-webkit-scrollbar { width: 8px; }
+  .hyp-list::-webkit-scrollbar-track { background: var(--bg); }
+  .hyp-list::-webkit-scrollbar-thumb { background: var(--line); }
+
+  .hyp-btn {
+    text-align: left;
+    padding: 10px 12px;
+    border: 1px solid var(--line);
+    background: var(--bg-2);
+    color: var(--text);
+    cursor: pointer;
+    font-family: var(--mono);
+    font-size: 11px;
+    transition: all 0.1s;
+    position: relative;
+  }
+  .hyp-btn:hover:not(:disabled) {
+    border-color: var(--you);
+    background: rgba(255,182,39,0.05);
+  }
+  .hyp-btn .hyp-name {
+    font-weight: 600;
+    margin-bottom: 4px;
+    display: block;
+  }
+  .hyp-btn .hyp-prior {
+    color: var(--text-faint);
+    font-size: 10px;
+  }
+  .hyp-btn .hyp-post {
+    color: var(--bot);
+    font-size: 10px;
+    margin-left: 6px;
+  }
+  .hyp-btn:disabled {
+    opacity: 0.3;
+    text-decoration: line-through;
+    text-decoration-color: var(--bad);
+    cursor: not-allowed;
+  }
+  .hyp-btn.wrong-guess {
+    border-color: var(--bad);
+    background: rgba(248,113,113,0.08);
+    animation: shake 0.4s;
+  }
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-3px); }
+    75% { transform: translateX(3px); }
+  }
+
+  .identify-status {
+    padding: 14px 16px;
+    border: 1px solid var(--line);
+    background: var(--bg-2);
+    font-family: var(--mono);
+    font-size: 12px;
+    margin-bottom: 16px;
+  }
+  .identify-status .row {
+    display: flex;
+    justify-content: space-between;
+    margin: 2px 0;
+  }
+  .identify-status .label { color: var(--text-dim); }
+  .identify-status .val { color: var(--text); font-weight: 600; }
+  .identify-status .val.warn { color: var(--warn); }
+
+  /* ===== POSTERIOR BARS ===== */
+  .posterior-list {
+    max-height: 280px;
+    overflow-y: auto;
+  }
+  .post-row {
+    display: grid;
+    grid-template-columns: 1fr 60px;
+    gap: 8px;
+    padding: 4px 0;
+    font-family: var(--mono);
+    font-size: 11px;
+    align-items: center;
+  }
+  .post-row .name { color: var(--text); }
+  .post-row.dead .name { color: var(--text-faint); text-decoration: line-through; }
+  .post-bar-track {
+    grid-column: 1 / -1;
+    height: 3px;
+    background: var(--bg);
+    margin-top: 2px;
+    margin-bottom: 6px;
+  }
+  .post-bar {
+    height: 100%;
+    background: var(--bot);
+    transition: width 0.4s cubic-bezier(0.4,0,0.2,1);
+  }
+  .post-row.dead .post-bar { background: var(--text-faint); width: 0 !important; }
+  .post-row .post-val { color: var(--bot); text-align: right; font-weight: 600; }
+  .post-row.dead .post-val { color: var(--text-faint); }
+  .posterior-list::-webkit-scrollbar { width: 8px; }
+  .posterior-list::-webkit-scrollbar-track { background: var(--bg-2); }
+  .posterior-list::-webkit-scrollbar-thumb { background: var(--line); }
+
+  /* ===== MESSAGES ===== */
+  .flash {
+    padding: 12px 16px;
+    font-family: var(--mono);
+    font-size: 12px;
+    margin: 12px 0;
+    border-left: 3px solid var(--good);
+    background: rgba(74,222,128,0.06);
+  }
+  .flash.bad { border-color: var(--bad); background: rgba(248,113,113,0.06); }
+  .flash.info { border-color: var(--bot); background: rgba(0,217,255,0.06); }
+  .flash strong { color: var(--text); }
+
+  /* ===== HIDDEN ===== */
+  .hidden { display: none !important; }
+
+  /* ===== HELP ===== */
+  .help-section h3 {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 8px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--line-soft);
+  }
+  .help-section p {
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--text);
+    margin-bottom: 8px;
+  }
+  .help-section .kbd {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 10px;
+    background: var(--bg-3);
+    border: 1px solid var(--line);
+    padding: 1px 6px;
+    color: var(--text);
+  }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 900px) {
+    .main { grid-template-columns: 1fr; }
+    .right-pane { border-top: 1px solid var(--line); }
+    .versus { grid-template-columns: 1fr; }
+    .vs-divider { writing-mode: horizontal-tb; transform: none; padding: 8px 0; }
+    .header { padding: 14px 20px; }
+    .left-pane { padding: 20px; }
+    .header-right { gap: 12px; font-size: 10px; }
+    .hyp-list { grid-template-columns: 1fr; }
+    .mode-tab { padding: 12px 16px; font-size: 11px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- TICKER -->
+<div class="ticker">
+  <div class="ticker-track" id="ticker-track">
+    <span class="sep">&#9642;</span>
+    <span>SOLOMONOFF EXCHANGE</span>
+    <span class="sep">&#9642;</span>
+    <span class="you">YOU</span>
+    <span class="sep">vs</span>
+    <span class="bot">UNIVERSAL BAYESIAN</span>
+    <span class="sep">&#9642;</span>
+    <span>UNIVERSAL PRIOR: 2^(-L)</span>
+    <span class="sep">&#9642;</span>
+    <span>SHORT PROGRAMS DOMINATE</span>
+    <span class="sep">&#9642;</span>
+    <span class="you">YOU</span>
+    <span class="sep">vs</span>
+    <span class="bot">UNIVERSAL BAYESIAN</span>
+    <span class="sep">&#9642;</span>
+    <span>FALSIFICATION IS INSTANT</span>
+    <span class="sep">&#9642;</span>
+    <span>EVERY BIT IS EVIDENCE</span>
+    <span class="sep">&#9642;</span>
+  </div>
+</div>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="logo">
+    <span class="b">B</span><span class="i">I</span><span class="t">T</span><span class="s">S</span>
+    <span class="sub">// Solomonoff Wordle &middot; Build 1.0</span>
+  </div>
+  <div class="header-right">
+    <span><span class="live-dot"></span>LIVE</span>
+    <span id="session-id">SESSION 0001</span>
+  </div>
+</div>
+
+<!-- MODE TABS -->
+<div class="modes">
+  <button class="mode-tab active" data-mode="predict">
+    <span class="num">01</span>PREDICT
+    <span class="desc">Guess each next bit. Race the Bayesian.</span>
+  </button>
+  <button class="mode-tab" data-mode="identify">
+    <span class="num">02</span>IDENTIFY
+    <span class="desc">Name the hidden program in as few bits as possible.</span>
+  </button>
+  <button class="mode-tab" data-mode="calibrate">
+    <span class="num">03</span>CALIBRATE
+    <span class="desc">Forecast a probability. Scored by Brier &amp; log-loss.</span>
+  </button>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- LEFT PANE -->
+  <div class="left-pane">
+
+    <!-- DATA STREAM -->
+    <div class="readout">
+      <div class="readout-head">
+        <span class="label">DATA STREAM</span>
+        <span id="stream-meta">Round &middot;</span>
+      </div>
+      <div class="readout-body">
+        <div class="stream" id="stream"><span class="stream-empty">Press START to begin a round.</span></div>
+        <div class="stream-counter" id="stream-counter">N = 0 bits observed</div>
+      </div>
+    </div>
+
+    <!-- PREDICT MODE PANELS -->
+    <div id="predict-panels">
+
+      <!-- VS -->
+      <div class="versus">
+        <div class="player-card you">
+          <div class="player-head">&#9650; YOU</div>
+          <div class="player-prediction pending" id="you-pred">&middot;</div>
+          <div class="player-conf" id="you-conf">awaiting guess</div>
+        </div>
+        <div class="vs-divider">VS</div>
+        <div class="player-card bot">
+          <div class="player-head">&#9679; BAYESIAN</div>
+          <div class="player-prediction pending" id="bot-pred">&middot;</div>
+          <div class="player-conf" id="bot-conf">awaiting bit</div>
+        </div>
+      </div>
+
+      <!-- GUESS -->
+      <div>
+        <div class="guess-row">
+          <button class="guess-btn" id="guess-0" onclick="submitGuess(0)">
+            0
+            <span class="key-hint">press 0</span>
+          </button>
+          <button class="guess-btn" id="guess-1" onclick="submitGuess(1)">
+            1
+            <span class="key-hint">press 1</span>
+          </button>
+        </div>
+        <div class="action-row">
+          <button class="btn primary" id="start-btn" onclick="startRound()">&#9654; START ROUND</button>
+          <button class="btn" id="next-btn" onclick="nextRound()" style="display:none">&#8635; NEW ROUND</button>
+          <button class="btn danger" onclick="resetAll()">&#9763; RESET SCORE</button>
+        </div>
+        <div id="flash-area"></div>
+      </div>
+
+      <!-- SCOREBOARD -->
+      <div>
+        <div class="readout">
+          <div class="readout-head">
+            <span class="label">SESSION SCORECARD</span>
+            <span id="rounds-played">0 rounds</span>
+          </div>
+          <div class="score-grid">
+            <div class="score-cell">
+              <div class="score-label">&#9650; YOUR HITS</div>
+              <div class="score-value you" id="you-hits">0 / 0</div>
+              <div class="score-sub" id="you-pct">&middot;</div>
+            </div>
+            <div class="score-cell">
+              <div class="score-label">&#9679; BAYESIAN HITS</div>
+              <div class="score-value bot" id="bot-hits">0 / 0</div>
+              <div class="score-sub" id="bot-pct">&middot;</div>
+            </div>
+            <div class="score-cell">
+              <div class="score-label">&#9650; YOUR LOG-LOSS</div>
+              <div class="score-value you" id="you-logloss">&middot;</div>
+              <div class="score-sub">lower is better</div>
+            </div>
+            <div class="score-cell">
+              <div class="score-label">&#9679; BAYESIAN LOG-LOSS</div>
+              <div class="score-value bot" id="bot-logloss">&middot;</div>
+              <div class="score-sub">theoretical floor</div>
+            </div>
+          </div>
+          <div class="log" id="prediction-log">
+            <div class="log-row header-row">
+              <span>#</span><span>Bit</span><span>You</span><span>Bot</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- IDENTIFY MODE PANELS -->
+    <div id="identify-panels" class="hidden">
+      <div class="identify-status">
+        <div class="row"><span class="label">BITS OBSERVED</span><span class="val" id="id-bits">0</span></div>
+        <div class="row"><span class="label">CANDIDATES ALIVE</span><span class="val" id="id-alive">&middot;</span></div>
+        <div class="row"><span class="label">YOUR WRONG GUESSES</span><span class="val warn" id="id-wrong">0</span></div>
+        <div class="row"><span class="label">SCORE IF YOU SOLVE NOW</span><span class="val" id="id-score">&middot;</span></div>
+      </div>
+
+      <div class="action-row">
+        <button class="btn primary" id="id-start-btn" onclick="startIdentifyRound()">&#9654; START ROUND</button>
+        <button class="btn" id="id-advance-btn" onclick="advanceBit()" style="display:none">&#9658; REVEAL NEXT BIT</button>
+        <button class="btn" id="id-next-btn" onclick="nextIdentifyRound()" style="display:none">&#8635; NEW ROUND</button>
+        <button class="btn danger" onclick="resetIdentify()">&#9763; RESET</button>
+      </div>
+
+      <div id="id-flash"></div>
+
+      <div class="readout">
+        <div class="readout-head">
+          <span class="label">YOUR GUESS, PICK THE HIDDEN HYPOTHESIS</span>
+          <span id="id-instruction">click any candidate</span>
+        </div>
+        <div class="readout-body">
+          <div class="hyp-list" id="hyp-list"></div>
+        </div>
+      </div>
+
+      <div class="readout" style="margin-top: 24px;">
+        <div class="readout-head">
+          <span class="label">&#9650; YOUR IDENTIFY HISTORY</span>
+          <span id="id-history-meta">0 rounds</span>
+        </div>
+        <div class="readout-body">
+          <div id="id-history" style="font-family: var(--mono); font-size: 12px; color: var(--text-dim);">
+            Solve rounds to build a track record.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CALIBRATE MODE PANELS -->
+    <div id="calibrate-panels" class="hidden">
+
+      <div class="cal-card">
+        <div class="cal-prompt" id="cal-prompt-text">Estimate P(next bit = 1)</div>
+
+        <div class="cal-display">
+          <div class="cal-side you">
+            <div class="lbl">&#9650; YOUR FORECAST</div>
+            <div class="val" id="cal-you-val">50%</div>
+            <div class="sub">P(next = 1)</div>
+          </div>
+          <div class="cal-side bot">
+            <div class="lbl">&#9679; BAYESIAN</div>
+            <div class="val" id="cal-bot-val">&middot;</div>
+            <div class="sub">posterior expectation</div>
+          </div>
+        </div>
+
+        <div class="cal-slider-row">
+          <span class="end" style="color:var(--bot)">0% (sure 0)</span>
+          <input type="range" min="0" max="100" value="50" class="cal-slider" id="cal-slider">
+          <span class="end" style="color:var(--you)">100% (sure 1)</span>
+        </div>
+
+        <div class="cal-quick">
+          <button onclick="setCalibrate(1)">1%</button>
+          <button onclick="setCalibrate(10)">10%</button>
+          <button onclick="setCalibrate(25)">25%</button>
+          <button onclick="setCalibrate(50)">50%</button>
+          <button onclick="setCalibrate(75)">75%</button>
+          <button onclick="setCalibrate(90)">90%</button>
+          <button onclick="setCalibrate(99)">99%</button>
+        </div>
+
+        <div class="action-row" style="margin-top: 20px;">
+          <button class="btn primary" id="cal-start-btn" onclick="startCalibrateRound()">&#9654; START ROUND</button>
+          <button class="btn primary" id="cal-commit-btn" onclick="commitCalibrate()" style="display:none">&#10003; COMMIT &amp; REVEAL</button>
+          <button class="btn" id="cal-next-btn" onclick="nextCalibrateRound()" style="display:none">&#8635; NEW ROUND</button>
+          <button class="btn danger" onclick="resetCalibrate()">&#9763; RESET</button>
+        </div>
+
+        <div id="cal-flash"></div>
+      </div>
+
+      <div class="readout">
+        <div class="readout-head">
+          <span class="label">SCORECARD. LOWER IS BETTER</span>
+          <span id="cal-rounds-meta">0 forecasts</span>
+        </div>
+        <div class="score-grid">
+          <div class="score-cell">
+            <div class="score-label">&#9650; YOUR BRIER SCORE</div>
+            <div class="score-value you" id="cal-you-brier">&middot;</div>
+            <div class="score-sub">mean (p &minus; outcome)&sup2;</div>
+          </div>
+          <div class="score-cell">
+            <div class="score-label">&#9679; BAYESIAN BRIER</div>
+            <div class="score-value bot" id="cal-bot-brier">&middot;</div>
+            <div class="score-sub">theoretical floor</div>
+          </div>
+          <div class="score-cell">
+            <div class="score-label">&#9650; YOUR LOG-LOSS</div>
+            <div class="score-value you" id="cal-you-ll">&middot;</div>
+            <div class="score-sub">&minus;log&#8322; p(actual)</div>
+          </div>
+          <div class="score-cell">
+            <div class="score-label">&#9679; BAYESIAN LOG-LOSS</div>
+            <div class="score-value bot" id="cal-bot-ll">&middot;</div>
+            <div class="score-sub">on the same outcomes</div>
+          </div>
+        </div>
+        <div class="brier-history" id="cal-history">
+          <div class="brier-row head">
+            <span>#</span><span class="bit-cell">Bit</span>
+            <span class="you-cell">Your P(1)</span><span class="bot-cell">Bot P(1)</span>
+            <span class="you-cell">&Delta; Brier</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- RIGHT PANE -->
+  <div class="right-pane">
+
+    <div class="readout">
+      <div class="readout-head">
+        <span class="label">&#9889; HIDDEN GENERATOR</span>
+        <span id="gen-meta">applied next round</span>
+      </div>
+      <div class="readout-body" style="padding: 12px;">
+        <div class="gen-grid" id="gen-grid"></div>
+        <div class="gen-warn" id="gen-warn"></div>
+      </div>
+    </div>
+
+    <div class="readout">
+      <div class="readout-head">
+        <span class="label">&#9679; BAYESIAN POSTERIOR</span>
+        <span id="post-meta">live</span>
+      </div>
+      <div class="readout-body">
+        <div class="posterior-list" id="posterior-list"></div>
+      </div>
+    </div>
+
+    <div class="help-section">
+      <h3>HOW TO PLAY</h3>
+      <div id="help-content"></div>
+    </div>
+
+    <div class="help-section">
+      <h3>KEYS</h3>
+      <p>
+        <span class="kbd">0</span> <span class="kbd">1</span> guess bit &middot;
+        <span class="kbd">Enter</span> start / next round &middot;
+        <span class="kbd">Space</span> reveal (identify) &middot;
+        <span class="kbd">R</span> reset
+      </p>
+    </div>
+
+    <div class="help-section">
+      <h3>THE PRIOR</h3>
+      <p style="font-size:12px;color:var(--text-dim);">
+        Hidden hypothesis drawn from the universal prior <span class="kbd">2^(&minus;L)</span>, where L is the program's description length. Short programs (Constant 0/1, alternating) are far more likely to be chosen than longer ones, exactly as Solomonoff induction would have it.
+      </p>
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+// ============================================================
+// HYPOTHESIS LIBRARY
+// ============================================================
+const hypotheses = [
+  { id: 'c0',   name: 'Constant 0',         length: 2, predict: ()    => 0,                 pattern: '0' },
+  { id: 'c1',   name: 'Constant 1',         length: 2, predict: ()    => 1,                 pattern: '1' },
+  { id: 'alt0', name: 'Alternates from 0',  length: 3, predict: (n)   => n % 2,             pattern: '01' },
+  { id: 'alt1', name: 'Alternates from 1',  length: 3, predict: (n)   => (n + 1) % 2,       pattern: '10' },
+];
+['001','010','011','100','101','110'].forEach(body => hypotheses.push({
+  id: 'p3_'+body, name: 'Period-3: '+body, length: 6,
+  predict: (n) => parseInt(body[n % 3]), pattern: body
+}));
+['0011','0110','0111','1001','1011','1100'].forEach(body => hypotheses.push({
+  id: 'p4_'+body, name: 'Period-4: '+body, length: 8,
+  predict: (n) => parseInt(body[n % 4]), pattern: body
+}));
+['00101','01011','10110','11010'].forEach(body => hypotheses.push({
+  id: 'p5_'+body, name: 'Period-5: '+body, length: 10,
+  predict: (n) => parseInt(body[n % 5]), pattern: body
+}));
+
+// ============================================================
+// SHARED STATE
+// ============================================================
+let currentMode = 'predict';
+let hiddenHyp = null;
+let data = [];
+let roundActive = false;
+
+// Predict-mode scoring
+let predictRound = 0;
+let youHits = 0, botHits = 0, totalBits = 0;
+let youSumLogLoss = 0, botSumLogLoss = 0;
+let pendingYouGuess = null;
+const ROUND_LENGTH = 12;
+
+// Identify-mode scoring
+let identifyRound = 0;
+let idWrongGuesses = 0;
+let idHistory = [];
+let idSolved = false;
+const INITIAL_REVEAL = 1;
+
+// Calibrate-mode state
+let calRound = 0;
+let calForecasts = 0;
+let calYouBrierSum = 0, calBotBrierSum = 0;
+let calYouLLSum = 0, calBotLLSum = 0;
+let calP = 0.5;
+let calBitsPerRound = 10;
+let calBitsThisRound = 0;
+let calCommitted = false;
+let calCurrentBotP = 0.5;
+let calHistory = [];
+const CAL_BITS_PER_ROUND = 10;
+
+// ============================================================
+// GENERATORS, both in-catalog (sampled from universal prior)
+// and out-of-catalog (Thue-Morse, Fibonacci word, pi binary, etc.)
+// ============================================================
+
+function thueMorse(n) {
+  let x = n, parity = 0;
+  while (x > 0) { parity ^= (x & 1); x >>= 1; }
+  return parity;
+}
+
+const fibWordCache = [];
+(function buildFibWord() {
+  let a = '1', b = '0';
+  while ((a + b).length < 4096) {
+    const c = b + a;
+    a = b; b = c;
+  }
+  for (const ch of b) fibWordCache.push(parseInt(ch));
+})();
+function fibWord(n) {
+  return fibWordCache[n % fibWordCache.length];
+}
+
+const piBinaryCache = (function() {
+  return ("00100100001111110110101010001000100001011010001100001000110100110001"
+        + "00110001100110001010001011100000001101110000011100110100010010100111"
+        + "11000010011100110001110100000110001110010001001000010101100100100110"
+        + "00111110001110000110010110101110010100001011110011010100110011110100"
+        + "10001000101011001111101101110011001100111101111111100011101100011101"
+        + "00111010101011111111101011000000111111000101010111110011011100100100"
+        + "01011010000011010000110001001110011011100101101100010111011000100110"
+        + "11001100110011001011001000000110101110011110011100110001100100100100").split('').map(Number);
+})();
+function piBinary(n) { return piBinaryCache[n % piBinaryCache.length]; }
+
+const champCache = (function() {
+  let s = '';
+  let k = 1;
+  while (s.length < 1024) { s += k.toString(2); k++; }
+  return s.split('').map(Number);
+})();
+function champernowne(n) { return champCache[n % champCache.length]; }
+
+const GENERATORS = {
+  catalog: {
+    name: 'In-catalog',
+    sub: 'Sampled by 2^(-L)',
+    inCatalog: true,
+    warn: '',
+  },
+  thuemorse: {
+    name: 'Thue-Morse',
+    sub: '01101001 10010110...',
+    inCatalog: false,
+    fn: thueMorse,
+    warn: 'OUT-OF-CATALOG: no fixed period. The posterior will thrash.',
+  },
+  fibword: {
+    name: 'Fibonacci word',
+    sub: '01001010 01001010...',
+    inCatalog: false,
+    fn: fibWord,
+    warn: 'OUT-OF-CATALOG: Sturmian. Aperiodic.',
+  },
+  pibinary: {
+    name: 'pi binary digits',
+    sub: 'After the radix point',
+    inCatalog: false,
+    fn: piBinary,
+    warn: 'OUT-OF-CATALOG: pseudorandom-looking. The Bayesian has no advantage.',
+  },
+  champernowne: {
+    name: 'Champernowne',
+    sub: '1, 10, 11, 100, 101...',
+    inCatalog: false,
+    fn: champernowne,
+    warn: 'OUT-OF-CATALOG: normal in base 2. Eventually defeats every period.',
+  },
+  coin: {
+    name: 'Fair coin',
+    sub: 'IID Bernoulli(0.5)',
+    inCatalog: false,
+    fn: null,
+    warn: 'OUT-OF-CATALOG: pure noise. There is no signal to find.',
+  },
+};
+let selectedGenerator = 'catalog';
+
+function buildHiddenFromGenerator(genKey) {
+  if (genKey === 'catalog') return sampleHypothesisFromPrior();
+  const gen = GENERATORS[genKey];
+  if (genKey === 'coin') {
+    const bits = Array.from({length: 64}, () => Math.random() < 0.5 ? 0 : 1);
+    return {
+      id: 'gen_coin', name: 'Fair coin (IID)', length: Infinity,
+      predict: (n) => bits[n % bits.length],
+      pattern: '?', outOfCatalog: true, genKey,
+    };
+  }
+  return {
+    id: 'gen_' + genKey, name: gen.name, length: Infinity,
+    predict: gen.fn, pattern: '?', outOfCatalog: true, genKey,
+  };
+}
+
+// ============================================================
+// SAMPLING FROM THE UNIVERSAL PRIOR (in-catalog)
+// ============================================================
+function sampleHypothesisFromPrior() {
+  const weights = hypotheses.map(h => Math.pow(2, -h.length));
+  const Z = weights.reduce((a, b) => a + b, 0);
+  let r = Math.random() * Z;
+  for (let i = 0; i < hypotheses.length; i++) {
+    r -= weights[i];
+    if (r <= 0) return hypotheses[i];
+  }
+  return hypotheses[hypotheses.length - 1];
+}
+
+function sampleHypothesis() {
+  return buildHiddenFromGenerator(selectedGenerator);
+}
+
+// ============================================================
+// POSTERIOR
+// ============================================================
+function computePosterior() {
+  const rows = hypotheses.map(h => {
+    let alive = true;
+    for (let i = 0; i < data.length; i++) {
+      if (h.predict(i) !== data[i]) { alive = false; break; }
+    }
+    return { h, alive, prior: Math.pow(2, -h.length) };
+  });
+  const liveMass = rows.filter(r => r.alive).reduce((s, r) => s + r.prior, 0) || 1;
+  rows.forEach(r => r.posterior = r.alive ? r.prior / liveMass : 0);
+  return rows;
+}
+
+function bayesianNextBitProb() {
+  const rows = computePosterior();
+  let p1 = 0;
+  rows.forEach(r => { if (r.alive && r.h.predict(data.length) === 1) p1 += r.posterior; });
+  const live = rows.filter(r => r.alive);
+  if (live.length === 0) return 0.5;
+  return p1;
+}
+
+// ============================================================
+// MODE SWITCHING
+// ============================================================
+document.querySelectorAll('.mode-tab').forEach(btn => {
+  btn.addEventListener('click', () => switchMode(btn.dataset.mode));
+});
+
+function switchMode(mode) {
+  currentMode = mode;
+  document.querySelectorAll('.mode-tab').forEach(b => {
+    b.classList.toggle('active', b.dataset.mode === mode);
+  });
+  document.getElementById('predict-panels').classList.toggle('hidden', mode !== 'predict');
+  document.getElementById('identify-panels').classList.toggle('hidden', mode !== 'identify');
+  document.getElementById('calibrate-panels').classList.toggle('hidden', mode !== 'calibrate');
+  data = [];
+  hiddenHyp = null;
+  roundActive = false;
+  pendingYouGuess = null;
+  idWrongGuesses = 0;
+  idSolved = false;
+  calBitsThisRound = 0;
+  calCommitted = false;
+  renderStream();
+  renderPosterior();
+  renderHelp();
+  renderGenerators();
+  if (mode === 'predict') renderPredictPanels();
+  else if (mode === 'identify') renderIdentifyPanels();
+  else renderCalibratePanels();
+}
+
+// ============================================================
+// GENERATOR SELECTOR RENDERING
+// ============================================================
+function renderGenerators() {
+  const el = document.getElementById('gen-grid');
+  el.innerHTML = Object.entries(GENERATORS).map(([key, g]) => `
+    <button class="gen-opt ${key === selectedGenerator ? 'selected' : ''}"
+            onclick="selectGenerator('${key}')">
+      <span class="gen-name">${g.name}</span>
+      <span class="gen-sub">${g.sub}</span>
+    </button>
+  `).join('');
+  document.getElementById('gen-warn').textContent = GENERATORS[selectedGenerator].warn || '';
+  document.getElementById('gen-meta').textContent =
+    roundActive ? 'next round' : (selectedGenerator === 'catalog' ? 'in-catalog' : 'out-of-catalog');
+}
+
+function selectGenerator(key) {
+  selectedGenerator = key;
+  renderGenerators();
+}
+
+// ============================================================
+// RENDERING (shared)
+// ============================================================
+function renderStream() {
+  const el = document.getElementById('stream');
+  const counter = document.getElementById('stream-counter');
+  if (data.length === 0) {
+    if (currentMode === 'predict') {
+      el.innerHTML = roundActive
+        ? '<span class="stream-empty">Make your first guess...</span>'
+        : '<span class="stream-empty">Press START to begin a round.</span>';
+    } else {
+      el.innerHTML = roundActive
+        ? '<span class="stream-empty">Bits will appear here...</span>'
+        : '<span class="stream-empty">Press START to begin a round.</span>';
+    }
+  } else {
+    el.innerHTML = data.map((b, i) => {
+      const isNew = i === data.length - 1;
+      return `<span class="bit-${b} ${isNew ? 'bit-new' : ''}">${b}</span>`;
+    }).join('');
+  }
+  counter.textContent = `N = ${data.length} bits observed`;
+  document.getElementById('stream-meta').textContent =
+    currentMode === 'predict'
+      ? (roundActive ? `Round ${predictRound} · bit ${data.length + 1} of ${ROUND_LENGTH}` : '·')
+      : (roundActive ? `Round ${identifyRound}` : '·');
+}
+
+function renderPosterior() {
+  const rows = computePosterior();
+  rows.sort((a, b) => b.posterior - a.posterior || a.h.length - b.h.length);
+  const live = rows.filter(r => r.alive);
+  document.getElementById('post-meta').textContent =
+    `${live.length} / ${rows.length} live`;
+  const top = rows.slice(0, 14);
+  const maxP = Math.max(...rows.map(r => r.posterior), 1e-12);
+  const el = document.getElementById('posterior-list');
+  el.innerHTML = top.map(r => {
+    const w = r.alive ? (r.posterior / maxP * 100) : 0;
+    const pText = r.alive
+      ? (r.posterior >= 0.001 ? (r.posterior * 100).toFixed(1) + '%' : '<0.1%')
+      : '·';
+    return `
+      <div class="post-row ${r.alive ? '' : 'dead'}">
+        <span class="name">${r.h.name}</span>
+        <span class="post-val">${pText}</span>
+        <div class="post-bar-track"><div class="post-bar" style="width:${w}%"></div></div>
+      </div>
+    `;
+  }).join('');
+}
+
+function flash(msg, kind, where = 'flash-area') {
+  const el = document.getElementById(where);
+  el.innerHTML = `<div class="flash ${kind}">${msg}</div>`;
+}
+function clearFlash(where = 'flash-area') {
+  document.getElementById(where).innerHTML = '';
+}
+
+function renderHelp() {
+  const el = document.getElementById('help-content');
+  if (currentMode === 'predict') {
+    el.innerHTML = `
+      <p>A hidden program will emit ${ROUND_LENGTH} bits, one at a time. Before each bit, guess <span class="kbd">0</span> or <span class="kbd">1</span>. The Bayesian guesses too, using the live posterior on the right.</p>
+      <p style="color:var(--text-dim);font-size:12px;">Hits are tallied; log-loss measures how confidently right (or wrong) each predictor was. The Bayesian is provably optimal <em>given the catalog</em>, but with an out-of-catalog generator selected, it has nowhere to hide either.</p>
+    `;
+  } else if (currentMode === 'identify') {
+    el.innerHTML = `
+      <p>A hidden program is generating bits. You start with ${INITIAL_REVEAL} bit revealed. Pick the hypothesis you think is the generator. Each wrong guess costs you. Reveal more bits to narrow the field.</p>
+      <p style="color:var(--text-dim);font-size:12px;">Best score: solve early, with no wrong guesses. With an out-of-catalog generator selected, <strong>none of the listed hypotheses are correct</strong>, and every guess will be wrong. That is the point: the catalog is not reality.</p>
+    `;
+  } else {
+    el.innerHTML = `
+      <p>Forecast <span class="kbd">P(next bit = 1)</span> as a probability between 0 and 1. Move the slider, hit COMMIT, and see the actual bit. The Bayesian forecasts in parallel using the posterior.</p>
+      <p style="color:var(--text-dim);font-size:12px;">Scored by <strong>Brier score</strong> (squared error) and <strong>log-loss</strong> (surprise). Confident-and-wrong is punished harder than uncertain-and-wrong. Out-of-catalog generators force you to forecast under genuine model uncertainty.</p>
+    `;
+  }
+}
+
+// ============================================================
+// PREDICT MODE
+// ============================================================
+function renderPredictPanels() {
+  renderStream();
+  renderScoreboard();
+  renderPredictionLog();
+  updateGuessButtons();
+}
+
+function renderPredictionLog() {
+  // log header is already in the DOM; rows are appended live.
+}
+
+function startRound() {
+  predictRound++;
+  hiddenHyp = sampleHypothesis();
+  data = [];
+  roundActive = true;
+  pendingYouGuess = null;
+  clearFlash();
+  document.getElementById('start-btn').style.display = 'none';
+  document.getElementById('next-btn').style.display = 'none';
+  document.getElementById('session-id').textContent = `SESSION ${String(predictRound).padStart(4,'0')}`;
+  showBotPrediction();
+  renderStream();
+  renderPosterior();
+  updateGuessButtons();
+  setYouPred('·', 'awaiting guess', true);
+}
+
+function showBotPrediction() {
+  const p1 = bayesianNextBitProb();
+  const botGuess = p1 >= 0.5 ? 1 : 0;
+  const conf = botGuess === 1 ? p1 : 1 - p1;
+  setBotPred(botGuess, `confidence ${(conf*100).toFixed(1)}%`);
+}
+
+function setYouPred(text, sub, pending) {
+  const el = document.getElementById('you-pred');
+  el.textContent = text;
+  el.classList.toggle('pending', !!pending);
+  document.getElementById('you-conf').textContent = sub;
+}
+function setBotPred(text, sub, pending) {
+  const el = document.getElementById('bot-pred');
+  el.textContent = text;
+  el.classList.toggle('pending', !!pending);
+  document.getElementById('bot-conf').textContent = sub;
+}
+
+function submitGuess(b) {
+  if (!roundActive || currentMode !== 'predict') return;
+  if (pendingYouGuess !== null) return;
+  pendingYouGuess = b;
+  setYouPred(b, `committed, revealing...`, false);
+  setTimeout(revealBit, 350);
+}
+
+function revealBit() {
+  const idx = data.length;
+  const actual = hiddenHyp.predict(idx);
+  const p1 = bayesianNextBitProb();
+  const botGuess = p1 >= 0.5 ? 1 : 0;
+  const youGuess = pendingYouGuess;
+
+  const yourProb = youGuess === 1 ? 0.95 : 0.05;
+  const youCorrect = youGuess === actual;
+  const youLL = youCorrect ? -Math.log2(0.95) : -Math.log2(0.05);
+
+  const botProbActual = actual === 1 ? p1 : 1 - p1;
+  const botProbClamped = Math.max(1e-4, Math.min(1 - 1e-4, botProbActual));
+  const botLL = -Math.log2(botProbClamped);
+  const botCorrect = botGuess === actual;
+
+  totalBits++;
+  if (youCorrect) youHits++;
+  if (botCorrect) botHits++;
+  youSumLogLoss += youLL;
+  botSumLogLoss += botLL;
+
+  data.push(actual);
+  pendingYouGuess = null;
+  renderStream();
+  renderPosterior();
+  appendLogRow(data.length, actual, youGuess, botGuess);
+  renderScoreboard();
+
+  if (data.length >= ROUND_LENGTH) {
+    endRound();
+  } else {
+    showBotPrediction();
+    setYouPred('·', 'awaiting guess', true);
+    updateGuessButtons();
+  }
+}
+
+function endRound() {
+  roundActive = false;
+  updateGuessButtons();
+  document.getElementById('next-btn').style.display = '';
+  const truthLine = `Hidden program was <strong>${hiddenHyp.name}</strong> (L=${hiddenHyp.length}, prior = ${(Math.pow(2,-hiddenHyp.length)*100).toFixed(1)}%).`;
+  flash(`<strong>Round complete.</strong> ${truthLine}`, 'info');
+}
+
+function nextRound() {
+  startRound();
+}
+
+function resetAll() {
+  predictRound = 0;
+  youHits = botHits = totalBits = 0;
+  youSumLogLoss = botSumLogLoss = 0;
+  data = [];
+  hiddenHyp = null;
+  roundActive = false;
+  pendingYouGuess = null;
+  clearFlash();
+  document.getElementById('start-btn').style.display = '';
+  document.getElementById('next-btn').style.display = 'none';
+  document.getElementById('prediction-log').innerHTML =
+    '<div class="log-row header-row"><span>#</span><span>Bit</span><span>You</span><span>Bot</span></div>';
+  setYouPred('·', 'awaiting guess', true);
+  setBotPred('·', 'awaiting bit', true);
+  renderStream();
+  renderPosterior();
+  renderScoreboard();
+}
+
+function updateGuessButtons() {
+  const enabled = roundActive && currentMode === 'predict' && pendingYouGuess === null && data.length < ROUND_LENGTH;
+  document.getElementById('guess-0').disabled = !enabled;
+  document.getElementById('guess-1').disabled = !enabled;
+}
+
+function renderScoreboard() {
+  const youAcc = totalBits > 0 ? (youHits / totalBits * 100).toFixed(1) + '%' : '·';
+  const botAcc = totalBits > 0 ? (botHits / totalBits * 100).toFixed(1) + '%' : '·';
+  document.getElementById('you-hits').textContent = `${youHits} / ${totalBits}`;
+  document.getElementById('bot-hits').textContent = `${botHits} / ${totalBits}`;
+  document.getElementById('you-pct').textContent = `accuracy ${youAcc}`;
+  document.getElementById('bot-pct').textContent = `accuracy ${botAcc}`;
+  document.getElementById('you-logloss').textContent = totalBits > 0 ? (youSumLogLoss / totalBits).toFixed(3) : '·';
+  document.getElementById('bot-logloss').textContent = totalBits > 0 ? (botSumLogLoss / totalBits).toFixed(3) : '·';
+  document.getElementById('rounds-played').textContent = `${predictRound} round${predictRound === 1 ? '' : 's'}`;
+}
+
+function appendLogRow(idx, actual, youG, botG) {
+  const log = document.getElementById('prediction-log');
+  const row = document.createElement('div');
+  row.className = 'log-row';
+  row.innerHTML = `
+    <span style="color:var(--text-faint)">${idx}</span>
+    <span class="log-actual actual-bit">${actual}</span>
+    <span class="log-you ${youG === actual ? 'log-correct' : 'log-wrong'}">${youG}</span>
+    <span class="log-bot ${botG === actual ? 'log-correct' : 'log-wrong'}">${botG}</span>
+  `;
+  log.appendChild(row);
+  log.scrollTop = log.scrollHeight;
+}
+
+// ============================================================
+// IDENTIFY MODE
+// ============================================================
+function renderIdentifyPanels() {
+  renderStream();
+  renderHypList();
+  renderIdentifyStatus();
+  renderIdHistory();
+  document.getElementById('id-start-btn').style.display = roundActive ? 'none' : '';
+  document.getElementById('id-advance-btn').style.display = roundActive && !idSolved ? '' : 'none';
+  document.getElementById('id-next-btn').style.display = (idSolved || (!roundActive && identifyRound > 0)) ? '' : 'none';
+}
+
+function startIdentifyRound() {
+  identifyRound++;
+  hiddenHyp = sampleHypothesis();
+  data = [];
+  idWrongGuesses = 0;
+  idSolved = false;
+  roundActive = true;
+  clearFlash('id-flash');
+  for (let i = 0; i < INITIAL_REVEAL; i++) data.push(hiddenHyp.predict(i));
+  renderStream();
+  renderPosterior();
+  renderHypList();
+  renderIdentifyStatus();
+  document.getElementById('id-start-btn').style.display = 'none';
+  document.getElementById('id-advance-btn').style.display = '';
+  document.getElementById('id-next-btn').style.display = 'none';
+}
+
+function advanceBit() {
+  if (!roundActive || idSolved) return;
+  data.push(hiddenHyp.predict(data.length));
+  renderStream();
+  renderPosterior();
+  renderHypList();
+  renderIdentifyStatus();
+}
+
+function makeHypGuess(hId) {
+  if (!roundActive || idSolved) return;
+  const h = hypotheses.find(x => x.id === hId);
+  if (!h) return;
+  let consistent = true;
+  for (let i = 0; i < data.length; i++) {
+    if (h.predict(i) !== data[i]) { consistent = false; break; }
+  }
+  if (!consistent) {
+    return;
+  }
+  if (h.id === hiddenHyp.id) {
+    idSolved = true;
+    const score = computeIdScore();
+    idHistory.unshift({
+      round: identifyRound, bits: data.length, wrongs: idWrongGuesses,
+      hypName: hiddenHyp.name, score: score, solved: true
+    });
+    flash(`<strong>Correct.</strong> You identified <strong>${h.name}</strong> after ${data.length} bit${data.length===1?'':'s'} and ${idWrongGuesses} wrong guess${idWrongGuesses===1?'':'es'}. <strong>Score: ${score.toFixed(1)}</strong>`, 'info', 'id-flash');
+    roundActive = false;
+    document.getElementById('id-advance-btn').style.display = 'none';
+    document.getElementById('id-next-btn').style.display = '';
+    renderIdHistory();
+    renderIdentifyStatus();
+  } else {
+    idWrongGuesses++;
+    flash(`<strong>Wrong.</strong> "${h.name}" is still alive in the posterior, but it is not the hidden program. Wrong guesses: ${idWrongGuesses}.`, 'bad', 'id-flash');
+    renderIdentifyStatus();
+    const btn = document.querySelector(`.hyp-btn[data-id="${hId}"]`);
+    if (btn) {
+      btn.classList.add('wrong-guess');
+      setTimeout(() => btn.classList.remove('wrong-guess'), 400);
+    }
+  }
+}
+
+function computeIdScore() {
+  return Math.max(0, 100 - 5 * data.length - 15 * idWrongGuesses);
+}
+
+function renderIdentifyStatus() {
+  const rows = computePosterior();
+  const liveCount = rows.filter(r => r.alive).length;
+  document.getElementById('id-bits').textContent = data.length;
+  document.getElementById('id-alive').textContent = `${liveCount} / ${hypotheses.length}`;
+  document.getElementById('id-wrong').textContent = idWrongGuesses;
+  document.getElementById('id-score').textContent =
+    roundActive && !idSolved ? computeIdScore().toFixed(0) : '·';
+}
+
+function renderHypList() {
+  const rows = computePosterior();
+  const sortedRows = rows.slice().sort((a, b) => {
+    if (a.alive !== b.alive) return a.alive ? -1 : 1;
+    return b.posterior - a.posterior;
+  });
+  const el = document.getElementById('hyp-list');
+  el.innerHTML = sortedRows.map(r => {
+    const prior = (r.prior * 100).toFixed(1);
+    const post = r.alive ? (r.posterior * 100).toFixed(1) : '0.0';
+    return `
+      <button class="hyp-btn" data-id="${r.h.id}"
+              ${r.alive ? '' : 'disabled'}
+              onclick="makeHypGuess('${r.h.id}')">
+        <span class="hyp-name">${r.h.name}</span>
+        <span class="hyp-prior">prior ${prior}%</span>
+        <span class="hyp-post">post ${post}%</span>
+      </button>
+    `;
+  }).join('');
+}
+
+function renderIdHistory() {
+  const meta = document.getElementById('id-history-meta');
+  const el = document.getElementById('id-history');
+  if (idHistory.length === 0) {
+    meta.textContent = '0 rounds';
+    el.innerHTML = '<span style="color:var(--text-faint)">Solve rounds to build a track record.</span>';
+    return;
+  }
+  meta.textContent = `${idHistory.length} round${idHistory.length===1?'':'s'}`;
+  const totalScore = idHistory.reduce((s, r) => s + r.score, 0);
+  const avg = (totalScore / idHistory.length).toFixed(1);
+  el.innerHTML = `
+    <div style="color:var(--text);margin-bottom:8px;">
+      Total score: <strong style="color:var(--you)">${totalScore.toFixed(0)}</strong> &middot; Avg / round: <strong>${avg}</strong>
+    </div>
+    <div style="border-top:1px solid var(--line-soft);padding-top:8px;">
+      ${idHistory.slice(0, 8).map(r => `
+        <div style="display:flex;justify-content:space-between;padding:3px 0;">
+          <span style="color:var(--text-dim)">R${r.round} &middot; ${r.hypName}</span>
+          <span>
+            <span style="color:var(--text-faint)">${r.bits}b &middot; ${r.wrongs}x &middot;</span>
+            <span style="color:var(--you);font-weight:600;margin-left:6px;">${r.score.toFixed(0)}</span>
+          </span>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+function nextIdentifyRound() {
+  startIdentifyRound();
+}
+
+function resetIdentify() {
+  identifyRound = 0;
+  idHistory = [];
+  idWrongGuesses = 0;
+  idSolved = false;
+  data = [];
+  hiddenHyp = null;
+  roundActive = false;
+  clearFlash('id-flash');
+  renderIdentifyPanels();
+}
+
+// ============================================================
+// CALIBRATE MODE
+// ============================================================
+function renderCalibratePanels() {
+  renderStream();
+  renderCalScorecard();
+  renderCalHistory();
+  document.getElementById('cal-start-btn').style.display = roundActive ? 'none' : '';
+  document.getElementById('cal-commit-btn').style.display = (roundActive && !calCommitted) ? '' : 'none';
+  document.getElementById('cal-next-btn').style.display = (calCommitted && calBitsThisRound >= CAL_BITS_PER_ROUND) ? '' : 'none';
+  updateCalibrateDisplay();
+}
+
+function startCalibrateRound() {
+  calRound++;
+  hiddenHyp = sampleHypothesis();
+  data = [];
+  roundActive = true;
+  calBitsThisRound = 0;
+  calCommitted = false;
+  clearFlash('cal-flash');
+  document.getElementById('cal-start-btn').style.display = 'none';
+  document.getElementById('cal-commit-btn').style.display = '';
+  document.getElementById('cal-next-btn').style.display = 'none';
+  document.getElementById('cal-slider').value = 50;
+  calP = 0.5;
+  calCurrentBotP = bayesianNextBitProb();
+  renderStream();
+  renderPosterior();
+  renderGenerators();
+  updateCalibrateDisplay();
+}
+
+function setCalibrate(pct) {
+  document.getElementById('cal-slider').value = pct;
+  calP = pct / 100;
+  updateCalibrateDisplay();
+}
+
+function updateCalibrateDisplay() {
+  const slider = document.getElementById('cal-slider');
+  if (slider) calP = parseInt(slider.value) / 100;
+  document.getElementById('cal-you-val').textContent = (calP * 100).toFixed(0) + '%';
+  if (roundActive) {
+    document.getElementById('cal-bot-val').textContent = (calCurrentBotP * 100).toFixed(1) + '%';
+  } else {
+    document.getElementById('cal-bot-val').textContent = '·';
+  }
+  document.getElementById('cal-prompt-text').textContent =
+    roundActive
+      ? `Forecast P(bit ${calBitsThisRound + 1} of ${CAL_BITS_PER_ROUND} = 1)`
+      : 'Estimate P(next bit = 1)';
+}
+
+function commitCalibrate() {
+  if (!roundActive || calCommitted) return;
+  const slider = document.getElementById('cal-slider');
+  const yourP = parseInt(slider.value) / 100;
+  const botP = calCurrentBotP;
+
+  const actual = hiddenHyp.predict(data.length);
+
+  const yourBrier = Math.pow(yourP - actual, 2);
+  const botBrier = Math.pow(botP - actual, 2);
+
+  const yourPactual = actual === 1 ? yourP : 1 - yourP;
+  const botPactual = actual === 1 ? botP : 1 - botP;
+  const eps = 1e-4;
+  const yourLL = -Math.log2(Math.max(eps, Math.min(1 - eps, yourPactual)));
+  const botLL = -Math.log2(Math.max(eps, Math.min(1 - eps, botPactual)));
+
+  calForecasts++;
+  calYouBrierSum += yourBrier;
+  calBotBrierSum += botBrier;
+  calYouLLSum += yourLL;
+  calBotLLSum += botLL;
+  calBitsThisRound++;
+
+  calHistory.unshift({
+    idx: calForecasts, actual, yourP, botP, yourBrier, botBrier,
+  });
+  if (calHistory.length > 100) calHistory.length = 100;
+
+  data.push(actual);
+  renderStream();
+  renderPosterior();
+
+  calCurrentBotP = bayesianNextBitProb();
+
+  if (calBitsThisRound >= CAL_BITS_PER_ROUND) {
+    roundActive = false;
+    calCommitted = true;
+    const truthLine = hiddenHyp.outOfCatalog
+      ? `Hidden generator was <strong>${hiddenHyp.name}</strong> (outside catalog).`
+      : `Hidden program was <strong>${hiddenHyp.name}</strong> (L=${hiddenHyp.length}).`;
+    flash(`<strong>Round complete.</strong> ${truthLine}`, 'info', 'cal-flash');
+    document.getElementById('cal-commit-btn').style.display = 'none';
+    document.getElementById('cal-next-btn').style.display = '';
+  } else {
+    document.getElementById('cal-slider').value = 50;
+  }
+  updateCalibrateDisplay();
+  renderCalScorecard();
+  renderCalHistory();
+}
+
+function nextCalibrateRound() {
+  startCalibrateRound();
+}
+
+function resetCalibrate() {
+  calRound = 0;
+  calForecasts = 0;
+  calYouBrierSum = 0;
+  calBotBrierSum = 0;
+  calYouLLSum = 0;
+  calBotLLSum = 0;
+  calBitsThisRound = 0;
+  calCommitted = false;
+  calHistory = [];
+  data = [];
+  hiddenHyp = null;
+  roundActive = false;
+  clearFlash('cal-flash');
+  renderCalibratePanels();
+  renderStream();
+  renderPosterior();
+}
+
+function renderCalScorecard() {
+  const f = (x) => calForecasts > 0 ? (x / calForecasts).toFixed(3) : '·';
+  document.getElementById('cal-you-brier').textContent = f(calYouBrierSum);
+  document.getElementById('cal-bot-brier').textContent = f(calBotBrierSum);
+  document.getElementById('cal-you-ll').textContent = f(calYouLLSum);
+  document.getElementById('cal-bot-ll').textContent = f(calBotLLSum);
+  document.getElementById('cal-rounds-meta').textContent =
+    `${calForecasts} forecast${calForecasts === 1 ? '' : 's'} over ${calRound} round${calRound === 1 ? '' : 's'}`;
+}
+
+function renderCalHistory() {
+  const head = `<div class="brier-row head">
+    <span>#</span><span class="bit-cell">Bit</span>
+    <span class="you-cell">Your P(1)</span><span class="bot-cell">Bot P(1)</span>
+    <span class="you-cell">Δ Brier</span>
+  </div>`;
+  const rows = calHistory.slice(0, 50).map(r => {
+    const delta = r.yourBrier - r.botBrier;
+    const dStr = (delta >= 0 ? '+' : '') + delta.toFixed(3);
+    const dColor = delta > 0.01 ? 'var(--bad)' : (delta < -0.01 ? 'var(--good)' : 'var(--text-dim)');
+    return `<div class="brier-row">
+      <span style="color:var(--text-faint)">${r.idx}</span>
+      <span class="bit-cell">${r.actual}</span>
+      <span class="you-cell">${(r.yourP*100).toFixed(0)}%</span>
+      <span class="bot-cell">${(r.botP*100).toFixed(0)}%</span>
+      <span class="you-cell" style="color:${dColor}">${dStr}</span>
+    </div>`;
+  }).join('');
+  document.getElementById('cal-history').innerHTML = head + rows;
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const slider = document.getElementById('cal-slider');
+  if (slider) slider.addEventListener('input', updateCalibrateDisplay);
+});
+(function () {
+  const slider = document.getElementById('cal-slider');
+  if (slider) slider.addEventListener('input', updateCalibrateDisplay);
+})();
+
+// ============================================================
+// KEYBOARD
+// ============================================================
+document.addEventListener('keydown', (e) => {
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+  if (currentMode === 'predict') {
+    if (e.key === '0') submitGuess(0);
+    else if (e.key === '1') submitGuess(1);
+    else if (e.key === 'Enter') {
+      if (!roundActive) startRound();
+      else if (data.length >= ROUND_LENGTH) nextRound();
+    }
+    else if (e.key === 'r' || e.key === 'R') resetAll();
+  } else if (currentMode === 'identify') {
+    if (e.key === ' ' || e.key === 'Spacebar') { e.preventDefault(); if (roundActive && !idSolved) advanceBit(); }
+    else if (e.key === 'Enter') {
+      if (!roundActive || idSolved) startIdentifyRound();
+    }
+    else if (e.key === 'r' || e.key === 'R') resetIdentify();
+  } else {
+    if (e.key === 'Enter') {
+      if (!roundActive) startCalibrateRound();
+      else if (!calCommitted) commitCalibrate();
+      else nextCalibrateRound();
+    }
+    else if (e.key === 'r' || e.key === 'R') resetCalibrate();
+    else if (e.key === 'ArrowLeft') {
+      const s = document.getElementById('cal-slider');
+      s.value = Math.max(0, parseInt(s.value) - 5);
+      updateCalibrateDisplay();
+    }
+    else if (e.key === 'ArrowRight') {
+      const s = document.getElementById('cal-slider');
+      s.value = Math.min(100, parseInt(s.value) + 5);
+      updateCalibrateDisplay();
+    }
+  }
+});
+
+// ============================================================
+// INIT
+// ============================================================
+renderGenerators();
+renderHelp();
+renderStream();
+renderPosterior();
+renderPredictPanels();
+</script>
+</body>
+</html>

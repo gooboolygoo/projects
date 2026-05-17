@@ -1,0 +1,23 @@
+{
+  "generated_at": "2026-05-17T04:03:39.516Z",
+  "model": "claude-haiku-4-5",
+  "url": "https://gooboolygoo.github.io/projects/solomonoff-wordle/",
+  "hashtags": [
+    "solomonoff",
+    "bayesian",
+    "gamedev",
+    "webdev",
+    "indiedev"
+  ],
+  "x": {
+    "tweet": "Ever played a guessing game against perfect math? Meet Solomonoff Wordle: three games where you race a Bayesian predictor on bit streams from hidden programs. Can you beat information theory?",
+    "reply_lead": "play here →"
+  },
+  "vertical_caption": "Guess the next bit faster than a Bayesian predictor, identify hidden programs from their output, or forecast probabilities under the universal prior. Pure information theory as a game.",
+  "shorts_description_lead": "Three competitive games against a universal Bayesian predictor. Guess bits, identify programs, calibrate forecasts—all on streams from short algorithms.",
+  "video": {
+    "title": "Solomonoff Wordle: Predict the Bits",
+    "script": "What if you could play against the optimal Bayesian predictor? Solomonoff Wordle gives you three games on bit streams from hidden programs. First, guess each next bit faster than information theory itself. Second, identify the program. Third, forecast probabilities under the universal prior. You're racing math. The Bayesian gets a theoretical edge—two to one odds on description length. But you can swap in special generators where neither of you has the advantage. Try Thue-Morse, Fibonacci, pi in binary. Every bit becomes evidence. Every guess reveals more. Can you beat randomness? Link in the description to play.",
+    "word_count": 96
+  }
+}
