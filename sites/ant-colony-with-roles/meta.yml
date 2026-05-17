@@ -7,3 +7,18 @@ tags:
   - simulation
   - stigmergy
 donate: true
+demo:
+  setup:
+    - { action: scroll_to, selector: "#sim" }
+  steps:
+    - { action: wait, duration_s: 2.5 }
+    - { action: move_mouse, selector: "#evap" }
+    - { action: drag_slider, selector: "#evap", from: 40, to: 160, duration_s: 3 }
+    - { action: wait, duration_s: 2 }
+    - { action: drag_slider, selector: "#evap", from: 160, to: 6, duration_s: 3 }
+    - { action: wait, duration_s: 2 }
+    - { action: click, selector: '[data-scenario="two"]' }
+    - { action: wait, duration_s: 3 }
+    - { action: click, selector: '[data-scenario="obstacle"]' }
+    - { action: wait, duration_s: 3 }
+

@@ -7,3 +7,18 @@ tags:
   - simulation
   - stigmergy
 donate: true
+demo:
+  setup:
+    - { action: scroll_to, selector: "#forage-canvas" }
+  steps:
+    - { action: wait, duration_s: 2.5 }
+    - { action: move_mouse, selector: "#forage-evap" }
+    - { action: drag_slider, selector: "#forage-evap", from: 0.6, to: 2.8, duration_s: 3 }
+    - { action: wait, duration_s: 2 }
+    - { action: drag_slider, selector: "#forage-evap", from: 2.8, to: 0.4, duration_s: 3 }
+    - { action: wait, duration_s: 2 }
+    - { action: drag_slider, selector: "#forage-ants", from: 200, to: 500, duration_s: 2.5 }
+    - { action: wait, duration_s: 2.5 }
+    - { action: click, selector: "#forage-reset" }
+    - { action: wait, duration_s: 2 }
+

@@ -5,7 +5,7 @@ import { parse as parseYaml } from "yaml";
 import { bundle } from "@remotion/bundler";
 import { renderMedia, selectComposition } from "@remotion/renderer";
 import { synthesize } from "./video/tts.ts";
-import { captureShots } from "./video/capture.ts";
+import { captureShots, captureDemo, type DemoConfig } from "./video/capture.ts";
 
 const ROOT = resolve(import.meta.dirname, "..");
 const SITES_DIR = join(ROOT, "sites");
@@ -23,7 +23,12 @@ type Promo = {
   video: { title: string; script: string; word_count: number };
 };
 
-type Meta = { title: string; blurb: string; publish_at_root?: boolean };
+type Meta = {
+  title: string;
+  blurb: string;
+  publish_at_root?: boolean;
+  demo?: DemoConfig;
+};
 
 async function exists(p: string): Promise<boolean> {
   try {
@@ -55,6 +60,7 @@ async function loadMeta(slug: string): Promise<Meta> {
     title: parsed.title,
     blurb: parsed.blurb,
     publish_at_root: parsed.publish_at_root === true,
+    demo: (parsed as { demo?: DemoConfig }).demo,
   };
 }
 
@@ -84,7 +90,6 @@ async function renderForSlug(args: {
     `[video][${slug}]    ${tts.words.length} words, ${(tts.durationMs / 1000).toFixed(1)}s audio`,
   );
 
-  console.log(`[video][${slug}] 2/4 capturing site screenshots`);
   let captureUrl: string;
   if (source === "live") {
     captureUrl = meta.publish_at_root ? `${SITE_BASE_URL}/` : `${SITE_BASE_URL}/${slug}/`;
@@ -99,28 +104,66 @@ async function renderForSlug(args: {
     }
     captureUrl = `file://${localIndex}`;
   }
-  const capture = await captureShots({
-    url: captureUrl,
-    outDir: cacheDir,
-    count: 4,
-  });
-  console.log(
-    `[video][${slug}]    captured ${capture.shots.length} shots from ${captureUrl}`,
-  );
+
+  const hasDemo =
+    meta.demo &&
+    Array.isArray(meta.demo.steps) &&
+    meta.demo.steps.length > 0;
+
+  let inputProps: {
+    title: string;
+    url: string;
+    words: typeof tts.words;
+    shotCount: number;
+    voiceDurationMs: number;
+    videoFile?: string;
+    videoPreambleMs?: number;
+  };
+
+  if (hasDemo) {
+    console.log(`[video][${slug}] 2/4 recording interactive demo`);
+    const demoResult = await captureDemo({
+      url: captureUrl,
+      outDir: cacheDir,
+      durationMs: tts.durationMs,
+      demo: meta.demo!,
+    });
+    console.log(
+      `[video][${slug}]    recorded ${(demoResult.durationMs / 1000).toFixed(1)}s demo (${(demoResult.preambleMs / 1000).toFixed(1)}s preamble) from ${captureUrl}`,
+    );
+    inputProps = {
+      title: meta.title,
+      url: promo.url,
+      words: tts.words,
+      shotCount: 0,
+      voiceDurationMs: tts.durationMs,
+      videoFile: demoResult.videoFile,
+      videoPreambleMs: demoResult.preambleMs,
+    };
+  } else {
+    console.log(`[video][${slug}] 2/4 capturing site screenshots`);
+    const capture = await captureShots({
+      url: captureUrl,
+      outDir: cacheDir,
+      count: 4,
+    });
+    console.log(
+      `[video][${slug}]    captured ${capture.shots.length} shots from ${captureUrl}`,
+    );
+    inputProps = {
+      title: meta.title,
+      url: promo.url,
+      words: tts.words,
+      shotCount: capture.shots.length,
+      voiceDurationMs: tts.durationMs,
+    };
+  }
 
   console.log(`[video][${slug}] 3/4 bundling Remotion composition`);
   const bundled = await bundle({
     entryPoint: REMOTION_ENTRY,
     publicDir: cacheDir,
   });
-
-  const inputProps = {
-    title: meta.title,
-    url: promo.url,
-    words: tts.words,
-    shotCount: capture.shots.length,
-    voiceDurationMs: tts.durationMs,
-  };
 
   const composition = await selectComposition({
     serveUrl: bundled,

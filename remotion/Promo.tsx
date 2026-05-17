@@ -3,6 +3,7 @@ import {
   AbsoluteFill,
   Audio,
   Img,
+  OffthreadVideo,
   Sequence,
   interpolate,
   spring,
@@ -23,6 +24,8 @@ export type PromoInputProps = {
   words: WordTiming[];
   shotCount: number;
   voiceDurationMs: number;
+  videoFile?: string;
+  videoPreambleMs?: number;
 };
 
 export const defaultPromoProps: PromoInputProps = {
@@ -31,6 +34,8 @@ export const defaultPromoProps: PromoInputProps = {
   words: [],
   shotCount: 4,
   voiceDurationMs: 22000,
+  videoFile: undefined,
+  videoPreambleMs: 0,
 };
 
 const TITLE_FRAMES = 60;
@@ -68,6 +73,8 @@ export const Promo: React.FC<PromoInputProps> = (props) => {
           shotCount={props.shotCount}
           words={props.words}
           voiceDurationMs={props.voiceDurationMs}
+          videoFile={props.videoFile}
+          videoPreambleMs={props.videoPreambleMs ?? 0}
         />
       </Sequence>
 
@@ -130,11 +137,37 @@ const MainScene: React.FC<{
   shotCount: number;
   words: WordTiming[];
   voiceDurationMs: number;
-}> = ({ shotCount, words, voiceDurationMs }) => {
+  videoFile?: string;
+  videoPreambleMs: number;
+}> = ({ shotCount, words, voiceDurationMs, videoFile, videoPreambleMs }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
-
   const sceneMs = (frame / fps) * 1000;
+
+  if (videoFile) {
+    return (
+      <AbsoluteFill style={{ background: "#0a0a0a" }}>
+        <OffthreadVideo
+          src={staticFile(videoFile)}
+          startFrom={Math.max(0, Math.round((videoPreambleMs / 1000) * fps))}
+          muted
+          style={{
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
+          }}
+        />
+        <AbsoluteFill
+          style={{
+            background:
+              "linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.0) 35%, rgba(0,0,0,0.0) 75%, rgba(0,0,0,0.55) 100%)",
+          }}
+        />
+        <Captions sceneMs={sceneMs} words={words} />
+      </AbsoluteFill>
+    );
+  }
+
   const safeShots = Math.max(1, shotCount);
   const perShotMs = voiceDurationMs / safeShots;
   const shotIdx = Math.min(safeShots - 1, Math.floor(sceneMs / perShotMs));
