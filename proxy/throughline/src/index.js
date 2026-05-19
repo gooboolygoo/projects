@@ -4,10 +4,24 @@
 
 const ALLOWED_ORIGINS = [
   "https://gooboolygoo.github.io",
+  "https://whatshouldidowithmylife.xyz",
+  "https://www.whatshouldidowithmylife.xyz",
   "http://localhost:8000",
   "http://localhost:3000",
   "http://localhost:5173",
 ];
+
+// Vercel preview URLs have unpredictable subdomains
+// (e.g. throughline-abc123-gooboolygoo.vercel.app). Allow the user's
+// own vercel preview deployments without opening it up to every
+// vercel.app site.
+const VERCEL_PREVIEW_RE = /^https:\/\/throughline(-[\w-]+)?\.vercel\.app$/;
+
+function isAllowedOrigin(origin) {
+  if (ALLOWED_ORIGINS.includes(origin)) return true;
+  if (VERCEL_PREVIEW_RE.test(origin)) return true;
+  return false;
+}
 
 const MAX_TOKENS_CAP = 4000;
 const ALLOWED_MODELS = new Set([
@@ -17,7 +31,7 @@ const ALLOWED_MODELS = new Set([
 ]);
 
 function corsHeaders(origin) {
-  const allow = ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0];
+  const allow = isAllowedOrigin(origin) ? origin : ALLOWED_ORIGINS[0];
   return {
     "Access-Control-Allow-Origin": allow,
     "Access-Control-Allow-Methods": "POST, OPTIONS",
@@ -37,7 +51,7 @@ export default {
     if (request.method !== "POST") {
       return new Response("Method not allowed", { status: 405, headers });
     }
-    if (!ALLOWED_ORIGINS.includes(origin)) {
+    if (!isAllowedOrigin(origin)) {
       return new Response("Forbidden", { status: 403, headers });
     }
     if (!env.ANTHROPIC_API_KEY) {

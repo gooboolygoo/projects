@@ -59,6 +59,10 @@ async function loadMeta(slug: string): Promise<Meta> {
 }
 
 function injectDonate(html: string, snippet: string): string {
+  // Idempotent: if the BMC widget is already in the source HTML (e.g. a
+  // site that also deploys to Vercel and needs the widget without running
+  // build.ts), skip injection rather than producing a duplicate.
+  if (html.includes('data-name="BMC-Widget"')) return html;
   if (html.includes("</body>")) {
     return html.replace("</body>", `${snippet}\n</body>`);
   }
