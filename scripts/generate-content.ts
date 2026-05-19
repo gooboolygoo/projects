@@ -93,7 +93,28 @@ Each project is its own thing. Your job is to draft promotional copy for ONE pro
 
 Voice: conversational, curious, a little playful. No corporate hype, no "revolutionary", no excessive emoji. At most one emoji per individual field. Write like a developer talking to other developers and curious humans, not a marketer.
 
+PERSUASION PRINCIPLES (pick 1-3 per asset, whichever the project's actual content can honestly support — do not invent facts to fit a principle, and never name the principles themselves in the output):
+
+- CURIOSITY GAP. Open an information loop in the first sentence. A counter-intuitive claim or a sharp question whose answer requires clicking. Example shape: "Ant colonies solve route-finding without any single ant knowing the answer." Do not resolve the loop in the same post.
+
+- AUTHORITY VIA SPECIFICITY. Cite one concrete number or detail pulled from the page (e.g. "5,127 failed prototypes", "23 Grand Slam titles", "62 founders, ages 16 to 62", "97 words of Bayesian forecast"). Round-number vagueness reads as marketing; specifics read as a person who actually built the thing.
+
+- SOCIAL PROOF. If the project itself displays counts, examples, or named instances, reference them concretely. Not "many people" — the actual numbers or named examples on the page.
+
+- UNITY / IDENTITY. Address a specific in-group the reader belongs to. "If you've been told you're too late to start", "For anyone who's argued with a Bayesian", "Founders who feel behind". Beats a generic broadcast.
+
+- LOSS / "you're missing this". Frame what the reader currently doesn't see or has wrong. "Most people underestimate X", "You've been thinking about X backward". Subtle, not shaming.
+
+- RECIPROCITY. Make the free, low-friction nature of the page explicit when it earns the click. "Free, no signup", "Open source, runs in your browser", "One page, nothing to install".
+
+- LOW-COMMITMENT FIRST STEP. Invite a tiny action that lowers activation energy: "Type your age", "Drag one slider", "Guess 12 bits". Beats vague "check it out".
+
+Apply these subtly. The audience hates being marketed at. If the copy reads like a checklist of techniques, it is wrong. Lead with the most interesting concrete thing on the page; let the principle fall out naturally. Different assets can lean on different principles: the tweet may go curiosity-gap, the vertical_caption may go low-commitment first step, the video.script may stack curiosity-gap with authority-via-specificity.
+
+For video.script specifically: the first sentence is the hook and viewers leave in 2 seconds. Open with concrete tension or a question, not with technical jargon. Lead with the curiosity, then earn the right to drop the jargon in the middle.
+
 CRITICAL RULES:
+- Never use em-dashes (the long dash punctuation, U+2014). Use periods, commas, semicolons, or colons instead. This applies to every text field.
 - Each project stands on its own. Never reference a sequence, schedule, or day number. NEVER write "Day 1", "day one", "first project", "today's project", "tomorrow", "the daily series", "every day", "ships daily", or anything that frames this project as part of a numbered or scheduled rollout. The audience does not know or care which day it is. Pretend this is the only project in the world.
 - Never include URLs anywhere in your output. The pipeline appends the URL itself.
 - Never include hashtags inline in any text. Hashtags go in the dedicated "hashtags" field only.
@@ -229,6 +250,12 @@ function assertNoInlineHashtag(field: string, value: string): void {
   }
 }
 
+function assertNoEmDash(field: string, value: string): void {
+  if (value.includes("—")) {
+    throw new Error(`tool input: ${field} must not contain em-dashes (U+2014)`);
+  }
+}
+
 function assertMaxLen(field: string, value: string, max: number): void {
   if (value.length > max) {
     throw new Error(`tool input: ${field} is ${value.length} chars (max ${max})`);
@@ -290,10 +317,12 @@ function validateToolInput(raw: unknown): ToolInput {
     ["x.reply_lead", x.reply_lead as string],
     ["vertical_caption", vertical_caption],
     ["shorts_description_lead", shorts_description_lead],
+    ["video.title", video.title as string],
     ["video.script", video.script as string],
   ] as [string, string][]) {
     assertNoUrl(name, value);
     assertNoInlineHashtag(name, value);
+    assertNoEmDash(name, value);
   }
 
   return {
@@ -379,8 +408,13 @@ async function generatePromo(slug: string, client: Anthropic): Promise<Promo> {
 
   let data: ToolInput | undefined;
   let lastErr: unknown;
+  let prevErrMsg: string | undefined;
   for (let i = 0; i < attempts.length; i++) {
     const a = attempts[i]!;
+    const dynamicHint = prevErrMsg
+      ? `Previous publish_promo was rejected with this exact error: "${prevErrMsg}". Fix that specific issue. Keep everything else unchanged.`
+      : undefined;
+    const combinedHint = [dynamicHint, a.retryHint].filter(Boolean).join("\n\n") || undefined;
     try {
       ({ data } = await callClaudeOnce({
         client,
@@ -389,14 +423,14 @@ async function generatePromo(slug: string, client: Anthropic): Promise<Promo> {
         meta,
         pageText,
         pageTextMaxChars: a.pageTextMaxChars,
-        retryHint: a.retryHint,
+        retryHint: combinedHint,
       }));
       break;
     } catch (err) {
       lastErr = err;
-      const msg = err instanceof Error ? err.message : String(err);
+      prevErrMsg = err instanceof Error ? err.message : String(err);
       if (i < attempts.length - 1) {
-        console.error(`  [retry ${i + 1}/${attempts.length}] ${msg}`);
+        console.error(`  [retry ${i + 1}/${attempts.length}] ${prevErrMsg}`);
       }
     }
   }
