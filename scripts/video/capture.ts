@@ -68,7 +68,8 @@ export type DemoStep =
   | { action: "drag_slider"; selector: string; from: number; to: number; duration_s: number }
   | { action: "click"; selector: string }
   | { action: "scroll_to"; selector?: string; y?: number }
-  | { action: "move_mouse"; selector: string };
+  | { action: "move_mouse"; selector: string }
+  | { action: "type"; selector: string; text: string; delay_ms?: number };
 
 export type DemoConfig = {
   duration_s?: number;
@@ -245,6 +246,17 @@ async function runStep(page: Page, step: DemoStep): Promise<void> {
         );
       }
       await page.waitForTimeout(450);
+      return;
+    }
+    case "type": {
+      const el = page.locator(step.selector);
+      await moveCursorToSelector(page, step.selector);
+      await page.waitForTimeout(150);
+      await el.click();
+      await page.waitForTimeout(180);
+      await el.fill("");
+      await el.pressSequentially(step.text, { delay: step.delay_ms ?? 28 });
+      await page.waitForTimeout(200);
       return;
     }
     case "drag_slider": {

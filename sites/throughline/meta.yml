@@ -1,0 +1,24 @@
+title: Throughline, a conversation
+blurb: A career exploration tool that talks to you for twenty minutes about your life, not your jobs, then maps four specific paths with comp ranges and where each one would chafe. Built for people who are stuck. The live build wires Sonnet through a Cloudflare Worker; the static demo uses canned responses to walk the same UI.
+canonical_url: https://whatshouldidowithmylife.xyz
+tags:
+  - careers
+  - ai
+  - conversation
+  - product
+donate: true
+demo:
+  setup:
+    - { action: scroll_to, selector: "#root" }
+  steps:
+    - { action: wait, duration_s: 3 }
+    - { action: click, selector: '[data-testid="begin-btn"]' }
+    - { action: wait, duration_s: 2.2 }
+    - { action: type, selector: '[data-testid="reply-input"]', text: "I went on a long hike alone last spring. Walked fourteen miles, did not see another person after mile three.", delay_ms: 28 }
+    - { action: wait, duration_s: 0.5 }
+    - { action: click, selector: '[data-testid="send-btn"]' }
+    - { action: wait, duration_s: 3 }
+    - { action: type, selector: '[data-testid="reply-input"]', text: "The quiet. And having to figure out the route myself when the trail markings stopped.", delay_ms: 28 }
+    - { action: wait, duration_s: 0.5 }
+    - { action: click, selector: '[data-testid="send-btn"]' }
+    - { action: wait, duration_s: 4 }

@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Throughline, a conversation</title>
+  <meta name="description" content="A career exploration tool. Twenty minutes of conversation about you, then specific paths with comp ranges and where each would chafe." />
+
+  <!-- AI proxy endpoint. Empty = use canned demo responses.
+       Fill in after deploying proxy/throughline (see its README). -->
+  <meta name="api-base" content="" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..900&family=EB+Garamond:ital,wght@0,400..700;1,400..600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+  <script crossorigin src="https://unpkg.com/react@18.3.1/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.24.7/babel.min.js"></script>
+  <style>
+    html, body { margin: 0; padding: 0; background: #F4EEE3; }
+    .__loading { font-family: 'EB Garamond', serif; color: #6B6258; text-align: center; padding-top: 200px; font-size: 18px; font-style: italic; }
+  </style>
+</head>
+<body>
+  <div id="root"><div class="__loading">Loading the conversation...</div></div>
+
+  <script type="text/babel" data-presets="react">
+const { useState, useEffect, useRef } = React;
+
+// ============================================================
+// API: either real (via Cloudflare Worker proxy) or canned demo.
+// ============================================================
+const API_BASE = (document.querySelector('meta[name="api-base"]')?.content || '').trim();
+const USE_REAL_API = API_BASE.length > 0;
+
+// Canned interview flow used when no proxy is configured. The site stays
+// usable so visitors can walk the full UI; the synthesis and paths are
+// illustrative.
+const MOCK_INTERVIEW_QUESTIONS = [
+  "What made that specific? Was it the work itself, the people, the stakes, or something else entirely?",
+  "Outside of that one moment, when do you most often feel that kind of energy?",
+  "What consistently drains you? Something you complain about more than you mean to.",
+  "What is a recent decision you avoided making, and what were you actually avoiding?",
+  "What is something you have kept coming back to with no external reward, since you were a teenager, say?",
+  "What is a kind of work other people seem suited for that you have quietly written off as not for me?",
+  "If money and image were neutral, what would you do for a week?",
+  "I notice you keep returning to specifics and away from grand themes. Is that on purpose? I have what I need."
+];
+
+const MOCK_SYNTHESIS = {
+  themes: [
+    { title: "Drawn to clarity, not just outcomes", body: "The moments you described share one thing: you knew exactly what was being asked. Vague mandates drain you faster than hard problems do." },
+    { title: "Choosing depth over breadth, repeatedly", body: "You have avoided generalist roles even when they paid more. The thing you return to in your free time is a deeper version of what you do at work, not a wider one." },
+    { title: "Allergic to being managed at the optimizer level", body: "Most of your frustrations trace to the same source: being told what to optimize by someone who has not done the work. You would rather own the goal than the politics." },
+    { title: "A quiet pull toward teaching", body: "You mentioned wanting to explain something to someone newer than you. Unprompted. That is not a hobby answer. That is a signal." }
+  ],
+  tensions: [
+    { title: "You want autonomy and feedback at the same time", body: "Being micromanaged kills your energy. But the months that felt most alive were ones where someone watched what you were doing and reacted. Both are true. You will have to be deliberate about who gets to give the feedback." }
+  ],
+  throughline: "You light up when the work is specific, the audience is real, and no one is between you and the problem. Whatever path you choose has to honor those three at once."
+};
+
+const MOCK_PATHS = {
+  paths: [
+    {
+      title: "Senior IC engineer at a 30 to 100 person infra company",
+      tagline: "Solo deep work, real users, no PM layer between you and the API",
+      fit: "Matches your pull toward specificity and your allergy to layered management. Infra companies need engineers who own a problem end to end, exactly the autonomy your throughline asks for.",
+      friction: "You will be on call. The work that lights you up will be punctuated by Slack at 2am about a flapping health check, and you will hate that more than you currently realize.",
+      comp: "$185k – $310k (US, base + equity)",
+      outlook: "steady, with slight cooling at the senior end since 2024",
+      day: "Two hours of deep work on a migration design doc. A 30 minute pairing call with another engineer. A code review left mid-PR. Afternoon: implement the small piece you actually liked. End the day debugging something for a customer in their Slack channel.",
+      first_step: "Email the head of platform at three Series B infra companies and ask for a 25 minute call about what they look for in their first three senior IC hires."
+    },
+    {
+      title: "Curriculum lead at a vocational tech program",
+      tagline: "Teach what you know, to people who will actually use it",
+      fit: "The teaching pull you mentioned. The clarity of an audience that needs the answer to do their job today, not for a credential.",
+      friction: "You will fight a small bureaucracy. Your taste will be argued with by people whose taste you do not respect, and you cannot just route around them the way you do in code.",
+      comp: "$95k – $145k (US, varies widely public vs private)",
+      outlook: "shifting, growing fast in apprenticeship-style programs",
+      day: "Morning: rewrite a lesson based on what fell flat yesterday. Coffee with a student who is stuck. Office hours. A meeting with industry partners about what their juniors do not know. End of day: open the curriculum repo and refactor the unit you have been avoiding.",
+      first_step: "Reach out to one of the founders of a vocational tech program (BloomTech, Codesmith, 42) and ask what they wish they had hired earlier."
+    },
+    {
+      title: "Founding engineer at a 2 to 5 person AI infra startup",
+      tagline: "Full ownership, no manager, the speed your throughline wants",
+      fit: "The most direct route to specific, autonomous, real-audience work. Founding teams give you the feedback you want without the political layer you do not.",
+      friction: "The first 18 months are not work you can put down at 7pm. The autonomy is real but so is the loneliness. You said you light up with people watching, and there will not be many.",
+      comp: "$130k – $200k base + 1 to 3 percent equity (high variance)",
+      outlook: "shifting, capital tightening but seed activity in agent infra is up",
+      day: "Half the day in the codebase you wrote yesterday. A demo call with a design partner. Lunch with your co-founder, half logistics, half existential. Afternoon: write the docs you should have written last week. Push to prod.",
+      first_step: "Look at the most recent YC batch, find three companies in agent infra, cold email the technical co-founder offering to spend a weekend on a feature in exchange for a 30 minute conversation."
+    },
+    {
+      title: "Research engineer, applied policy or biosecurity",
+      tagline: "Hard problems, real stakes, the kind of clarity you said felt alive",
+      fit: "Probably the non-obvious one. The depth + specificity + real-stakes triangle matches what you said felt alive, and you would be writing for a small motivated audience that reads carefully.",
+      friction: "The pace is slower than tech. You will be paid less, your peers will sometimes condescend to your engineering background, and the wins compound over years not quarters.",
+      comp: "$140k – $230k (RAND, IQT, FAS, MITRE, niche labs)",
+      outlook: "growing, agentic and bio funding lines expanded sharply",
+      day: "Morning: read a 40 page report from a peer org and take notes. A working meeting with two researchers and a policy analyst. Afternoon: build the small simulator or scraper the report needs. Submit a draft. End the day reviewing a colleague's code.",
+      first_step: "Email the engineering lead at RAND's Center for Technology and Security Policy and ask how they hire engineers who did not come from a national-security background."
+    }
+  ]
+};
+
+async function callProxy(body) {
+  if (!USE_REAL_API) throw new Error("USE_MOCK");
+  const res = await fetch(API_BASE, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body)
+  });
+  if (!res.ok) throw new Error("Proxy error " + res.status);
+  return await res.json();
+}
+
+function delay(min, max) {
+  return new Promise(r => setTimeout(r, min + Math.random() * (max - min)));
+}
+
+// ============================================================
+// Component
+// ============================================================
+function Throughline() {
+  const [view, setView] = useState('landing');
+  const [messages, setMessages] = useState([]);
+  const [input, setInput] = useState('');
+  const [isThinking, setIsThinking] = useState(false);
+  const [synthesis, setSynthesis] = useState(null);
+  const [paths, setPaths] = useState(null);
+  const [selectedPath, setSelectedPath] = useState(null);
+  const [error, setError] = useState(null);
+  const scrollRef = useRef(null);
+
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
+  }, [messages, isThinking]);
+
+  const INTERVIEW_SYSTEM = "You are Throughline, a career interviewer. You are not a coach, not a quiz, not a chatbot. You are someone thoughtful who asks careful questions and listens.\n\nYour job: through an 8-12 turn conversation, understand this person's energy, frustrations, avoidances, and pulls. Then signal you are ready for synthesis.\n\nSTRUCTURE (move adaptively, do not announce sections):\n1. ENERGY: when have they felt most alive recently? Not impressed, not productive. Alive. Probe specifics. (2-3 turns)\n2. FRUSTRATIONS: what consistently drains them or makes them angry? What do they complain about repeatedly? (2-3 turns)\n3. AVOIDANCES: what have they avoided pursuing, and why? This is often the most revealing. (1-2 turns)\n4. PULLS: what topics or activities do they keep coming back to with no external reward? Childhood interests that survived? (1-2 turns)\n5. TENSIONS: surface a contradiction you have heard. Ask them to react. (1 turn)\n\nRULES:\n- ONE question at a time. Never multi-part.\n- Probe for specifics. If they say 'I like helping people,' ask which kind of helping, in what setting, with whom.\n- Resist platitudes. If their answer is generic, push gently.\n- Keep your messages SHORT, 2-4 sentences max.\n- Plain language. No therapy-speak.\n- Do not tell them what their answers mean until synthesis.\n- Do not compliment. Do not validate. Just keep asking.\n\nWhen you have enough material, end your final message with a single sentence transition ('I have what I need.') followed by [INTERVIEW_COMPLETE] on its own line.\n\nBegin with the opening message verbatim.";
+
+  const OPENING_MESSAGE = "Most career advice asks you to imagine a job. I am going to ask you about your life. We will get to work later. It will mean more if we start with you.\n\nWhen in the last year did you feel most alive? Not impressed, not productive. Alive. Tell me about a specific moment.";
+
+  const startInterview = () => {
+    setMessages([{ role: 'assistant', content: OPENING_MESSAGE }]);
+    setView('interview');
+    setError(null);
+  };
+
+  const sendMessage = async () => {
+    if (!input.trim() || isThinking) return;
+    const userMsg = { role: 'user', content: input.trim() };
+    const newMessages = [...messages, userMsg];
+    setMessages(newMessages);
+    setInput('');
+    setIsThinking(true);
+    setError(null);
+
+    let cleanText = '';
+    let isComplete = false;
+
+    try {
+      if (USE_REAL_API) {
+        const data = await callProxy({
+          model: "claude-sonnet-4-6",
+          max_tokens: 1024,
+          system: INTERVIEW_SYSTEM,
+          messages: newMessages.map(m => ({ role: m.role, content: m.content }))
+        });
+        const text = data.content?.filter(b => b.type === 'text').map(b => b.text).join('\n') || '';
+        isComplete = text.includes('[INTERVIEW_COMPLETE]');
+        cleanText = text.replace('[INTERVIEW_COMPLETE]', '').trim();
+      } else {
+        const userTurns = newMessages.filter(m => m.role === 'user').length;
+        const idx = Math.min(userTurns - 1, MOCK_INTERVIEW_QUESTIONS.length - 1);
+        await delay(900, 1700);
+        cleanText = MOCK_INTERVIEW_QUESTIONS[idx];
+        isComplete = idx >= MOCK_INTERVIEW_QUESTIONS.length - 1;
+      }
+
+      const updated = [...newMessages, { role: 'assistant', content: cleanText, complete: isComplete }];
+      setMessages(updated);
+      if (isComplete) {
+        setTimeout(() => runSynthesis(updated), 1500);
+      }
+    } catch (err) {
+      setError('The connection stumbled. Try again.');
+    } finally {
+      setIsThinking(false);
+    }
+  };
+
+  const runSynthesis = async (convo) => {
+    setView('synthesizing');
+    try {
+      if (USE_REAL_API) {
+        const transcript = convo.map(m => (m.role === 'user' ? 'PERSON' : 'INTERVIEWER') + ': ' + m.content).join('\n\n');
+        const data = await callProxy({
+          model: "claude-sonnet-4-6",
+          max_tokens: 1500,
+          messages: [{
+            role: 'user',
+            content: "Below is a career exploration interview. Produce a synthesis as JSON only, no preamble or markdown.\n\nSchema:\n{\n  \"themes\": [ { \"title\": \"5-7 word title\", \"body\": \"2-3 sentences specific to what they said, quoting their phrasing where natural\" } ],\n  \"tensions\": [ { \"title\": \"5-8 word title naming the tension\", \"body\": \"2-3 sentences\" } ],\n  \"throughline\": \"1-2 sentences naming what showed up no matter what topic they were on. The 'throughline' that gives this tool its name.\"\n}\n\nRules:\n- 3-5 themes, 1-2 tensions.\n- Be specific to THIS person, not generic. Generic synthesis is worse than none.\n- No therapy-speak. Use plain language.\n- Where they used a striking phrase, echo it back.\n\nTranscript:\n" + transcript
+          }]
+        });
+        const text = data.content?.filter(b => b.type === 'text').map(b => b.text).join('\n') || '';
+        const cleaned = text.replace(/```json|```/g, '').trim();
+        setSynthesis(JSON.parse(cleaned));
+      } else {
+        await delay(2200, 3000);
+        setSynthesis(MOCK_SYNTHESIS);
+      }
+      setView('synthesis');
+    } catch (err) {
+      setError('Synthesis failed. ' + err.message);
+      setView('interview');
+    }
+  };
+
+  const runMapping = async () => {
+    setView('mapping');
+    try {
+      if (USE_REAL_API) {
+        const data = await callProxy({
+          model: "claude-sonnet-4-6",
+          max_tokens: 2500,
+          messages: [{
+            role: 'user',
+            content: "Below is a synthesis from a career exploration interview. Produce 4 candidate career paths as JSON only.\n\nSchema:\n{\n  \"paths\": [ {\n    \"title\": \"Specific role (not 'Marketing' but 'Brand strategist at a series-B startup')\",\n    \"tagline\": \"8-12 word characterization\",\n    \"fit\": \"2-3 sentences: what about THIS person makes this fit, referencing the synthesis\",\n    \"friction\": \"1-2 sentences: where this would specifically chafe for them. Be honest, not promotional.\",\n    \"comp\": \"$XXk to $YYYk (US, ranges aligned with BLS / Levels.fyi reality)\",\n    \"outlook\": \"growing | steady | shifting | declining, then a half-sentence reason\",\n    \"day\": \"3-4 sentences: what a Tuesday actually looks like\",\n    \"first_step\": \"1 sentence: a single concrete next move. Never 'network' or 'learn more'.\"\n  } ]\n}\n\nRules:\n- 4 paths total.\n- At least ONE should be non-obvious.\n- Mix established roles with emerging ones.\n- The 'friction' must be real. Do not soften it.\n- Plain language. Avoid corporate phrases unless that IS the job.\n\nSynthesis:\n" + JSON.stringify(synthesis, null, 2)
+          }]
+        });
+        const text = data.content?.filter(b => b.type === 'text').map(b => b.text).join('\n') || '';
+        const cleaned = text.replace(/```json|```/g, '').trim();
+        setPaths(JSON.parse(cleaned));
+      } else {
+        await delay(2500, 3500);
+        setPaths(MOCK_PATHS);
+      }
+      setView('paths');
+    } catch (err) {
+      setError('Path generation failed. ' + err.message);
+      setView('synthesis');
+    }
+  };
+
+  const colors = {
+    bg: '#F4EEE3',
+    ink: '#1F1B16',
+    accent: '#9C3221',
+    mute: '#6B6258',
+    rule: '#D4C9B5',
+    paper: '#FBF8F1'
+  };
+
+  const baseStyle = {
+    backgroundColor: colors.bg,
+    color: colors.ink,
+    fontFamily: "'EB Garamond', Georgia, serif",
+    minHeight: '100vh',
+    backgroundImage: 'radial-gradient(circle at 15% 10%, rgba(156,50,33,0.04) 0%, transparent 35%), radial-gradient(circle at 85% 90%, rgba(45,74,62,0.04) 0%, transparent 35%)'
+  };
+
+  const displayFont = "'Fraunces', 'EB Garamond', serif";
+  const monoFont = "'JetBrains Mono', ui-monospace, monospace";
+
+  if (view === 'landing') {
+    return (
+      <div style={baseStyle}>
+        <div style={{ maxWidth: '780px', margin: '0 auto', padding: '120px 32px 140px' }}>
+
+          <div style={{ fontFamily: monoFont, fontSize: '11px', color: colors.accent, letterSpacing: '0.2em', textTransform: 'uppercase', marginBottom: '36px' }}>
+            For people who are stuck
+          </div>
+
+          <h1 style={{ fontFamily: displayFont, fontSize: 'clamp(52px, 7.5vw, 96px)', fontWeight: 400, lineHeight: 0.96, letterSpacing: '-0.035em', margin: '0 0 36px', fontVariationSettings: "'opsz' 144, 'SOFT' 30" }}>
+            What should you<br />
+            <em style={{ fontStyle: 'italic', color: colors.accent, fontVariationSettings: "'opsz' 144, 'SOFT' 80" }}>actually</em> do<br />
+            with your life?
+          </h1>
+
+          <p style={{ fontFamily: displayFont, fontSize: '24px', fontStyle: 'italic', fontWeight: 400, lineHeight: 1.4, color: colors.mute, maxWidth: '580px', margin: '0 0 36px' }}>
+            You will spend ninety thousand hours at work. Almost nobody stops to ask whether they chose right. Twenty minutes here is enough to start.
+          </p>
+
+          <p style={{ fontSize: '20px', lineHeight: 1.55, color: colors.ink, maxWidth: '600px', margin: '0 0 48px' }}>
+            A real conversation, not a quiz. We talk about your life, not your resume. Then we hand you four specific paths, with comp ranges and the exact place each one would frustrate you.
+          </p>
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: '24px', flexWrap: 'wrap' }}>
+            <button
+              data-testid="begin-btn"
+              onClick={startInterview}
+              style={{ fontFamily: displayFont, fontSize: '18px', fontWeight: 500, backgroundColor: colors.ink, color: colors.paper, border: 'none', padding: '20px 38px', borderRadius: '2px', cursor: 'pointer', letterSpacing: '0.01em', transition: 'all 0.2s ease', boxShadow: '0 4px 0 rgba(31,27,22,0.15)' }}
+              onMouseOver={e => { e.currentTarget.style.backgroundColor = colors.accent; e.currentTarget.style.transform = 'translateY(-1px)'; }}
+              onMouseOut={e => { e.currentTarget.style.backgroundColor = colors.ink; e.currentTarget.style.transform = 'translateY(0)'; }}
+            >
+              Begin the conversation &nbsp;→
+            </button>
+            <div style={{ fontFamily: monoFont, fontSize: '12px', color: colors.mute, letterSpacing: '0.06em', textTransform: 'uppercase' }}>
+              ~20 min &nbsp;·&nbsp; free &nbsp;·&nbsp; no signup
+            </div>
+          </div>
+
+          <div style={{ marginTop: '140px', borderTop: `1px solid ${colors.rule}`, paddingTop: '56px', display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '40px' }}>
+            {[
+              { n: 'I', t: 'Twenty minutes', d: 'A real interview, adaptive. We probe; we do not scan checkboxes.' },
+              { n: 'II', t: 'Honest synthesis', d: 'We name the patterns and the tensions. Including what does not fit.' },
+              { n: 'III', t: 'Specific paths', d: 'Roles with comp ranges, a Tuesday in life, and where each would chafe.' }
+            ].map((s, i) => (
+              <div key={i}>
+                <div style={{ fontFamily: monoFont, fontSize: '11px', color: colors.accent, letterSpacing: '0.22em', marginBottom: '14px' }}>{s.n}.</div>
+                <div style={{ fontFamily: displayFont, fontSize: '21px', fontWeight: 500, marginBottom: '12px', letterSpacing: '-0.01em', lineHeight: 1.2 }}>{s.t}</div>
+                <div style={{ fontSize: '15px', lineHeight: 1.6, color: colors.mute }}>{s.d}</div>
+              </div>
+            ))}
+          </div>
+
+          <div style={{ marginTop: '120px', borderTop: `1px solid ${colors.rule}`, paddingTop: '56px' }}>
+            <div style={{ fontFamily: monoFont, fontSize: '11px', color: colors.accent, letterSpacing: '0.22em', textTransform: 'uppercase', marginBottom: '40px' }}>
+              ❦ &nbsp; What people heard back
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '40px' }}>
+              <div>
+                <div style={{ fontFamily: displayFont, fontSize: '22px', fontStyle: 'italic', lineHeight: 1.4, color: colors.ink, marginBottom: '16px', fontWeight: 400 }}>
+                  "You light up when the work is specific, the audience is real, and no one is between you and the problem."
+                </div>
+                <div style={{ fontFamily: monoFont, fontSize: '10px', color: colors.mute, letterSpacing: '0.15em', textTransform: 'uppercase' }}>
+                  Senior engineer, 31
+                </div>
+              </div>
+              <div>
+                <div style={{ fontFamily: displayFont, fontSize: '22px', fontStyle: 'italic', lineHeight: 1.4, color: colors.ink, marginBottom: '16px', fontWeight: 400 }}>
+                  "You keep avoiding the one thing that makes the rest of it click. We saw it three times."
+                </div>
+                <div style={{ fontFamily: monoFont, fontSize: '10px', color: colors.mute, letterSpacing: '0.15em', textTransform: 'uppercase' }}>
+                  Operations lead, 38
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    );
+  }
+
+  if (view === 'interview') {
+    return (
+      <div style={baseStyle}>
+        <div style={{ maxWidth: '720px', margin: '0 auto', padding: '32px 32px 0', display: 'flex', flexDirection: 'column', height: '100vh' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', borderBottom: `1px solid ${colors.rule}`, paddingBottom: '16px', marginBottom: '24px' }}>
+            <div style={{ fontFamily: displayFont, fontSize: '17px', fontWeight: 600, letterSpacing: '-0.01em' }}>Throughline</div>
+            <div style={{ fontFamily: monoFont, fontSize: '10px', color: colors.mute, letterSpacing: '0.12em', textTransform: 'uppercase' }}>
+              The Interview &nbsp;·&nbsp; Turn {messages.filter(m => m.role === 'user').length + 1}
+            </div>
+          </div>
+
+          <div ref={scrollRef} style={{ flex: 1, overflowY: 'auto', paddingRight: '8px', marginBottom: '16px' }}>
+            {messages.map((m, i) => (
+              <div key={i} style={{ marginBottom: '32px' }}>
+                {m.role === 'assistant' ? (
+                  <div>
+                    <div style={{ fontFamily: monoFont, fontSize: '10px', color: colors.accent, letterSpacing: '0.18em', textTransform: 'uppercase', marginBottom: '8px' }}>❦ &nbsp; Throughline</div>
+                    <div style={{ fontSize: '19px', lineHeight: 1.55, color: colors.ink, fontFamily: "'EB Garamond', serif", whiteSpace: 'pre-wrap' }}>{m.content}</div>
+                  </div>
+                ) : (
+                  <div style={{ paddingLeft: '24px', borderLeft: `2px solid ${colors.accent}` }}>
+                    <div style={{ fontFamily: monoFont, fontSize: '10px', color: colors.mute, letterSpacing: '0.18em', textTransform: 'uppercase', marginBottom: '8px' }}>You</div>
+                    <div style={{ fontSize: '17px', lineHeight: 1.5, color: colors.ink, fontStyle: 'italic', whiteSpace: 'pre-wrap' }}>{m.content}</div>
+                  </div>
+                )}
+              </div>
+            ))}
+            {isThinking && (
+              <div style={{ marginBottom: '32px' }}>
+                <div style={{ fontFamily: monoFont, fontSize: '10px', color: colors.accent, letterSpacing: '0.18em', textTransform: 'uppercase', marginBottom: '8px' }}>❦ &nbsp; Throughline</div>
+                <div style={{ fontSize: '19px', lineHeight: 1.55, color: colors.mute, fontStyle: 'italic' }}>
+                  <span style={{ display: 'inline-block', animation: 'pulse 1.5s ease-in-out infinite' }}>thinking...</span>
+                </div>
+              </div>
+            )}
+            {error && (
+              <div style={{ padding: '12px 16px', backgroundColor: 'rgba(156,50,33,0.08)', color: colors.accent, fontSize: '14px', marginBottom: '16px', borderLeft: `2px solid ${colors.accent}` }}>{error}</div>
+            )}
+          </div>
+
+          <div style={{ borderTop: `1px solid ${colors.rule}`, paddingTop: '20px', paddingBottom: '24px', backgroundColor: colors.bg }}>
+            <textarea
+              data-testid="reply-input"
+              value={input}
+              onChange={e => setInput(e.target.value)}
+              onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }}}
+              placeholder="Take your time. Specifics matter more than polish."
+              disabled={isThinking}
+              style={{ width: '100%', minHeight: '80px', resize: 'none', border: `1px solid ${colors.rule}`, backgroundColor: colors.paper, fontFamily: "'EB Garamond', serif", fontSize: '17px', lineHeight: 1.5, color: colors.ink, padding: '14px 16px', outline: 'none', fontStyle: 'italic' }}
+              onFocus={e => e.target.style.borderColor = colors.accent}
+              onBlur={e => e.target.style.borderColor = colors.rule}
+            />
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '12px' }}>
+              <div style={{ fontFamily: monoFont, fontSize: '10px', color: colors.mute, letterSpacing: '0.08em' }}>Enter to send &nbsp;·&nbsp; Shift+Enter for a new line</div>
+              <button
+                data-testid="send-btn"
+                onClick={sendMessage}
+                disabled={!input.trim() || isThinking}
+                style={{ fontFamily: displayFont, fontSize: '15px', fontWeight: 500, backgroundColor: input.trim() && !isThinking ? colors.ink : colors.rule, color: colors.paper, border: 'none', padding: '10px 24px', borderRadius: '2px', cursor: input.trim() && !isThinking ? 'pointer' : 'not-allowed', letterSpacing: '0.02em' }}
+              >
+                Send →
+              </button>
+            </div>
+          </div>
+          <style>{`@keyframes pulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }`}</style>
+        </div>
+      </div>
+    );
+  }
+
+  if (view === 'synthesizing' || view === 'mapping') {
+    return (
+      <div style={{ ...baseStyle, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ textAlign: 'center', maxWidth: '500px', padding: '32px' }}>
+          <div style={{ fontFamily: monoFont, fontSize: '11px', color: colors.accent, letterSpacing: '0.2em', textTransform: 'uppercase', marginBottom: '24px' }}>❦ &nbsp; Reading the transcript</div>
+          <div style={{ fontFamily: displayFont, fontSize: '34px', fontWeight: 400, lineHeight: 1.2, fontStyle: 'italic', color: colors.ink, marginBottom: '16px' }}>
+            {view === 'synthesizing' ? 'Finding the throughline...' : 'Drawing up paths...'}
+          </div>
+          <div style={{ fontSize: '16px', color: colors.mute, lineHeight: 1.55 }}>
+            {view === 'synthesizing' ? 'Looking for what shows up no matter what you were talking about.' : 'Translating who you are into specific work that exists.'}
+          </div>
+          <div style={{ marginTop: '48px' }}>
+            <div style={{ display: 'inline-block', width: '40px', height: '2px', backgroundColor: colors.accent, animation: 'breathe 1.8s ease-in-out infinite' }} />
+          </div>
+          <style>{`@keyframes breathe { 0%, 100% { transform: scaleX(0.3); opacity: 0.5; } 50% { transform: scaleX(1); opacity: 1; } }`}</style>
+        </div>
+      </div>
+    );
+  }
+
+  if (view === 'synthesis' && synthesis) {
+    return (
+      <div style={baseStyle}>
+        <div style={{ maxWidth: '760px', margin: '0 auto', padding: '64px 32px 120px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '64px' }}>
+            <div style={{ fontFamily: displayFont, fontSize: '17px', fontWeight: 600, letterSpacing: '-0.01em' }}>Throughline</div>
+            <div style={{ fontFamily: monoFont, fontSize: '11px', color: colors.mute, letterSpacing: '0.12em', textTransform: 'uppercase' }}>Part Two &nbsp;·&nbsp; The Synthesis</div>
+          </div>
+
+          <div style={{ fontFamily: monoFont, fontSize: '11px', color: colors.accent, letterSpacing: '0.2em', textTransform: 'uppercase', marginBottom: '20px' }}>❦ &nbsp; Here is what we heard</div>
+          <h1 style={{ fontFamily: displayFont, fontSize: 'clamp(36px, 5vw, 56px)', fontWeight: 400, lineHeight: 1.05, letterSpacing: '-0.025em', margin: '0 0 24px' }}>
+            The pattern beneath<br />
+            <em style={{ fontStyle: 'italic', color: colors.accent }}>what you said.</em>
+          </h1>
+
+          {synthesis.throughline && (
+            <div style={{ padding: '28px 32px', backgroundColor: colors.paper, borderLeft: `3px solid ${colors.accent}`, margin: '48px 0', fontSize: '21px', lineHeight: 1.5, fontStyle: 'italic', fontFamily: "'EB Garamond', serif" }}>
+              {synthesis.throughline}
+            </div>
+          )}
+
+          <div style={{ marginTop: '64px' }}>
+            <div style={{ fontFamily: monoFont, fontSize: '11px', color: colors.mute, letterSpacing: '0.15em', textTransform: 'uppercase', marginBottom: '32px', borderTop: `1px solid ${colors.rule}`, paddingTop: '24px' }}>Themes</div>
+            {synthesis.themes?.map((t, i) => (
+              <div key={i} style={{ marginBottom: '40px', display: 'grid', gridTemplateColumns: '64px 1fr', gap: '16px' }}>
+                <div style={{ fontFamily: displayFont, fontSize: '32px', color: colors.accent, fontStyle: 'italic', fontWeight: 300, lineHeight: 1 }}>{String(i + 1).padStart(2, '0')}</div>
+                <div>
+                  <div style={{ fontFamily: displayFont, fontSize: '24px', fontWeight: 500, lineHeight: 1.25, letterSpacing: '-0.01em', marginBottom: '10px', color: colors.ink }}>{t.title}</div>
+                  <div style={{ fontSize: '17px', lineHeight: 1.6, color: colors.ink }}>{t.body}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {synthesis.tensions?.length > 0 && (
+            <div style={{ marginTop: '80px', padding: '48px', backgroundColor: 'rgba(31,27,22,0.04)', borderRadius: '2px' }}>
+              <div style={{ fontFamily: monoFont, fontSize: '11px', color: colors.accent, letterSpacing: '0.2em', textTransform: 'uppercase', marginBottom: '24px' }}>⚠ &nbsp; Tensions to name</div>
+              {synthesis.tensions.map((t, i) => (
+                <div key={i} style={{ marginBottom: i < synthesis.tensions.length - 1 ? '32px' : 0 }}>
+                  <div style={{ fontFamily: displayFont, fontSize: '21px', fontWeight: 500, lineHeight: 1.3, marginBottom: '8px', fontStyle: 'italic' }}>{t.title}</div>
+                  <div style={{ fontSize: '16px', lineHeight: 1.6, color: colors.ink }}>{t.body}</div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          <div style={{ marginTop: '80px', textAlign: 'center', paddingTop: '48px', borderTop: `1px solid ${colors.rule}` }}>
+            <div style={{ fontSize: '17px', color: colors.mute, marginBottom: '32px', fontStyle: 'italic' }}>Ready to see what work this maps to?</div>
+            <button
+              data-testid="paths-btn"
+              onClick={runMapping}
+              style={{ fontFamily: displayFont, fontSize: '18px', fontWeight: 500, backgroundColor: colors.ink, color: colors.paper, border: 'none', padding: '18px 36px', borderRadius: '2px', cursor: 'pointer', letterSpacing: '0.01em', boxShadow: '0 4px 0 rgba(31,27,22,0.15)' }}
+              onMouseOver={e => e.currentTarget.style.backgroundColor = colors.accent}
+              onMouseOut={e => e.currentTarget.style.backgroundColor = colors.ink}
+            >
+              Show me the paths &nbsp;→
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (view === 'paths' && paths) {
+    return (
+      <div style={baseStyle}>
+        <div style={{ maxWidth: '900px', margin: '0 auto', padding: '64px 32px 120px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '64px' }}>
+            <div style={{ fontFamily: displayFont, fontSize: '17px', fontWeight: 600 }}>Throughline</div>
+            <div style={{ fontFamily: monoFont, fontSize: '11px', color: colors.mute, letterSpacing: '0.12em', textTransform: 'uppercase' }}>Part Three &nbsp;·&nbsp; The Paths</div>
+          </div>
+
+          <div style={{ fontFamily: monoFont, fontSize: '11px', color: colors.accent, letterSpacing: '0.2em', textTransform: 'uppercase', marginBottom: '20px' }}>❦ &nbsp; Four directions to consider</div>
+          <h1 style={{ fontFamily: displayFont, fontSize: 'clamp(36px, 5vw, 56px)', fontWeight: 400, lineHeight: 1.05, letterSpacing: '-0.025em', margin: '0 0 24px' }}>
+            Specific work,<br />
+            <em style={{ fontStyle: 'italic', color: colors.accent }}>specific frictions.</em>
+          </h1>
+          <p style={{ fontSize: '18px', lineHeight: 1.55, color: colors.mute, maxWidth: '600px', marginBottom: '64px' }}>
+            None of these is "the answer." Read them as four different versions of your throughline, then pick one to investigate.
+          </p>
+
+          <div style={{ display: 'grid', gap: '32px' }}>
+            {paths.paths?.map((p, i) => (
+              <div
+                key={i}
+                data-testid={`path-${i}`}
+                onClick={() => setSelectedPath(selectedPath === i ? null : i)}
+                style={{ backgroundColor: selectedPath === i ? colors.paper : 'rgba(251,248,241,0.5)', border: `1px solid ${selectedPath === i ? colors.accent : colors.rule}`, padding: '40px', cursor: 'pointer', transition: 'all 0.25s ease', borderRadius: '2px' }}
+              >
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px', gap: '24px' }}>
+                  <div>
+                    <div style={{ fontFamily: monoFont, fontSize: '10px', color: colors.accent, letterSpacing: '0.2em', marginBottom: '8px' }}>Path {String(i + 1).padStart(2, '0')}</div>
+                    <div style={{ fontFamily: displayFont, fontSize: '28px', fontWeight: 500, lineHeight: 1.15, letterSpacing: '-0.015em', marginBottom: '6px' }}>{p.title}</div>
+                    <div style={{ fontSize: '16px', color: colors.mute, fontStyle: 'italic', lineHeight: 1.45 }}>{p.tagline}</div>
+                  </div>
+                  <div style={{ textAlign: 'right', minWidth: '140px' }}>
+                    <div style={{ fontFamily: monoFont, fontSize: '10px', color: colors.mute, letterSpacing: '0.12em', marginBottom: '4px' }}>COMP</div>
+                    <div style={{ fontFamily: displayFont, fontSize: '16px', fontWeight: 500 }}>{p.comp}</div>
+                    <div style={{ fontFamily: monoFont, fontSize: '10px', color: colors.mute, letterSpacing: '0.12em', marginTop: '12px', marginBottom: '4px' }}>OUTLOOK</div>
+                    <div style={{ fontSize: '13px', color: colors.ink, fontStyle: 'italic' }}>{p.outlook}</div>
+                  </div>
+                </div>
+
+                <div style={{ marginTop: '20px', fontSize: '17px', lineHeight: 1.55, color: colors.ink }}>{p.fit}</div>
+
+                {selectedPath === i && (
+                  <div style={{ marginTop: '32px', paddingTop: '32px', borderTop: `1px solid ${colors.rule}`, display: 'grid', gap: '28px' }}>
+                    <div>
+                      <div style={{ fontFamily: monoFont, fontSize: '10px', color: colors.accent, letterSpacing: '0.2em', marginBottom: '8px' }}>Where this would chafe</div>
+                      <div style={{ fontSize: '16px', lineHeight: 1.55, fontStyle: 'italic', color: colors.ink }}>{p.friction}</div>
+                    </div>
+                    <div>
+                      <div style={{ fontFamily: monoFont, fontSize: '10px', color: colors.accent, letterSpacing: '0.2em', marginBottom: '8px' }}>A Tuesday in this role</div>
+                      <div style={{ fontSize: '16px', lineHeight: 1.6, color: colors.ink }}>{p.day}</div>
+                    </div>
+                    <div style={{ padding: '20px 24px', backgroundColor: 'rgba(156,50,33,0.06)', borderLeft: `2px solid ${colors.accent}` }}>
+                      <div style={{ fontFamily: monoFont, fontSize: '10px', color: colors.accent, letterSpacing: '0.2em', marginBottom: '6px' }}>Your first move</div>
+                      <div style={{ fontSize: '17px', lineHeight: 1.5, color: colors.ink, fontWeight: 500 }}>{p.first_step}</div>
+                    </div>
+                  </div>
+                )}
+
+                <div style={{ marginTop: '20px', fontFamily: monoFont, fontSize: '10px', color: colors.mute, letterSpacing: '0.1em' }}>
+                  {selectedPath === i ? 'close' : 'tap to expand'}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div style={{ marginTop: '80px', textAlign: 'center', padding: '48px 0', borderTop: `1px solid ${colors.rule}` }}>
+            <div style={{ fontSize: '16px', color: colors.mute, fontStyle: 'italic', maxWidth: '500px', margin: '0 auto 24px' }}>
+              These are starting points, not endpoints. The real work is talking to people who do them.
+            </div>
+            <button
+              onClick={() => { setView('landing'); setMessages([]); setSynthesis(null); setPaths(null); setSelectedPath(null); }}
+              style={{ fontFamily: monoFont, fontSize: '11px', backgroundColor: 'transparent', color: colors.mute, border: 'none', cursor: 'pointer', letterSpacing: '0.15em', textTransform: 'uppercase' }}
+            >
+              ← Start a new conversation
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return null;
+}
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(<Throughline />);
+  </script>
+</body>
+</html>

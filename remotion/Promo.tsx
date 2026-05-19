@@ -38,7 +38,6 @@ export const defaultPromoProps: PromoInputProps = {
   videoPreambleMs: 0,
 };
 
-const TITLE_FRAMES = 60;
 const OUTRO_FRAMES = 90;
 
 export const calculatePromoMetadata = ({
@@ -48,7 +47,7 @@ export const calculatePromoMetadata = ({
 }) => {
   const fps = 30;
   const voiceFrames = Math.ceil((props.voiceDurationMs / 1000) * fps);
-  const totalFrames = TITLE_FRAMES + voiceFrames + OUTRO_FRAMES;
+  const totalFrames = voiceFrames + OUTRO_FRAMES;
   return {
     durationInFrames: Math.max(totalFrames, 60),
     fps,
@@ -60,15 +59,11 @@ export const calculatePromoMetadata = ({
 export const Promo: React.FC<PromoInputProps> = (props) => {
   const { fps, durationInFrames } = useVideoConfig();
   const voiceFrames = Math.ceil((props.voiceDurationMs / 1000) * fps);
-  const outroStart = TITLE_FRAMES + voiceFrames;
+  const outroStart = voiceFrames;
 
   return (
     <AbsoluteFill style={{ background: "#0a0a0a" }}>
-      <Sequence durationInFrames={TITLE_FRAMES}>
-        <TitleCard title={props.title} />
-      </Sequence>
-
-      <Sequence from={TITLE_FRAMES} durationInFrames={voiceFrames}>
+      <Sequence durationInFrames={voiceFrames}>
         <MainScene
           shotCount={props.shotCount}
           words={props.words}
@@ -78,7 +73,7 @@ export const Promo: React.FC<PromoInputProps> = (props) => {
         />
       </Sequence>
 
-      <Sequence from={TITLE_FRAMES} durationInFrames={voiceFrames}>
+      <Sequence durationInFrames={voiceFrames}>
         <Audio src={staticFile("audio.mp3")} />
       </Sequence>
 
@@ -94,44 +89,6 @@ export const Promo: React.FC<PromoInputProps> = (props) => {
 
 const FONT_STACK =
   "-apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif";
-
-const TitleCard: React.FC<{ title: string }> = ({ title }) => {
-  const frame = useCurrentFrame();
-  const { fps } = useVideoConfig();
-  const enter = spring({ frame, fps, config: { damping: 200 } });
-  const lift = interpolate(enter, [0, 1], [40, 0]);
-  const opacity = interpolate(enter, [0, 1], [0, 1]);
-
-  return (
-    <AbsoluteFill
-      style={{
-        background:
-          "radial-gradient(900px 600px at 50% 50%, #2a2240 0%, #0a0a0a 70%)",
-        color: "#fff",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: 80,
-        textAlign: "center",
-        opacity,
-        transform: `translateY(${lift}px)`,
-        fontFamily: FONT_STACK,
-      }}
-    >
-      <div
-        style={{
-          fontSize: 120,
-          fontWeight: 800,
-          lineHeight: 1.05,
-          letterSpacing: -3,
-          maxWidth: "90%",
-        }}
-      >
-        {title}
-      </div>
-    </AbsoluteFill>
-  );
-};
 
 const MainScene: React.FC<{
   shotCount: number;
