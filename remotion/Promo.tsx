@@ -204,13 +204,42 @@ const MainScene: React.FC<{
   );
 };
 
+const CAPTION_FONT =
+  "Inter, 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif";
+
+const CAPTION_CHUNK_MAX_CHARS = 50;
+
+function chunkWordsByLength(
+  words: WordTiming[],
+  maxChars: number,
+): WordTiming[][] {
+  const chunks: WordTiming[][] = [];
+  let current: WordTiming[] = [];
+  let chars = 0;
+  for (const w of words) {
+    const wlen = w.word.length;
+    const extra = current.length === 0 ? wlen : 1 + wlen;
+    if (current.length > 0 && chars + extra > maxChars) {
+      chunks.push(current);
+      current = [];
+      chars = 0;
+    }
+    current.push(w);
+    chars += current.length === 1 ? wlen : 1 + wlen;
+  }
+  if (current.length > 0) chunks.push(current);
+  return chunks;
+}
+
 const Captions: React.FC<{ sceneMs: number; words: WordTiming[] }> = ({
   sceneMs,
   words,
 }) => {
+  const frame = useCurrentFrame();
+  const { fps } = useVideoConfig();
+
   if (words.length === 0) return null;
 
-  const WINDOW = 6;
   let activeIdx = -1;
   for (let i = 0; i < words.length; i++) {
     const w = words[i]!;
@@ -222,40 +251,65 @@ const Captions: React.FC<{ sceneMs: number; words: WordTiming[] }> = ({
   }
   if (activeIdx < 0) return null;
 
-  const start = Math.max(
-    0,
-    Math.min(words.length - WINDOW, activeIdx - Math.floor(WINDOW / 2)),
-  );
-  const visible = words.slice(start, start + WINDOW);
+  const chunks = chunkWordsByLength(words, CAPTION_CHUNK_MAX_CHARS);
+  let chunkOffset = 0;
+  let chunkIdx = 0;
+  for (let ci = 0; ci < chunks.length; ci++) {
+    if (activeIdx < chunkOffset + chunks[ci]!.length) {
+      chunkIdx = ci;
+      break;
+    }
+    chunkOffset += chunks[ci]!.length;
+  }
+  const chunk = chunks[chunkIdx]!;
+  const activeInChunk = activeIdx - chunkOffset;
+
+  const chunkStartFrame = (chunk[0]!.startMs / 1000) * fps;
+  const chunkEntry = spring({
+    frame: frame - chunkStartFrame,
+    fps,
+    config: { damping: 200 },
+    durationInFrames: 9,
+  });
+  const chunkLift = interpolate(chunkEntry, [0, 1], [18, 0]);
+  const chunkOpacity = interpolate(chunkEntry, [0, 1], [0, 1]);
 
   return (
     <div
       style={{
         position: "absolute",
-        left: 60,
-        right: 60,
-        bottom: 220,
+        left: 48,
+        right: 48,
+        top: "54%",
         display: "flex",
         flexWrap: "wrap",
         justifyContent: "center",
-        gap: "12px 18px",
-        fontFamily: FONT_STACK,
+        alignItems: "baseline",
+        rowGap: 8,
+        columnGap: 22,
+        transform: `translateY(${chunkLift}px)`,
+        opacity: chunkOpacity,
+        fontFamily: CAPTION_FONT,
+        pointerEvents: "none",
       }}
     >
-      {visible.map((w, i) => {
-        const globalIdx = start + i;
-        const isActive = globalIdx === activeIdx;
+      {chunk.map((w, i) => {
+        const isActive = i === activeInChunk;
         return (
           <span
-            key={`${globalIdx}-${w.word}`}
+            key={`${chunkOffset + i}-${w.word}`}
             style={{
-              fontSize: 64,
-              fontWeight: 700,
-              lineHeight: 1.2,
-              color: isActive ? "#ffe066" : "#fff",
-              textShadow: "0 4px 14px rgba(0,0,0,0.65)",
-              transform: isActive ? "scale(1.06)" : "scale(1)",
-              transition: "transform 80ms linear",
+              display: "inline-block",
+              fontSize: 78,
+              fontWeight: 900,
+              lineHeight: 1.15,
+              letterSpacing: "0.005em",
+              textTransform: "uppercase",
+              color: isActive ? "#fff200" : "#ffffff",
+              WebkitTextStroke: "5px #000",
+              paintOrder: "stroke fill",
+              textShadow:
+                "0 5px 0 rgba(0,0,0,1), 0 10px 24px rgba(0,0,0,0.85)",
             }}
           >
             {w.word}
