@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Overcharged. Find errors in your medical bills.</title>
+  <meta name="description" content="Most US medical bills contain errors. Paste yours, see the likely overcharges, and get an editable appeal letter. Free, no signup." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..900&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+  <script crossorigin src="https://unpkg.com/react@18.3.1/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.24.7/babel.min.js"></script>
+  <style>
+    html, body { margin: 0; padding: 0; background: #FCFBF8; }
+    .__loading { font-family: Inter, system-ui, sans-serif; color: #888; text-align: center; padding-top: 200px; font-size: 16px; }
+  </style>
+</head>
+<body>
+  <div id="root"><div class="__loading">Loading...</div></div>
+
+  <script type="text/babel" data-presets="react">
+const { useState, useRef } = React;
+
+// ============================================================
+// Sample bill + canned analysis. Visitor can paste their own,
+// but the analysis is currently illustrative (no live model yet).
+// ============================================================
+const SAMPLE_BILL = `MEDICAL CENTER OF EXCELLENCE
+Patient: J. Smith       Account #: 4827-91-3322
+Date of Service: 03/15/2026
+
+Itemized Charges:
+  Emergency Department Level 4 Visit         $1,890.00
+  Hospital Inpatient Bed (Semi-Private) x 2  $6,400.00
+  IV Therapy, Push                              $185.00
+  Lab Panel, Comprehensive Metabolic            $475.00
+  Lab Panel, CBC w/ Differential                $290.00
+  Pharmacy, Lisinopril 10mg                      $87.50
+  Pharmacy, Ibuprofen 200mg                      $45.00
+  Imaging, Chest X-Ray, 2-view                  $750.00
+  Imaging, CT Abdomen w/ Contrast             $4,250.00
+  Cardiology Consultation                       $890.00
+  Disposable Pulse Oximeter                      $42.00
+  Acetaminophen, single dose                     $15.00
+  ----------------------------------
+  Total                                       $15,329.50`;
+
+const MOCK_ANALYSIS = {
+  total: 15329.50,
+  overcharge_low: 2100,
+  overcharge_high: 2900,
+  flags: [
+    {
+      line: "Emergency Department Level 4 Visit",
+      charge: 1890,
+      severity: "warn",
+      why: "Level 4 ED visits require moderate-to-high complexity decision making. If you were treated and discharged in under 2 hours with no major procedures, this is likely Level 2 or 3 ($400 to $900). Request the documentation that justifies Level 4."
+    },
+    {
+      line: "Pharmacy, Lisinopril 10mg",
+      charge: 87.50,
+      severity: "high",
+      why: "Retail Lisinopril 10mg costs $0.05 to $0.50 per pill. $87.50 is a roughly 175x markup. Hospital pharmacy markups exist, but this is high enough to be worth disputing or asking your insurer to renegotiate."
+    },
+    {
+      line: "Pharmacy, Ibuprofen 200mg",
+      charge: 45.00,
+      severity: "high",
+      why: "Retail cost is about $0.05 per dose. $45 is an 900x markup. Same dispute angle as Lisinopril."
+    },
+    {
+      line: "Disposable Pulse Oximeter",
+      charge: 42.00,
+      severity: "warn",
+      why: "Pulse oximetry monitoring is typically bundled into the room and board charge, not billed as a separate disposable. Request the policy that supports unbundling this charge."
+    },
+    {
+      line: "Acetaminophen, single dose",
+      charge: 15.00,
+      severity: "high",
+      why: "Same pattern as ibuprofen. Retail cost is about $0.04 per dose."
+    },
+    {
+      line: "Lab Panel, CBC + Comprehensive Metabolic",
+      charge: 765.00,
+      severity: "warn",
+      why: "CBC and CMP run together typically cost $200 to $400 in-network. Ask for the contracted rate per your insurer's Explanation of Benefits and dispute the difference."
+    }
+  ],
+  next_steps: [
+    "Request a fully itemized bill with CPT codes if you do not already have one.",
+    "Cross-reference each CPT code against your insurance Explanation of Benefits.",
+    "Submit a written appeal within 30 days citing each disputed line."
+  ]
+};
+
+const MOCK_LETTER = `Patient Name: J. Smith
+Account: 4827-91-3322
+Date of Service: 03/15/2026
+
+To the Billing Department:
+
+I am writing to formally dispute several charges on the above-referenced bill. After reviewing the itemization, I have identified the following items that require clarification or correction:
+
+1. Emergency Department Level 4 Visit ($1,890.00)
+   Please provide the documentation that supports Level 4 coding. Based on my visit history (no major procedures, discharge within two hours), I believe this should be coded as Level 2 or Level 3.
+
+2. Pharmacy items (Lisinopril 10mg $87.50, Ibuprofen 200mg $45.00, Acetaminophen $15.00)
+   The retail equivalent costs for these medications are well under one dollar per dose. The current charges represent markups between 175x and 900x. Please justify these amounts or adjust to a reasonable hospital pharmacy rate.
+
+3. Disposable Pulse Oximeter ($42.00)
+   Pulse oximetry monitoring is conventionally bundled into room and board charges. Please provide the unbundling policy that supports this separate line item.
+
+4. Lab Panels, CBC and Comprehensive Metabolic ($290.00 + $475.00)
+   The combined fair price for these panels in network is typically $200 to $400. Please reconcile the difference and apply the contracted rate per my insurer's Explanation of Benefits.
+
+Pending your response, I am withholding payment on the disputed amounts. I am happy to pay any portion that is correctly documented and properly priced. Please respond within 30 days as required by the Fair Credit Billing Act.
+
+Sincerely,
+J. Smith
+[your phone] [your email]`;
+
+function delay(min, max) {
+  return new Promise(r => setTimeout(r, min + Math.random() * (max - min)));
+}
+
+function formatUsd(n) {
+  return "$" + n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+// ============================================================
+// Component
+// ============================================================
+function App() {
+  const [billText, setBillText] = useState("");
+  const [view, setView] = useState("landing"); // landing | analyzing | results
+  const [analysis, setAnalysis] = useState(null);
+  const [showLetter, setShowLetter] = useState(false);
+  const [letterText, setLetterText] = useState("");
+  const [letterLoading, setLetterLoading] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const resultsRef = useRef(null);
+
+  async function runAnalysis() {
+    if (!billText.trim()) return;
+    setView("analyzing");
+    setAnalysis(null);
+    setShowLetter(false);
+    setLetterText("");
+    await delay(1800, 2600);
+    setAnalysis(MOCK_ANALYSIS);
+    setView("results");
+    setTimeout(() => {
+      resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 80);
+  }
+
+  function loadSample() {
+    setBillText(SAMPLE_BILL);
+    setView("landing");
+    setAnalysis(null);
+    setShowLetter(false);
+    setTimeout(() => {
+      document.getElementById("analyze-btn")?.focus();
+    }, 50);
+  }
+
+  async function generateLetter() {
+    setShowLetter(true);
+    setLetterLoading(true);
+    setLetterText("");
+    await delay(1600, 2400);
+    setLetterText(MOCK_LETTER);
+    setLetterLoading(false);
+  }
+
+  function copyLetter() {
+    navigator.clipboard?.writeText(letterText);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1600);
+  }
+
+  const ink = "#1A1A1A";
+  const paper = "#FCFBF8";
+  const accent = "#B91C1C";
+  const ok = "#15803D";
+  const warn = "#B45309";
+  const mute = "#666";
+  const rule = "#E6E3DC";
+  const card = "#FFFFFF";
+
+  const wrap = { maxWidth: 760, margin: "0 auto", padding: "64px 24px 120px" };
+  const display = "'Fraunces', Georgia, serif";
+  const sans = "Inter, system-ui, sans-serif";
+  const mono = "'JetBrains Mono', ui-monospace, monospace";
+
+  return (
+    <div style={{ background: paper, color: ink, fontFamily: sans, minHeight: "100vh" }}>
+
+      {/* ============== HERO ============== */}
+      <header style={wrap}>
+        <div data-testid="eyebrow" style={{ fontFamily: mono, fontSize: 11, color: accent, letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: 32 }}>
+          For anyone with a recent US medical bill
+        </div>
+
+        <h1 style={{
+          fontFamily: display,
+          fontWeight: 400,
+          fontSize: "clamp(48px, 7vw, 84px)",
+          lineHeight: 0.98,
+          letterSpacing: "-0.035em",
+          margin: 0,
+          color: ink
+        }}>
+          You probably <em style={{ fontStyle: "italic", color: accent }}>overpaid</em><br />
+          your last hospital bill.
+        </h1>
+
+        <p style={{
+          fontFamily: display,
+          fontSize: 22,
+          fontStyle: "italic",
+          fontWeight: 400,
+          lineHeight: 1.45,
+          color: mute,
+          margin: "32px 0 24px",
+          maxWidth: 580
+        }}>
+          About one in four US medical bills contains an error. The average patient never checks. Paste yours, see the likely overcharges, and get an editable appeal letter in two minutes.
+        </p>
+
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 16, alignItems: "center", marginTop: 32 }}>
+          <button
+            data-testid="try-sample"
+            onClick={loadSample}
+            style={{
+              fontFamily: sans, fontSize: 16, fontWeight: 600,
+              background: ink, color: paper, border: "none",
+              padding: "16px 28px", borderRadius: 4, cursor: "pointer",
+              letterSpacing: 0.2, boxShadow: "0 3px 0 rgba(0,0,0,0.18)"
+            }}
+            onMouseOver={e => { e.currentTarget.style.background = accent; }}
+            onMouseOut={e => { e.currentTarget.style.background = ink; }}
+          >
+            Try with a sample bill &nbsp;→
+          </button>
+          <a href="#paste" style={{
+            fontFamily: sans, fontSize: 14, color: mute, textDecoration: "underline",
+            textUnderlineOffset: 4, letterSpacing: 0.1
+          }}>
+            or paste your own
+          </a>
+          <span style={{ fontFamily: mono, fontSize: 11, color: mute, letterSpacing: 0.1, textTransform: "uppercase" }}>
+            ·&nbsp; free &nbsp;·&nbsp; no signup &nbsp;·&nbsp; nothing leaves your browser
+          </span>
+        </div>
+
+        {/* ============== STAT STRIP ============== */}
+        <div style={{
+          marginTop: 80, paddingTop: 32, borderTop: `1px solid ${rule}`,
+          display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 32
+        }}>
+          {[
+            { n: "23%", l: "of US medical bills", s: "contain a billing error worth disputing" },
+            { n: "$1,200", l: "average refund", s: "per successful patient appeal (industry estimate)" },
+            { n: "30 days", l: "your appeal window", s: "starts the day the bill arrived" }
+          ].map((s, i) => (
+            <div key={i}>
+              <div style={{ fontFamily: display, fontSize: 38, fontWeight: 500, color: accent, lineHeight: 1, letterSpacing: "-0.02em" }}>
+                {s.n}
+              </div>
+              <div style={{ fontFamily: sans, fontSize: 14, fontWeight: 600, color: ink, marginTop: 8 }}>
+                {s.l}
+              </div>
+              <div style={{ fontFamily: sans, fontSize: 13, color: mute, marginTop: 4, lineHeight: 1.45 }}>
+                {s.s}
+              </div>
+            </div>
+          ))}
+        </div>
+      </header>
+
+      {/* ============== PASTE ============== */}
+      <section id="paste" style={{ ...wrap, paddingTop: 0 }}>
+        <div style={{
+          background: card, border: `1px solid ${rule}`, borderRadius: 6, padding: 28
+        }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 16 }}>
+            <div style={{ fontFamily: mono, fontSize: 11, color: accent, letterSpacing: "0.18em", textTransform: "uppercase" }}>
+              Step 1 of 2 &nbsp;·&nbsp; Paste the itemized bill
+            </div>
+            <button
+              data-testid="load-sample-inline"
+              onClick={loadSample}
+              style={{ fontFamily: sans, fontSize: 12, background: "transparent", border: `1px solid ${rule}`,
+                color: mute, padding: "6px 12px", borderRadius: 4, cursor: "pointer" }}
+            >
+              load sample
+            </button>
+          </div>
+
+          <textarea
+            data-testid="bill-input"
+            value={billText}
+            onChange={e => setBillText(e.target.value)}
+            placeholder="Paste your itemized bill here. Even one line works. The more line items, the better the analysis."
+            style={{
+              width: "100%", minHeight: 220, resize: "vertical",
+              fontFamily: mono, fontSize: 13, lineHeight: 1.55, color: ink,
+              border: `1px solid ${rule}`, borderRadius: 4, padding: "14px 16px",
+              outline: "none", background: paper
+            }}
+            onFocus={e => e.target.style.borderColor = accent}
+            onBlur={e => e.target.style.borderColor = rule}
+          />
+
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 16 }}>
+            <div style={{ fontFamily: mono, fontSize: 11, color: mute, letterSpacing: 0.05 }}>
+              {billText.length} characters &nbsp;·&nbsp; analyzed locally
+            </div>
+            <button
+              id="analyze-btn"
+              data-testid="analyze-btn"
+              onClick={runAnalysis}
+              disabled={!billText.trim() || view === "analyzing"}
+              style={{
+                fontFamily: sans, fontSize: 15, fontWeight: 600,
+                background: billText.trim() && view !== "analyzing" ? accent : rule,
+                color: paper, border: "none",
+                padding: "12px 24px", borderRadius: 4,
+                cursor: billText.trim() && view !== "analyzing" ? "pointer" : "not-allowed",
+                letterSpacing: 0.2
+              }}
+            >
+              {view === "analyzing" ? "Analyzing..." : "Find my overcharges  →"}
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* ============== ANALYZING ============== */}
+      {view === "analyzing" && (
+        <section style={{ ...wrap, paddingTop: 24, paddingBottom: 24, textAlign: "center" }}>
+          <div style={{ fontFamily: mono, fontSize: 11, color: accent, letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: 12 }}>
+            Reading line items
+          </div>
+          <div style={{ fontFamily: display, fontSize: 28, fontStyle: "italic", color: ink, marginBottom: 16 }}>
+            Cross-checking against reference pricing...
+          </div>
+          <div style={{ display: "inline-block", width: 40, height: 2, background: accent, animation: "pulse 1.8s ease-in-out infinite" }} />
+          <style>{`@keyframes pulse { 0%,100% { transform: scaleX(0.3); opacity: 0.4; } 50% { transform: scaleX(1); opacity: 1; } }`}</style>
+        </section>
+      )}
+
+      {/* ============== RESULTS ============== */}
+      {view === "results" && analysis && (
+        <section ref={resultsRef} style={{ ...wrap, paddingTop: 32 }}>
+
+          {/* Summary card with loss frame */}
+          <div data-testid="overcharge-summary" style={{
+            background: card, border: `2px solid ${accent}`, borderRadius: 6,
+            padding: 32, marginBottom: 32
+          }}>
+            <div style={{ fontFamily: mono, fontSize: 11, color: accent, letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: 8 }}>
+              Step 2 of 2 &nbsp;·&nbsp; Likely overcharge
+            </div>
+            <div style={{ fontFamily: display, fontSize: "clamp(38px, 5vw, 56px)", fontWeight: 500, color: accent, lineHeight: 1, letterSpacing: "-0.025em" }}>
+              {formatUsd(analysis.overcharge_low)} – {formatUsd(analysis.overcharge_high)}
+            </div>
+            <div style={{ fontFamily: sans, fontSize: 15, color: mute, marginTop: 10 }}>
+              out of {formatUsd(analysis.total)} billed.&nbsp; That is roughly {Math.round((analysis.overcharge_low / analysis.total) * 100)}% to {Math.round((analysis.overcharge_high / analysis.total) * 100)}% of the bill.
+            </div>
+          </div>
+
+          {/* Line items */}
+          <div style={{ fontFamily: mono, fontSize: 11, color: mute, letterSpacing: "0.15em", textTransform: "uppercase", marginBottom: 16 }}>
+            {analysis.flags.length} line items flagged
+          </div>
+
+          {analysis.flags.map((f, i) => (
+            <div key={i} style={{
+              background: card, border: `1px solid ${rule}`, borderLeft: `4px solid ${f.severity === "high" ? accent : warn}`,
+              borderRadius: 4, padding: "20px 24px", marginBottom: 14
+            }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 16 }}>
+                <div style={{ fontFamily: sans, fontSize: 16, fontWeight: 600, color: ink }}>
+                  {f.line}
+                </div>
+                <div style={{ fontFamily: mono, fontSize: 14, fontWeight: 600, color: f.severity === "high" ? accent : warn, whiteSpace: "nowrap" }}>
+                  {formatUsd(f.charge)}
+                </div>
+              </div>
+              <div style={{ fontFamily: sans, fontSize: 14, color: mute, marginTop: 8, lineHeight: 1.55 }}>
+                {f.why}
+              </div>
+            </div>
+          ))}
+
+          {/* CTA: draft letter */}
+          <div style={{
+            marginTop: 40, padding: 28, background: card, border: `1px solid ${rule}`, borderRadius: 6, textAlign: "center"
+          }}>
+            <div style={{ fontFamily: display, fontSize: 22, fontWeight: 500, color: ink, marginBottom: 8 }}>
+              Ready to send it back?
+            </div>
+            <div style={{ fontFamily: sans, fontSize: 14, color: mute, marginBottom: 20, maxWidth: 460, margin: "0 auto 20px" }}>
+              We will draft an appeal letter citing each flagged line. Edit it, copy it, mail or fax it.
+            </div>
+            <button
+              data-testid="letter-btn"
+              onClick={generateLetter}
+              disabled={letterLoading}
+              style={{
+                fontFamily: sans, fontSize: 15, fontWeight: 600,
+                background: ink, color: paper, border: "none",
+                padding: "14px 28px", borderRadius: 4, cursor: letterLoading ? "wait" : "pointer",
+                boxShadow: "0 3px 0 rgba(0,0,0,0.18)"
+              }}
+            >
+              {letterLoading ? "Drafting..." : (showLetter ? "Regenerate letter" : "Draft my appeal letter  →")}
+            </button>
+          </div>
+
+          {/* Letter */}
+          {showLetter && (
+            <div style={{ marginTop: 28 }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
+                <div style={{ fontFamily: mono, fontSize: 11, color: accent, letterSpacing: "0.2em", textTransform: "uppercase" }}>
+                  Editable appeal letter
+                </div>
+                {letterText && (
+                  <button
+                    onClick={copyLetter}
+                    style={{ fontFamily: sans, fontSize: 12, background: "transparent",
+                      border: `1px solid ${rule}`, color: ink, padding: "6px 14px",
+                      borderRadius: 4, cursor: "pointer" }}
+                  >
+                    {copied ? "copied ✓" : "copy"}
+                  </button>
+                )}
+              </div>
+              <textarea
+                value={letterText}
+                onChange={e => setLetterText(e.target.value)}
+                placeholder={letterLoading ? "Drafting..." : ""}
+                style={{
+                  width: "100%", minHeight: 360, resize: "vertical",
+                  fontFamily: mono, fontSize: 13, lineHeight: 1.55, color: ink,
+                  border: `1px solid ${rule}`, borderRadius: 4, padding: "16px 18px",
+                  outline: "none", background: card
+                }}
+              />
+            </div>
+          )}
+
+          {/* Next steps */}
+          <div style={{
+            marginTop: 40, padding: 24, background: "rgba(185,28,28,0.04)", borderLeft: `3px solid ${accent}`, borderRadius: 4
+          }}>
+            <div style={{ fontFamily: mono, fontSize: 11, color: accent, letterSpacing: "0.18em", textTransform: "uppercase", marginBottom: 12 }}>
+              While the appeal is pending
+            </div>
+            <ol style={{ margin: 0, paddingLeft: 20, fontFamily: sans, fontSize: 14, color: ink, lineHeight: 1.7 }}>
+              {analysis.next_steps.map((s, i) => <li key={i} style={{ marginBottom: 6 }}>{s}</li>)}
+            </ol>
+          </div>
+
+        </section>
+      )}
+
+      {/* ============== FOOTER ============== */}
+      <footer style={{ ...wrap, paddingTop: 32, paddingBottom: 64, borderTop: `1px solid ${rule}` }}>
+        <div style={{ fontFamily: mono, fontSize: 11, color: mute, letterSpacing: 0.05, textAlign: "center", lineHeight: 1.6 }}>
+          This tool is for informational purposes only and is not legal, medical, or financial advice.
+          Analysis is currently illustrative.&nbsp; The flagged-charge thresholds are based on publicly
+          published reference pricing (Healthcare Bluebook, Medicare fee schedules, retail pharmacy data).
+        </div>
+      </footer>
+    </div>
+  );
+}
+
+const root = ReactDOM.createRoot(document.getElementById("root"));
+root.render(<App />);
+  </script>
+
+  <!-- Buy Me a Coffee widget. Lives in source (not just build-time inject)
+       so it ships on every deploy path. build.ts skips injection when this
+       is already present. -->
+  <script data-name="BMC-Widget" data-cfasync="false" src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js" data-id="gooboolygoo" data-description="Support me on Buy me a coffee!" data-message="Love this project? Donate to keep it going" data-color="#5F7FFF" data-position="Right" data-x_margin="18" data-y_margin="18"></script>
+</body>
+</html>

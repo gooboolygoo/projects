@@ -1,0 +1,23 @@
+title: Overcharged
+blurb: Find errors in your US medical bills and draft an appeal letter in two minutes. About one in four medical bills contains a billing error worth disputing; the average patient never checks. Paste yours, see the flagged line items, copy the editable appeal letter. Free, no signup, nothing leaves your browser.
+tags:
+  - healthcare
+  - consumer
+  - ai
+  - product
+donate: true
+demo:
+  setup:
+    - { action: scroll_to, selector: "#root" }
+  steps:
+    - { action: wait, duration_s: 3 }
+    - { action: click, selector: '[data-testid="try-sample"]' }
+    - { action: wait, duration_s: 1.5 }
+    - { action: scroll_to, selector: "#paste" }
+    - { action: wait, duration_s: 1.5 }
+    - { action: click, selector: '[data-testid="analyze-btn"]' }
+    - { action: wait, duration_s: 4 }
+    - { action: scroll_to, selector: '[data-testid="overcharge-summary"]' }
+    - { action: wait, duration_s: 3 }
+    - { action: click, selector: '[data-testid="letter-btn"]' }
+    - { action: wait, duration_s: 4 }

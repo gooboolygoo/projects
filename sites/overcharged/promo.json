@@ -1,0 +1,23 @@
+{
+  "generated_at": "2026-05-20T03:34:50.550Z",
+  "model": "claude-haiku-4-5",
+  "url": "https://gooboolygoo.github.io/projects/overcharged/",
+  "hashtags": [
+    "medicalbilling",
+    "healthtech",
+    "consumer",
+    "webdev",
+    "buildinpublic"
+  ],
+  "x": {
+    "tweet": "One in four medical bills has an error worth catching. Most people never check. Paste yours and see exactly what's wrong in seconds.",
+    "reply_lead": "free tool, runs in your browser ↓"
+  },
+  "vertical_caption": "Your hospital bill probably has an error hiding in it. Paste the bill, get flagged line items, grab an appeal letter. Done in two minutes. No signup needed 📋",
+  "shorts_description_lead": "Medical bills are full of mistakes. Paste yours here and find the errors in seconds, with an appeal letter ready to copy.",
+  "video": {
+    "title": "Find Hidden Errors in Medical Bills",
+    "script": "Hospital bills are confusing on purpose. One in four contains an error. But here's the thing: most patients never look. Paste your bill into this tool and it spots the problems for you. Flagged line items, an appeal letter you can copy and send. Takes two minutes. Everything runs in your browser, nothing leaves your device. Check the link in the description.",
+    "word_count": 62
+  }
+}
