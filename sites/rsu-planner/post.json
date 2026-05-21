@@ -1,0 +1,36 @@
+{
+  "posted_at": "2026-05-21T09:49:22.033Z",
+  "mode": "now",
+  "scheduled_for": "2026-05-21T09:49:19.935Z",
+  "platforms": [
+    "x",
+    "tiktok",
+    "instagram",
+    "facebook",
+    "youtube"
+  ],
+  "skipped": [],
+  "media_id": "ff40daf3-469e-4f52-bd44-26b9c4a87092",
+  "response": [
+    {
+      "postId": "cmpfb6yhc0110lo0ybt5ulsme",
+      "integration": "cmox7506j02uvl70yfup8q9kb"
+    },
+    {
+      "postId": "cmpfb6yl60112lo0yitdfbisx",
+      "integration": "cmox882h902ytns0ysr2uqfva"
+    },
+    {
+      "postId": "cmpfb6yni0113lo0yz3d1xduh",
+      "integration": "cmpc1qfkp01ielg0y2natgd1t"
+    },
+    {
+      "postId": "cmpfb6ypm0114lo0yknlzub1d",
+      "integration": "cmox7e9vy02w7l70yyycs3qm8"
+    },
+    {
+      "postId": "cmpfb6yrs0115lo0yeb6l06ux",
+      "integration": "cmox89rfc031il70yn390svwi"
+    }
+  ]
+}
