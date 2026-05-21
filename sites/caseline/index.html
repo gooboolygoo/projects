@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Caseline. Your immigration deadlines, before they bite.</title>
+  <meta name="description" content="USCIS sends RFEs with 87-day windows. Forget to file an H1B extension 180 days early and you lose status. Caseline turns your case into a timeline of what is next, when, and what to do." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..900&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+  <script crossorigin src="https://unpkg.com/react@18.3.1/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.24.7/babel.min.js"></script>
+  <style>
+    html, body { margin: 0; padding: 0; background: #0F1419; }
+    .__loading { font-family: Inter, system-ui, sans-serif; color: #6B7785; text-align: center; padding-top: 200px; font-size: 16px; }
+  </style>
+</head>
+<body>
+  <div id="root"><div class="__loading">Loading...</div></div>
+
+  <script type="text/babel" data-presets="react">
+const { useState, useRef } = React;
+
+// ============================================================
+// Sample case + canned analysis. Visitor can paste their own,
+// but the analysis is currently illustrative.
+// "Today" anchors to a fixed reference date so the demo is reproducible.
+// ============================================================
+const SAMPLE_CASE = `Visa type: H1B
+Current employer: Acme Inc.
+Visa start date: 2023-10-01
+Visa end date: 2026-09-30
+
+I-140 status: approved 2025-06-15
+I-485 status: filed 2025-08-01
+
+EAD card expires: 2026-08-01
+Advance Parole expires: 2026-08-01
+
+Recent USCIS events:
+  - 2026-04-15: RFE issued on I-485 (initial evidence)
+  - 2026-04-22: RFE received in mail`;
+
+// "Today" for the canned scenario. Real version would use new Date().
+const TODAY_LABEL = "May 20, 2026";
+
+const MOCK_TIMELINE = {
+  case_summary: "H1B holder with pending I-485, EAD c09 expires in roughly 10 weeks, RFE response window closing in about 7 weeks.",
+  urgency_count: { urgent: 1, soon: 2, watch: 2 },
+  items: [
+    {
+      id: "rfe-i485",
+      urgency: "urgent",
+      due_label: "due Jul 14, 2026",
+      days_left: 55,
+      title: "Respond to the I-485 RFE",
+      what: "USCIS issued a Request for Evidence on Apr 15. The response window is 87 calendar days from issuance. If they do not receive your response by Jul 14, 2026 the I-485 is denied with no automatic extension.",
+      action: "Gather the specific documents requested in the RFE notice (typically medical exam, employment letter, or birth records). Mail the entire RFE notice back with the response on top.",
+      consequence: "Missing this deadline by one day denies your green card application and you start over.",
+      has_draft: true
+    },
+    {
+      id: "ead-renewal",
+      urgency: "soon",
+      due_label: "file by Jun 4, 2026",
+      days_left: 15,
+      title: "File EAD renewal (Form I-765, c09)",
+      what: "Your EAD card expires Aug 1, 2026. As an I-485 applicant you can file the renewal up to 180 days before expiration. A timely filed I-765 c09 renewal gives you a 540-day automatic extension while the new card is processed.",
+      action: "Submit Form I-765 with category code (c)(9), the $260 fee, and a copy of your current EAD. File now to maximize the automatic-extension buffer.",
+      consequence: "If your card expires before you file, you lose work authorization the next day. Even one day late costs the 540-day auto-extension.",
+      has_draft: false
+    },
+    {
+      id: "ap-renewal",
+      urgency: "soon",
+      due_label: "file by Jun 4, 2026",
+      days_left: 15,
+      title: "File Advance Parole renewal (Form I-131)",
+      what: "Your AP document also expires Aug 1, 2026. Without a valid AP, international travel while I-485 is pending is treated as abandonment of the green card application.",
+      action: "File Form I-131 alongside the I-765 renewal. The fee is included in the I-485 if you filed them concurrently in 2025; otherwise $630.",
+      consequence: "Leave the US without a valid AP and your I-485 is abandoned automatically.",
+      has_draft: false
+    },
+    {
+      id: "h1b-extension-window",
+      urgency: "watch",
+      due_label: "window opens Apr 3, 2026",
+      days_left: -47,
+      title: "H1B 3-year extension is filable now",
+      what: "Your H1B expires Sep 30, 2026. As an approved I-140 beneficiary stuck in a backlogged category you are entitled to a 3-year extension under AC21. The earliest filing window opened 180 days before expiration.",
+      action: "Have your employer or attorney file the I-129 extension. Premium processing ($2,805) returns a decision in 15 calendar days; standard runs ~6 months currently.",
+      consequence: "Filing late is allowed up to the expiration date itself, but a denial after that date ends your work authorization immediately.",
+      has_draft: false
+    },
+    {
+      id: "i485-medical",
+      urgency: "watch",
+      due_label: "valid for 2 years from signing",
+      days_left: 365,
+      title: "I-693 medical exam is still valid",
+      what: "Your I-693 medical exam was signed by the civil surgeon on Jul 12, 2025 and is valid until Jul 12, 2027. If the I-485 is still pending after that date you will need a fresh exam, which costs $200 to $500 and takes 2 to 4 weeks to schedule.",
+      action: "No action required now. Add a reminder for Apr 2027 to schedule a follow-up exam if I-485 is still pending then.",
+      consequence: "An expired I-693 at adjudication time generates another RFE and slows the case by months.",
+      has_draft: false
+    }
+  ]
+};
+
+const MOCK_RFE_DRAFT = `${"USCIS California Service Center\nP.O. Box 30111\nLaguna Niguel, CA 92607-0111\n\nRE: Response to Request for Evidence\n    Beneficiary: [Your full name]\n    Receipt Number: [WAC/MSC number from the RFE notice]\n    Form Type: I-485, Application to Register Permanent Residence or Adjust Status\n    RFE Issue Date: April 15, 2026\n    Response Deadline: July 14, 2026\n\nTo Whom It May Concern:\n\nThis correspondence and the enclosed documentation are submitted in timely response to the Request for Evidence dated April 15, 2026.\n\nI have enclosed the following items requested in the RFE notice:\n\n1. [Item 1 from the RFE, e.g. Updated Form I-693 Medical Examination]\n   - [Original sealed envelope as required]\n   - [Civil surgeon name and address]\n\n2. [Item 2 from the RFE, e.g. Employment Verification Letter]\n   - [Letter on company letterhead dated within 30 days]\n   - [Including job title, start date, salary, and duties]\n\n3. [Item 3 from the RFE]\n   - [Item description]\n\nThe original RFE notice is included as the cover page of this response, as instructed.\n\nPlease contact me at the address on file if any additional documentation is needed to adjudicate this application.\n\nRespectfully submitted,\n\n[Your signature]\n[Your printed name]\n[Date]\n\nEnclosures: [Number of items] documents as listed above, plus original RFE notice."}`;
+
+function delay(min, max) {
+  return new Promise(r => setTimeout(r, min + Math.random() * (max - min)));
+}
+
+function urgencyColor(u, palette) {
+  if (u === "urgent") return palette.urgent;
+  if (u === "soon") return palette.soon;
+  return palette.watch;
+}
+
+function urgencyLabel(u) {
+  if (u === "urgent") return "URGENT";
+  if (u === "soon") return "ACT THIS WEEK";
+  return "WATCH";
+}
+
+// ============================================================
+// Component
+// ============================================================
+function App() {
+  const [caseText, setCaseText] = useState("");
+  const [view, setView] = useState("landing"); // landing | analyzing | results
+  const [timeline, setTimeline] = useState(null);
+  const [openItem, setOpenItem] = useState(null);
+  const [draftItemId, setDraftItemId] = useState(null);
+  const [draftText, setDraftText] = useState("");
+  const [draftLoading, setDraftLoading] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const resultsRef = useRef(null);
+
+  async function runAnalysis() {
+    if (!caseText.trim()) return;
+    setView("analyzing");
+    setTimeline(null);
+    setDraftItemId(null);
+    setDraftText("");
+    await delay(2000, 2800);
+    setTimeline(MOCK_TIMELINE);
+    setView("results");
+    setOpenItem(MOCK_TIMELINE.items[0].id);
+    setTimeout(() => {
+      resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 80);
+  }
+
+  function loadSample() {
+    setCaseText(SAMPLE_CASE);
+    setView("landing");
+    setTimeline(null);
+    setDraftItemId(null);
+    setTimeout(() => {
+      document.getElementById("analyze-btn")?.focus();
+    }, 50);
+  }
+
+  async function draftFor(itemId) {
+    setDraftItemId(itemId);
+    setDraftLoading(true);
+    setDraftText("");
+    await delay(1800, 2400);
+    setDraftText(MOCK_RFE_DRAFT);
+    setDraftLoading(false);
+  }
+
+  function copyDraft() {
+    navigator.clipboard?.writeText(draftText);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1600);
+  }
+
+  const palette = {
+    bg: "#0F1419",
+    ink: "#E8EAED",
+    inkSoft: "#B0B8C4",
+    paper: "#161B22",
+    card: "#1B232D",
+    rule: "#2A3441",
+    accent: "#F59E0B",      // amber for brand
+    urgent: "#EF4444",      // red
+    soon: "#F59E0B",        // amber
+    watch: "#60A5FA",       // blue
+    ok: "#34D399",
+    mute: "#7A8595"
+  };
+
+  const wrap = { maxWidth: 820, margin: "0 auto", padding: "64px 24px 96px" };
+  const display = "'Fraunces', Georgia, serif";
+  const sans = "Inter, system-ui, sans-serif";
+  const mono = "'JetBrains Mono', ui-monospace, monospace";
+
+  return (
+    <div style={{ background: palette.bg, color: palette.ink, fontFamily: sans, minHeight: "100vh" }}>
+
+      {/* HERO */}
+      <header style={wrap}>
+        <div data-testid="eyebrow" style={{ fontFamily: mono, fontSize: 11, color: palette.accent, letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: 32 }}>
+          For anyone in a US immigration case
+        </div>
+
+        <h1 style={{
+          fontFamily: display,
+          fontWeight: 400,
+          fontSize: "clamp(48px, 7.5vw, 84px)",
+          lineHeight: 0.97,
+          letterSpacing: "-0.035em",
+          margin: 0,
+          color: palette.ink
+        }}>
+          Your immigration<br />
+          timeline is full of<br />
+          <em style={{ fontStyle: "italic", color: palette.accent }}>deadlines</em> you<br />
+          can't see.
+        </h1>
+
+        <p style={{
+          fontFamily: display,
+          fontSize: 22,
+          fontStyle: "italic",
+          fontWeight: 400,
+          lineHeight: 1.45,
+          color: palette.inkSoft,
+          margin: "32px 0 24px",
+          maxWidth: 600
+        }}>
+          USCIS sends RFEs with 87 day response windows. Forget to file an H1B extension 180 days early and you risk losing status. The forms don't warn you. Your lawyer bills 300 dollars an hour to remember for you. Caseline turns your case into a list of what is next, when, and what to do.
+        </p>
+
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 16, alignItems: "center", marginTop: 28 }}>
+          <button
+            data-testid="try-sample"
+            onClick={loadSample}
+            style={{
+              fontFamily: sans, fontSize: 16, fontWeight: 600,
+              background: palette.accent, color: "#1A1408", border: "none",
+              padding: "16px 28px", borderRadius: 4, cursor: "pointer",
+              letterSpacing: 0.2, boxShadow: "0 3px 0 rgba(245,158,11,0.25)"
+            }}
+            onMouseOver={e => { e.currentTarget.style.background = "#FBBF24"; }}
+            onMouseOut={e => { e.currentTarget.style.background = palette.accent; }}
+          >
+            Try with a sample H1B case &nbsp;→
+          </button>
+          <a href="#input" style={{
+            fontFamily: sans, fontSize: 14, color: palette.inkSoft, textDecoration: "underline",
+            textUnderlineOffset: 4, letterSpacing: 0.1
+          }}>
+            or paste your own
+          </a>
+          <span style={{ fontFamily: mono, fontSize: 11, color: palette.mute, letterSpacing: 0.1, textTransform: "uppercase" }}>
+            ·&nbsp; free &nbsp;·&nbsp; no signup &nbsp;·&nbsp; nothing leaves your browser
+          </span>
+        </div>
+
+        {/* STAT STRIP */}
+        <div style={{
+          marginTop: 80, paddingTop: 32, borderTop: `1px solid ${palette.rule}`,
+          display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 32
+        }}>
+          {[
+            { n: "87 days", l: "RFE response window", s: "from the date USCIS issues a Request for Evidence. Miss it and the petition is denied." },
+            { n: "180 days", l: "H1B extension window", s: "is when you can file. Many people wait, then can't get an appointment in time." },
+            { n: "$0", l: "USCIS charges for late", s: "because they don't accept late. There is no late fee, only a denial." }
+          ].map((s, i) => (
+            <div key={i}>
+              <div style={{ fontFamily: display, fontSize: 36, fontWeight: 500, color: palette.accent, lineHeight: 1, letterSpacing: "-0.02em" }}>
+                {s.n}
+              </div>
+              <div style={{ fontFamily: sans, fontSize: 14, fontWeight: 600, color: palette.ink, marginTop: 8 }}>
+                {s.l}
+              </div>
+              <div style={{ fontFamily: sans, fontSize: 13, color: palette.mute, marginTop: 4, lineHeight: 1.5 }}>
+                {s.s}
+              </div>
+            </div>
+          ))}
+        </div>
+      </header>
+
+      {/* INPUT */}
+      <section id="input" style={{ ...wrap, paddingTop: 0 }}>
+        <div id="input-panel" style={{
+          background: palette.paper, border: `1px solid ${palette.rule}`, borderRadius: 6, padding: 28
+        }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 16, flexWrap: "wrap", gap: 8 }}>
+            <div style={{ fontFamily: mono, fontSize: 11, color: palette.accent, letterSpacing: "0.18em", textTransform: "uppercase" }}>
+              Step 1 of 2 &nbsp;·&nbsp; Describe your case
+            </div>
+            <button
+              data-testid="load-sample-inline"
+              onClick={loadSample}
+              style={{ fontFamily: sans, fontSize: 12, background: "transparent", border: `1px solid ${palette.rule}`,
+                color: palette.inkSoft, padding: "6px 12px", borderRadius: 4, cursor: "pointer" }}
+            >
+              load sample
+            </button>
+          </div>
+
+          <textarea
+            data-testid="case-input"
+            value={caseText}
+            onChange={e => setCaseText(e.target.value)}
+            placeholder={`Tell us visa type, current status dates, any pending forms, and recent USCIS events. Example:\n\nVisa type: H1B\nVisa end date: 2026-09-30\nI-140 status: approved\nI-485 status: filed 2025-08-01\nRecent: RFE received 2026-04-22`}
+            style={{
+              width: "100%", minHeight: 240, resize: "vertical",
+              fontFamily: mono, fontSize: 13, lineHeight: 1.55, color: palette.ink,
+              border: `1px solid ${palette.rule}`, borderRadius: 4, padding: "14px 16px",
+              outline: "none", background: palette.bg
+            }}
+            onFocus={e => e.target.style.borderColor = palette.accent}
+            onBlur={e => e.target.style.borderColor = palette.rule}
+          />
+
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 16, flexWrap: "wrap", gap: 12 }}>
+            <div style={{ fontFamily: mono, fontSize: 11, color: palette.mute, letterSpacing: 0.05 }}>
+              {caseText.length} characters &nbsp;·&nbsp; processed locally
+            </div>
+            <button
+              id="analyze-btn"
+              data-testid="analyze-btn"
+              onClick={runAnalysis}
+              disabled={!caseText.trim() || view === "analyzing"}
+              style={{
+                fontFamily: sans, fontSize: 15, fontWeight: 600,
+                background: caseText.trim() && view !== "analyzing" ? palette.accent : palette.rule,
+                color: caseText.trim() && view !== "analyzing" ? "#1A1408" : palette.mute,
+                border: "none",
+                padding: "12px 24px", borderRadius: 4,
+                cursor: caseText.trim() && view !== "analyzing" ? "pointer" : "not-allowed",
+                letterSpacing: 0.2
+              }}
+            >
+              {view === "analyzing" ? "Reading your case..." : "Find my deadlines  →"}
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* ANALYZING */}
+      {view === "analyzing" && (
+        <section style={{ ...wrap, paddingTop: 24, paddingBottom: 24, textAlign: "center" }}>
+          <div style={{ fontFamily: mono, fontSize: 11, color: palette.accent, letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: 12 }}>
+            Cross-checking dates
+          </div>
+          <div style={{ fontFamily: display, fontSize: 28, fontStyle: "italic", color: palette.ink, marginBottom: 16 }}>
+            Finding the deadlines you can't see...
+          </div>
+          <div style={{ display: "inline-block", width: 40, height: 2, background: palette.accent, animation: "cl-pulse 1.8s ease-in-out infinite" }} />
+          <style>{`@keyframes cl-pulse { 0%,100% { transform: scaleX(0.3); opacity: 0.4; } 50% { transform: scaleX(1); opacity: 1; } }`}</style>
+        </section>
+      )}
+
+      {/* RESULTS */}
+      {view === "results" && timeline && (
+        <section ref={resultsRef} style={{ ...wrap, paddingTop: 32 }}>
+
+          <div data-testid="timeline-summary" style={{
+            background: palette.card, border: `2px solid ${palette.urgent}`, borderRadius: 6,
+            padding: 28, marginBottom: 28
+          }}>
+            <div style={{ fontFamily: mono, fontSize: 11, color: palette.urgent, letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: 8 }}>
+              Step 2 of 2 &nbsp;·&nbsp; Your next 90 days
+            </div>
+            <div style={{ display: "flex", alignItems: "baseline", gap: 24, flexWrap: "wrap", marginTop: 4 }}>
+              <div>
+                <div style={{ fontFamily: display, fontSize: 56, fontWeight: 500, color: palette.urgent, lineHeight: 1, letterSpacing: "-0.025em" }}>
+                  {timeline.urgency_count.urgent}
+                </div>
+                <div style={{ fontFamily: sans, fontSize: 13, color: palette.mute, marginTop: 6, textTransform: "uppercase", letterSpacing: 0.1 }}>
+                  Urgent
+                </div>
+              </div>
+              <div>
+                <div style={{ fontFamily: display, fontSize: 56, fontWeight: 500, color: palette.soon, lineHeight: 1, letterSpacing: "-0.025em" }}>
+                  {timeline.urgency_count.soon}
+                </div>
+                <div style={{ fontFamily: sans, fontSize: 13, color: palette.mute, marginTop: 6, textTransform: "uppercase", letterSpacing: 0.1 }}>
+                  Act this week
+                </div>
+              </div>
+              <div>
+                <div style={{ fontFamily: display, fontSize: 56, fontWeight: 500, color: palette.watch, lineHeight: 1, letterSpacing: "-0.025em" }}>
+                  {timeline.urgency_count.watch}
+                </div>
+                <div style={{ fontFamily: sans, fontSize: 13, color: palette.mute, marginTop: 6, textTransform: "uppercase", letterSpacing: 0.1 }}>
+                  Watch
+                </div>
+              </div>
+            </div>
+            <div style={{ fontFamily: sans, fontSize: 14, color: palette.inkSoft, marginTop: 18, lineHeight: 1.55 }}>
+              {timeline.case_summary} &nbsp;<span style={{ color: palette.mute }}>(as of {TODAY_LABEL})</span>
+            </div>
+          </div>
+
+          {/* TIMELINE ITEMS */}
+          {timeline.items.map((item) => {
+            const c = urgencyColor(item.urgency, palette);
+            const isOpen = openItem === item.id;
+            return (
+              <div key={item.id} style={{
+                background: palette.card,
+                border: `1px solid ${palette.rule}`,
+                borderLeft: `4px solid ${c}`,
+                borderRadius: 4,
+                marginBottom: 12,
+                overflow: "hidden"
+              }}>
+                <button
+                  onClick={() => setOpenItem(isOpen ? null : item.id)}
+                  style={{
+                    width: "100%", textAlign: "left", background: "transparent", border: "none",
+                    padding: "20px 24px", cursor: "pointer", color: "inherit"
+                  }}
+                >
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 16, flexWrap: "wrap" }}>
+                    <div>
+                      <div style={{ fontFamily: mono, fontSize: 10, color: c, letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: 4 }}>
+                        {urgencyLabel(item.urgency)} &nbsp;·&nbsp; {item.due_label}
+                      </div>
+                      <div style={{ fontFamily: sans, fontSize: 17, fontWeight: 600, color: palette.ink }}>
+                        {item.title}
+                      </div>
+                    </div>
+                    <div style={{ fontFamily: mono, fontSize: 13, color: c, whiteSpace: "nowrap" }}>
+                      {item.days_left >= 0 ? `${item.days_left}d remaining` : `${-item.days_left}d ago`}
+                    </div>
+                  </div>
+                </button>
+
+                {isOpen && (
+                  <div style={{ padding: "0 24px 24px", borderTop: `1px solid ${palette.rule}` }}>
+                    <div style={{ display: "grid", gap: 14, marginTop: 18 }}>
+                      <div>
+                        <div style={{ fontFamily: mono, fontSize: 10, color: palette.mute, letterSpacing: "0.18em", textTransform: "uppercase", marginBottom: 6 }}>
+                          What this is
+                        </div>
+                        <div style={{ fontFamily: sans, fontSize: 14, color: palette.inkSoft, lineHeight: 1.55 }}>
+                          {item.what}
+                        </div>
+                      </div>
+                      <div>
+                        <div style={{ fontFamily: mono, fontSize: 10, color: palette.mute, letterSpacing: "0.18em", textTransform: "uppercase", marginBottom: 6 }}>
+                          What to do
+                        </div>
+                        <div style={{ fontFamily: sans, fontSize: 14, color: palette.inkSoft, lineHeight: 1.55 }}>
+                          {item.action}
+                        </div>
+                      </div>
+                      <div style={{ padding: "12px 16px", background: "rgba(239,68,68,0.08)", borderLeft: `2px solid ${palette.urgent}`, borderRadius: 2 }}>
+                        <div style={{ fontFamily: mono, fontSize: 10, color: palette.urgent, letterSpacing: "0.18em", textTransform: "uppercase", marginBottom: 6 }}>
+                          If you miss it
+                        </div>
+                        <div style={{ fontFamily: sans, fontSize: 14, color: palette.ink, lineHeight: 1.55, fontWeight: 500 }}>
+                          {item.consequence}
+                        </div>
+                      </div>
+
+                      {item.has_draft && (
+                        <div style={{ marginTop: 4 }}>
+                          <button
+                            data-testid="draft-rfe-btn"
+                            onClick={() => draftFor(item.id)}
+                            disabled={draftLoading}
+                            style={{
+                              fontFamily: sans, fontSize: 14, fontWeight: 600,
+                              background: palette.accent, color: "#1A1408", border: "none",
+                              padding: "10px 20px", borderRadius: 4, cursor: draftLoading ? "wait" : "pointer"
+                            }}
+                          >
+                            {draftLoading && draftItemId === item.id ? "Drafting..." :
+                              draftItemId === item.id && draftText ? "Regenerate response" : "Draft my RFE response  →"}
+                          </button>
+                        </div>
+                      )}
+
+                      {draftItemId === item.id && (draftText || draftLoading) && (
+                        <div style={{ marginTop: 12 }}>
+                          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+                            <div style={{ fontFamily: mono, fontSize: 10, color: palette.accent, letterSpacing: "0.18em", textTransform: "uppercase" }}>
+                              Editable response letter
+                            </div>
+                            {draftText && (
+                              <button
+                                onClick={copyDraft}
+                                style={{ fontFamily: sans, fontSize: 12, background: "transparent",
+                                  border: `1px solid ${palette.rule}`, color: palette.ink,
+                                  padding: "6px 14px", borderRadius: 4, cursor: "pointer" }}
+                              >
+                                {copied ? "copied ✓" : "copy"}
+                              </button>
+                            )}
+                          </div>
+                          <textarea
+                            value={draftText}
+                            onChange={e => setDraftText(e.target.value)}
+                            placeholder={draftLoading ? "Drafting..." : ""}
+                            style={{
+                              width: "100%", minHeight: 360, resize: "vertical",
+                              fontFamily: mono, fontSize: 13, lineHeight: 1.55, color: palette.ink,
+                              border: `1px solid ${palette.rule}`, borderRadius: 4, padding: "14px 16px",
+                              outline: "none", background: palette.bg
+                            }}
+                          />
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
+            );
+          })}
+
+          {/* CTA */}
+          <div style={{
+            marginTop: 40, padding: 28, background: palette.paper, border: `1px solid ${palette.rule}`, borderRadius: 6, textAlign: "center"
+          }}>
+            <div style={{ fontFamily: display, fontSize: 22, fontWeight: 500, color: palette.ink, marginBottom: 8 }}>
+              You can't see deadlines you don't know about.
+            </div>
+            <div style={{ fontFamily: sans, fontSize: 14, color: palette.inkSoft, marginBottom: 0, maxWidth: 480, margin: "0 auto", lineHeight: 1.55 }}>
+              Run your real case through the input above. The output is one more thing your lawyer hasn't told you yet.
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* FOOTER */}
+      <footer style={{ ...wrap, paddingTop: 32, paddingBottom: 56, borderTop: `1px solid ${palette.rule}` }}>
+        <div style={{ fontFamily: mono, fontSize: 11, color: palette.mute, letterSpacing: 0.05, textAlign: "center", lineHeight: 1.65 }}>
+          Caseline is informational only and is not legal advice. For complex cases consult an immigration attorney.&nbsp;
+          Analysis is currently illustrative; date references draw from publicly published USCIS policy
+          (USCIS Policy Manual, 8 CFR 103.2, AC21 §104(c)).
+        </div>
+      </footer>
+    </div>
+  );
+}
+
+const root = ReactDOM.createRoot(document.getElementById("root"));
+root.render(<App />);
+  </script>
+
+  <!-- Buy Me a Coffee widget. Lives in source so it ships on every
+       deploy path. build.ts skips injection when this is already present. -->
+  <script data-name="BMC-Widget" data-cfasync="false" src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js" data-id="gooboolygoo" data-description="Support me on Buy me a coffee!" data-message="Love this project? Donate to keep it going" data-color="#5F7FFF" data-position="Right" data-x_margin="18" data-y_margin="18"></script>
+</body>
+</html>

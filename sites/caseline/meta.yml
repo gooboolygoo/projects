@@ -1,0 +1,23 @@
+title: Caseline
+blurb: Your US immigration case is full of deadlines you can't see. RFEs have 87 day response windows. H1B extensions are filable 180 days early. EAD renewals can give you a 540 day auto-extension, but only if you file in time. Caseline turns your case into a timeline of what is next, when, and what to do. Free, no signup, nothing leaves your browser.
+tags:
+  - immigration
+  - consumer
+  - ai
+  - product
+donate: true
+demo:
+  setup:
+    - { action: scroll_to, selector: "#root" }
+  steps:
+    - { action: wait, duration_s: 3 }
+    - { action: click, selector: '[data-testid="try-sample"]' }
+    - { action: wait, duration_s: 1.5 }
+    - { action: scroll_to, selector: "#input-panel" }
+    - { action: wait, duration_s: 1.5 }
+    - { action: click, selector: '[data-testid="analyze-btn"]' }
+    - { action: wait, duration_s: 4 }
+    - { action: scroll_to, selector: '[data-testid="timeline-summary"]' }
+    - { action: wait, duration_s: 3 }
+    - { action: click, selector: '[data-testid="draft-rfe-btn"]' }
+    - { action: wait, duration_s: 4 }

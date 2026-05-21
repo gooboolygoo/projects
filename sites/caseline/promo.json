@@ -1,0 +1,23 @@
+{
+  "generated_at": "2026-05-21T03:24:32.073Z",
+  "model": "claude-haiku-4-5",
+  "url": "https://gooboolygoo.github.io/projects/caseline/",
+  "hashtags": [
+    "immigration",
+    "webdev",
+    "indiedev",
+    "webtools",
+    "privacy"
+  ],
+  "x": {
+    "tweet": "Your H1B extension window closes 180 days after your last approval. Miss it by a week and you're stuck. Caseline finds every deadline hiding in your immigration case.",
+    "reply_lead": "run it now ↓"
+  },
+  "vertical_caption": "You've been tracking your immigration case in an email folder. What if you could see every deadline, how many days left, and what to do next on one timeline? That's Caseline.",
+  "shorts_description_lead": "Immigration deadlines aren't announced. They're buried in approval notices and I-797 forms. Caseline extracts them and shows you what's due and when.",
+  "video": {
+    "title": "See Your Hidden Immigration Deadlines",
+    "script": "Your RFE response window is 87 days. Your H1B extension window is 180 days. Your EAD auto-extension can give you 540 days, but only if you file on time. The problem: these deadlines aren't in one place. They're scattered across approval notices, emails, and forms you printed months ago. Caseline turns your immigration case into a single timeline. Upload your documents, and it extracts every deadline, shows you how many days are left, and tells you what to do next. Everything stays in your browser. No signup, no servers. Check it out.",
+    "word_count": 92
+  }
+}
