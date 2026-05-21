@@ -1,0 +1,17 @@
+title: Estate Vault
+blurb: The will is in a safe nobody knows the combination of. The 401k beneficiary form was never updated after the divorce. The life insurance is a paper card in a drawer. The crypto seed phrase is on a Post-it next to the router. Estate Vault sorts it, seals it, and unlocks it for the right person when needed. Encrypted, client-side, zero-knowledge.
+tags:
+  - estate
+  - finance
+  - product
+  - family
+donate: true
+demo:
+  setup:
+    - { action: scroll_to, selector: "#root" }
+  steps:
+    - { action: wait, duration_s: 3 }
+    - { action: click, selector: '[data-testid="try-sample"]' }
+    - { action: wait, duration_s: 2 }
+    - { action: scroll_to, selector: '[data-testid="summary"]' }
+    - { action: wait, duration_s: 7 }

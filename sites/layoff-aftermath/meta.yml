@@ -1,0 +1,21 @@
+title: Day One
+blurb: The week you get laid off, you have leverage you will never have again. The severance is negotiable. The COBRA decision is reversible. The 401k rollover saves you tens of thousands. Most people miss most of this because no one tells them. Day-one through day-sixty checklist. Free, no signup.
+tags:
+  - career
+  - layoff
+  - finance
+  - product
+donate: true
+demo:
+  setup:
+    - { action: scroll_to, selector: "#root" }
+  steps:
+    - { action: wait, duration_s: 3 }
+    - { action: click, selector: '[data-testid="try-sample"]' }
+    - { action: wait, duration_s: 1.5 }
+    - { action: scroll_to, selector: "#input-panel" }
+    - { action: wait, duration_s: 1 }
+    - { action: click, selector: '[data-testid="analyze-btn"]' }
+    - { action: wait, duration_s: 3 }
+    - { action: scroll_to, selector: '[data-testid="summary"]' }
+    - { action: wait, duration_s: 6 }

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cloud Bill. Translate your AWS bill into plain English.</title>
+<meta name="description" content="Indie devs get surprise $400 AWS bills and can't tell which service caused it. Paste your bill, see what is actually costing you, and what to cut.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..900&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script crossorigin src="https://unpkg.com/react@18.3.1/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone@7.24.7/babel.min.js"></script>
+<style>html,body{margin:0;padding:0;background:#0B0F14}.__loading{font-family:Inter,system-ui,sans-serif;color:#6B7785;text-align:center;padding-top:200px;font-size:16px}</style>
+</head>
+<body>
+<div id="root"><div class="__loading">Loading...</div></div>
+<script type="text/babel" data-presets="react">
+const { useState, useRef } = React;
+const SAMPLE = `AWS Bill Summary, May 2026
+Account: 412355661022
+
+Service                        Charge
+Amazon EC2                    $182.40
+Amazon RDS                     $94.20
+Amazon S3                      $12.80
+Amazon CloudFront               $4.10
+AWS Lambda                      $0.40
+Amazon EBS                     $58.00
+NAT Gateway                    $84.32
+Data Transfer Out              $61.18
+Amazon CloudWatch              $19.40
+Tax                            $42.18
+
+Total                         $558.98`;
+const MOCK = {
+  total: 558.98, expected: 180, surprise: 379,
+  items: [
+    { svc: "NAT Gateway", charge: 84.32, why: "$0.045/hour plus $0.045/GB processed. You're paying ~$32/month just for the hourly idle cost, before any data. Indie devs leave a single NAT in each AZ on the default VPC.", fix: "If you have one EC2 instance and don't need outbound from private subnets, delete the NAT and put the instance on a public subnet with a security group. Saves $80/month immediately." },
+    { svc: "Amazon EC2", charge: 182.40, why: "Two t3.medium instances running 24/7 in us-east-1 cost ~$60 each. You're billed per-second once started. Check if any are dev instances that should be stopped overnight.", fix: "Tag instances by environment. Use AWS Instance Scheduler to stop dev/staging from 10pm to 7am, weekends off. Cuts EC2 by 60%." },
+    { svc: "Amazon EBS", charge: 58.00, why: "Unattached EBS volumes still bill. $0.10/GB/month for gp3. You almost certainly have orphaned volumes from terminated instances.", fix: "Run `aws ec2 describe-volumes --filters Name=status,Values=available` and delete anything that's been detached more than 7 days." },
+    { svc: "Data Transfer Out", charge: 61.18, why: "$0.09/GB to the internet from us-east-1 after the first 100GB. CloudFront would be ~$0.085/GB but you're hitting EC2 directly.", fix: "Put a CloudFront distribution in front of your origin. Cuts the egress bill ~10% and improves latency. Free tier covers the first 1TB." },
+    { svc: "Amazon RDS", charge: 94.20, why: "db.t4g.small + storage runs ~$30/month per instance. You probably have a forgotten Multi-AZ that doubles the cost.", fix: "Single-AZ for dev. Multi-AZ only on prod. `aws rds describe-db-instances --query 'DBInstances[].[DBInstanceIdentifier,MultiAZ]'`." }
+  ]
+};
+const delay = (ms) => new Promise(r => setTimeout(r, ms));
+const fmt = (n) => "$" + n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+function App(){
+  const [text, setText] = useState("");
+  const [view, setView] = useState("landing");
+  const [out, setOut] = useState(null);
+  const resRef = useRef(null);
+  async function analyze(){ if(!text.trim()) return; setView("analyzing"); await delay(2000); setOut(MOCK); setView("results"); setTimeout(()=>resRef.current?.scrollIntoView({behavior:"smooth"}),80); }
+  function loadSample(){ setText(SAMPLE); setView("landing"); setOut(null); }
+  const P = {bg:"#0B0F14",ink:"#E8EAED",inkSoft:"#B0B8C4",card:"#141A22",paper:"#1A2230",rule:"#2A3441",accent:"#FF9900",warn:"#FBBF24",mute:"#7A8595",savings:"#34D399"};
+  const wrap = {maxWidth:820,margin:"0 auto",padding:"64px 24px 96px"};
+  const display="'Fraunces',Georgia,serif", sans="Inter,system-ui,sans-serif", mono="'JetBrains Mono',ui-monospace,monospace";
+  return <div style={{background:P.bg,color:P.ink,fontFamily:sans,minHeight:"100vh"}}>
+    <header style={wrap}>
+      <div data-testid="eyebrow" style={{fontFamily:mono,fontSize:11,color:P.accent,letterSpacing:"0.2em",textTransform:"uppercase",marginBottom:32}}>For indie devs with a surprise AWS bill</div>
+      <h1 style={{fontFamily:display,fontWeight:400,fontSize:"clamp(48px,7.5vw,84px)",lineHeight:0.97,letterSpacing:"-0.035em",margin:0}}>Why is your AWS bill <em style={{fontStyle:"italic",color:P.accent}}>$400</em><br/>this month?</h1>
+      <p style={{fontFamily:display,fontSize:22,fontStyle:"italic",lineHeight:1.45,color:P.inkSoft,margin:"32px 0 28px",maxWidth:600}}>Cost Explorer tells you which service costs what. It does not tell you why or what to do. Paste your bill and get a plain English explanation plus the specific commands to cut it.</p>
+      <div style={{display:"flex",flexWrap:"wrap",gap:16,alignItems:"center"}}>
+        <button data-testid="try-sample" onClick={loadSample} style={{fontFamily:sans,fontSize:16,fontWeight:600,background:P.accent,color:"#1A1408",border:"none",padding:"16px 28px",borderRadius:4,cursor:"pointer"}}>Try with a sample bill →</button>
+        <span style={{fontFamily:mono,fontSize:11,color:P.mute,letterSpacing:0.1,textTransform:"uppercase"}}>· free · no signup · nothing leaves your browser</span>
+      </div>
+      <div style={{marginTop:72,paddingTop:32,borderTop:`1px solid ${P.rule}`,display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:32}}>
+        {[{n:"$0.045/hr",l:"NAT Gateway idle",s:"That is $32/month before a single byte flows. The most common indie-dev surprise."},{n:"60%",l:"EC2 saved",s:"by stopping dev and staging from 10pm to 7am, weekends off."},{n:"7 days",l:"orphan threshold",s:"any EBS volume detached longer is almost certainly dead weight."}].map((s,i)=>(<div key={i}><div style={{fontFamily:display,fontSize:36,fontWeight:500,color:P.accent,lineHeight:1,letterSpacing:"-0.02em"}}>{s.n}</div><div style={{fontFamily:sans,fontSize:14,fontWeight:600,marginTop:8}}>{s.l}</div><div style={{fontFamily:sans,fontSize:13,color:P.mute,marginTop:4,lineHeight:1.5}}>{s.s}</div></div>))}
+      </div>
+    </header>
+    <section style={{...wrap,paddingTop:0}}>
+      <div id="input-panel" style={{background:P.paper,border:`1px solid ${P.rule}`,borderRadius:6,padding:28}}>
+        <div style={{fontFamily:mono,fontSize:11,color:P.accent,letterSpacing:"0.18em",textTransform:"uppercase",marginBottom:16}}>Step 1 of 2 · Paste your bill</div>
+        <textarea data-testid="bill-input" value={text} onChange={e=>setText(e.target.value)} placeholder="Paste your AWS or GCP bill (CSV, line items, or full PDF text)" style={{width:"100%",minHeight:200,fontFamily:mono,fontSize:13,lineHeight:1.55,color:P.ink,border:`1px solid ${P.rule}`,borderRadius:4,padding:"14px 16px",outline:"none",background:P.bg,resize:"vertical"}}/>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginTop:16,flexWrap:"wrap",gap:12}}>
+          <div style={{fontFamily:mono,fontSize:11,color:P.mute}}>{text.length} characters</div>
+          <button id="analyze-btn" data-testid="analyze-btn" onClick={analyze} disabled={!text.trim()||view==="analyzing"} style={{fontFamily:sans,fontSize:15,fontWeight:600,background:text.trim()&&view!=="analyzing"?P.accent:P.rule,color:text.trim()&&view!=="analyzing"?"#1A1408":P.mute,border:"none",padding:"12px 24px",borderRadius:4,cursor:text.trim()&&view!=="analyzing"?"pointer":"not-allowed"}}>{view==="analyzing"?"Reading line items...":"Explain my bill  →"}</button>
+        </div>
+      </div>
+    </section>
+    {view==="analyzing"&&<section style={{...wrap,paddingTop:24,textAlign:"center"}}><div style={{fontFamily:display,fontSize:28,fontStyle:"italic",color:P.ink}}>Cross-referencing pricing pages...</div></section>}
+    {view==="results"&&out&&<section ref={resRef} style={{...wrap,paddingTop:32}}>
+      <div data-testid="summary" style={{background:P.card,border:`2px solid ${P.savings}`,borderRadius:6,padding:32,marginBottom:28}}>
+        <div style={{fontFamily:mono,fontSize:11,color:P.savings,letterSpacing:"0.2em",textTransform:"uppercase",marginBottom:8}}>Step 2 of 2 · You could save</div>
+        <div style={{fontFamily:display,fontSize:"clamp(38px,5vw,56px)",fontWeight:500,color:P.savings,lineHeight:1,letterSpacing:"-0.025em"}}>{fmt(out.surprise)} / month</div>
+        <div style={{fontFamily:sans,fontSize:15,color:P.inkSoft,marginTop:10}}>out of {fmt(out.total)} billed.  About {Math.round(out.surprise/out.total*100)}% of your current spend is the kind of waste indie devs typically eliminate in an afternoon.</div>
+      </div>
+      {out.items.map((it,i)=>(<div key={i} style={{background:P.card,border:`1px solid ${P.rule}`,borderLeft:`4px solid ${P.warn}`,borderRadius:4,padding:"20px 24px",marginBottom:14}}>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"baseline",gap:16,flexWrap:"wrap"}}>
+          <div style={{fontFamily:sans,fontSize:16,fontWeight:600}}>{it.svc}</div>
+          <div style={{fontFamily:mono,fontSize:14,fontWeight:600,color:P.warn}}>{fmt(it.charge)}</div>
+        </div>
+        <div style={{fontFamily:sans,fontSize:14,color:P.inkSoft,marginTop:8,lineHeight:1.55}}>{it.why}</div>
+        <div style={{marginTop:10,padding:"10px 14px",background:"rgba(52,211,153,0.07)",borderLeft:`2px solid ${P.savings}`,borderRadius:2}}>
+          <div style={{fontFamily:mono,fontSize:10,color:P.savings,letterSpacing:"0.18em",textTransform:"uppercase",marginBottom:4}}>fix</div>
+          <div style={{fontFamily:sans,fontSize:14,color:P.ink,lineHeight:1.55}}>{it.fix}</div>
+        </div>
+      </div>))}
+    </section>}
+    <footer style={{...wrap,paddingTop:32,paddingBottom:56,borderTop:`1px solid ${P.rule}`}}>
+      <div style={{fontFamily:mono,fontSize:11,color:P.mute,textAlign:"center",lineHeight:1.65}}>For informational purposes. Pricing references use the AWS pricing pages as of 2026. Analysis is currently illustrative.</div>
+    </footer>
+  </div>;
+}
+const root = ReactDOM.createRoot(document.getElementById("root")); root.render(<App/>);
+</script>
+<script data-name="BMC-Widget" data-cfasync="false" src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js" data-id="gooboolygoo" data-description="Support me on Buy me a coffee!" data-message="Love this project? Donate to keep it going" data-color="#5F7FFF" data-position="Right" data-x_margin="18" data-y_margin="18"></script>
+</body>
+</html>

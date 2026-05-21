@@ -1,0 +1,23 @@
+{
+  "generated_at": "2026-05-21T09:38:50.967Z",
+  "model": "claude-haiku-4-5",
+  "url": "https://gooboolygoo.github.io/projects/rsu-planner/",
+  "hashtags": [
+    "rsus",
+    "taxplanning",
+    "finance",
+    "webdev",
+    "buildinpublic"
+  ],
+  "x": {
+    "tweet": "Your company withheld tax at 22% on that RSU vest. If you're in the 32 or 37 percent bracket, you owe more come April. And you've already spent it.",
+    "reply_lead": "calculate your gap here"
+  },
+  "vertical_caption": "Your company withheld 22% tax on that RSU vest. If you're in a higher bracket, April is coming and you'll owe the difference. See your exact tax gap and decide: sell to cover or hold. Free, no signup.",
+  "shorts_description_lead": "RSU withholding is usually 22 percent. If your actual tax bracket is 32 or 37 percent, you're short come April. This calculator shows the gap so you can plan ahead.",
+  "video": {
+    "title": "Your RSU Tax Gap Explained",
+    "script": "Your company just withheld 22 percent tax on an RSU vest. Sounds fine, right. But if you're in the 32 or 37 percent federal bracket, you're short. Sometimes by thousands of dollars. The worst part: by April, when you owe the IRS, you've already spent it. This calculator shows you the exact gap between what was withheld and what you actually owe. Then you decide: sell some shares to cover the difference, or hold and pay the bill in cash. Free, runs right in your browser. Link in the description.",
+    "word_count": 90
+  }
+}

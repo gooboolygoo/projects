@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Day One. The post-layoff checklist they didn't give you.</title>
+<meta name="description" content="You just got laid off. COBRA, 401k rollover, unemployment, severance review, healthcare gaps. Most people miss something costly. Here is the day-one through 60-day checklist no HR sent you.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..900&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script crossorigin src="https://unpkg.com/react@18.3.1/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone@7.24.7/babel.min.js"></script>
+<style>html,body{margin:0;padding:0;background:#FAFAF8}.__loading{font-family:Inter,system-ui,sans-serif;color:#888;text-align:center;padding-top:200px;font-size:16px}</style>
+</head>
+<body>
+<div id="root"><div class="__loading">Loading...</div></div>
+<script type="text/babel" data-presets="react">
+const { useState } = React;
+const SAMPLE = { state: "California", weeks_severance: 8, lastDay: "May 15, 2026", insurance: "yes" };
+const ITEMS = [
+  { day: "Day 1", urg: "urgent", title: "File for unemployment immediately", body: "Do not wait until severance runs out. California allows you to file the day after your last day of work. The clock on benefits starts when you file, not when you stopped working. Waiting four weeks loses you four weeks of benefits. File at edd.ca.gov.", consequence: "Each week you delay filing is a week of benefits you never recover." },
+  { day: "Day 1", urg: "urgent", title: "Do not sign the severance agreement yet", body: "Most severance agreements include a release of legal claims, a non-disparagement clause, and sometimes an extended non-compete. You typically have 21 to 45 days to review. If you are over 40, you have 21 days minimum by federal law (OWBPA). Read it with a lawyer first.", consequence: "Signing in the first week trades away leverage you have for nothing." },
+  { day: "Day 7", urg: "soon", title: "COBRA election arrives in the mail", body: "You have 60 days from the COBRA notice to elect, and another 45 days after election to pay the first premium. Coverage is retroactive. This means you can wait, see if you stay healthy, and only elect if you actually use care. If you elect on day 59 and back-pay, you are covered from day one.", consequence: "COBRA is expensive ($800-$2,200/month family). Do not pre-pay if you can avoid it." },
+  { day: "Day 14", urg: "soon", title: "Roll over the 401k, but not into the new employer", body: "Roll to a Traditional IRA at Vanguard, Fidelity, or Schwab. The IRA gives you backdoor Roth optionality and lower fees than most 401k plans. Avoid taking a cash distribution: 20 percent federal withholding plus 10 percent early-withdrawal penalty if you are under 59 and a half.", consequence: "A cash distribution of $80k at 32% bracket plus penalty costs you ~$33,600 in taxes." },
+  { day: "Day 30", urg: "watch", title: "Confirm any vested equity strike price and exercise window", body: "Most companies give you 90 days to exercise vested options. If you cannot pay the strike price plus the tax in 90 days, you forfeit them. Some companies offer 10-year exercise windows; check your option agreement. ISOs change to NQSOs after 90 days.", consequence: "Forfeiting vested ISOs because you could not pay the AMT in 90 days happens constantly." },
+  { day: "Day 30", urg: "watch", title: "Update your tax withholding for the year", body: "If you got severance, you likely had 22% federal withheld on it. If your bracket is 32% or 37%, you will owe at filing. Adjust your W-4 at the new job, or pay estimated tax via Form 1040-ES. Unemployment benefits are also taxable; many states do not withhold by default.", consequence: "Unwithheld severance plus unwithheld UI can be a five-figure surprise in April." },
+  { day: "Day 60", urg: "watch", title: "FSA balance check", body: "Health FSAs are forfeit at separation unless you elect COBRA continuation of the FSA itself (rare). Run-out periods vary. Submit eligible expenses incurred before your last day immediately.", consequence: "Unused FSA balances are gone the day you separate." }
+];
+const delay = (ms) => new Promise(r => setTimeout(r, ms));
+function App(){
+  const [state, setState] = useState("");
+  const [weeks, setWeeks] = useState("");
+  const [last, setLast] = useState("");
+  const [view, setView] = useState("landing");
+  const [items, setItems] = useState(null);
+  async function go(){ setView("loading"); await delay(2000); setItems(ITEMS); setView("results"); setTimeout(()=>document.getElementById("results")?.scrollIntoView({behavior:"smooth"}),80); }
+  function loadSample(){ setState(SAMPLE.state); setWeeks(SAMPLE.weeks_severance); setLast(SAMPLE.lastDay); setView("landing"); }
+  const P = {bg:"#FAFAF8",ink:"#1A1A1A",inkSoft:"#444",paper:"#FFFFFF",rule:"#E4E0D8",accent:"#7C3AED",urgent:"#DC2626",soon:"#D97706",watch:"#2563EB",mute:"#777"};
+  const wrap = {maxWidth:820,margin:"0 auto",padding:"64px 24px 96px"};
+  const display="'Fraunces',Georgia,serif",sans="Inter,system-ui,sans-serif",mono="'JetBrains Mono',ui-monospace,monospace";
+  const input = {fontFamily:sans,fontSize:16,color:P.ink,background:P.bg,border:`1px solid ${P.rule}`,borderRadius:4,padding:"12px 16px",width:"100%",outline:"none"};
+  function uColor(u){ return u==="urgent"?P.urgent:u==="soon"?P.soon:P.watch; }
+  function uLabel(u){ return u==="urgent"?"URGENT":u==="soon"?"THIS WEEK":"THIS MONTH"; }
+  return <div style={{background:P.bg,color:P.ink,fontFamily:sans,minHeight:"100vh"}}>
+    <header style={wrap}>
+      <div data-testid="eyebrow" style={{fontFamily:mono,fontSize:11,color:P.accent,letterSpacing:"0.2em",textTransform:"uppercase",marginBottom:32}}>For anyone whose last day was this month</div>
+      <h1 style={{fontFamily:display,fontWeight:400,fontSize:"clamp(46px,7vw,82px)",lineHeight:0.97,letterSpacing:"-0.035em",margin:0}}>HR will not<br/>send this list.<br/><em style={{fontStyle:"italic",color:P.accent}}>We will.</em></h1>
+      <p style={{fontFamily:display,fontSize:22,fontStyle:"italic",lineHeight:1.45,color:P.inkSoft,margin:"32px 0 28px",maxWidth:600}}>The week you get laid off, you have leverage you will never have again. The severance is negotiable. The COBRA decision is reversible. The 401k rollover saves you tens of thousands. Most people miss most of this because no one tells them. Tell us your last day, get the day-one through day-sixty checklist.</p>
+      <div style={{display:"flex",flexWrap:"wrap",gap:16,alignItems:"center"}}>
+        <button data-testid="try-sample" onClick={loadSample} style={{fontFamily:sans,fontSize:16,fontWeight:600,background:P.ink,color:P.bg,border:"none",padding:"16px 28px",borderRadius:4,cursor:"pointer"}}>Show me a sample (CA, 8 weeks severance) →</button>
+        <span style={{fontFamily:mono,fontSize:11,color:P.mute,letterSpacing:0.1,textTransform:"uppercase"}}>· free · no signup</span>
+      </div>
+      <div style={{marginTop:64,paddingTop:32,borderTop:`1px solid ${P.rule}`,display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:32}}>
+        {[{n:"21 days",l:"to review severance",s:"longer if you are over 40 (OWBPA federal protection)"},{n:"60 days",l:"to elect COBRA",s:"and 45 more days to pay the first premium. Retroactive."},{n:"90 days",l:"to exercise options",s:"or you forfeit your vested ISOs at most companies"}].map((s,i)=>(<div key={i}><div style={{fontFamily:display,fontSize:36,fontWeight:500,color:P.accent,lineHeight:1,letterSpacing:"-0.02em"}}>{s.n}</div><div style={{fontFamily:sans,fontSize:14,fontWeight:600,marginTop:8}}>{s.l}</div><div style={{fontFamily:sans,fontSize:13,color:P.mute,marginTop:4,lineHeight:1.5}}>{s.s}</div></div>))}
+      </div>
+    </header>
+    <section style={{...wrap,paddingTop:0}}>
+      <div id="input-panel" style={{background:P.paper,border:`1px solid ${P.rule}`,borderRadius:6,padding:28}}>
+        <div style={{fontFamily:mono,fontSize:11,color:P.accent,letterSpacing:"0.18em",textTransform:"uppercase",marginBottom:16}}>Step 1 of 2 · Your situation</div>
+        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:14,marginBottom:14}}>
+          <label><div style={{fontSize:12,color:P.mute,marginBottom:6,fontFamily:mono,letterSpacing:0.08,textTransform:"uppercase"}}>State</div><input data-testid="state" value={state} onChange={e=>setState(e.target.value)} placeholder="California" style={input}/></label>
+          <label><div style={{fontSize:12,color:P.mute,marginBottom:6,fontFamily:mono,letterSpacing:0.08,textTransform:"uppercase"}}>Severance (weeks)</div><input data-testid="weeks" value={weeks} onChange={e=>setWeeks(e.target.value)} placeholder="8" style={input}/></label>
+          <label><div style={{fontSize:12,color:P.mute,marginBottom:6,fontFamily:mono,letterSpacing:0.08,textTransform:"uppercase"}}>Last day</div><input data-testid="last" value={last} onChange={e=>setLast(e.target.value)} placeholder="May 15, 2026" style={input}/></label>
+        </div>
+        <div style={{display:"flex",justifyContent:"flex-end"}}>
+          <button data-testid="analyze-btn" onClick={go} style={{fontFamily:sans,fontSize:15,fontWeight:600,background:P.accent,color:P.bg,border:"none",padding:"12px 24px",borderRadius:4,cursor:"pointer"}}>{view==="loading"?"Building your checklist...":"Show my checklist →"}</button>
+        </div>
+      </div>
+    </section>
+    {view==="results"&&items&&<section id="results" style={{...wrap,paddingTop:32}}>
+      <div data-testid="summary" style={{fontFamily:mono,fontSize:11,color:P.accent,letterSpacing:"0.2em",textTransform:"uppercase",marginBottom:18}}>{items.length} actions across day 1 through day 60</div>
+      {items.map((it,i)=>(<div key={i} style={{background:P.paper,border:`1px solid ${P.rule}`,borderLeft:`4px solid ${uColor(it.urg)}`,borderRadius:4,padding:"22px 26px",marginBottom:14}}>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"baseline",marginBottom:6,flexWrap:"wrap",gap:8}}>
+          <div style={{fontFamily:mono,fontSize:10,color:uColor(it.urg),letterSpacing:"0.18em",textTransform:"uppercase"}}>{uLabel(it.urg)} · {it.day}</div>
+        </div>
+        <div style={{fontFamily:sans,fontSize:17,fontWeight:600,marginBottom:8}}>{it.title}</div>
+        <div style={{fontFamily:sans,fontSize:14,color:P.inkSoft,lineHeight:1.6,marginBottom:10}}>{it.body}</div>
+        <div style={{padding:"8px 12px",background:"rgba(220,38,38,0.06)",borderLeft:`2px solid ${P.urgent}`,borderRadius:2,fontFamily:sans,fontSize:13,color:P.ink}}><strong style={{fontFamily:mono,fontSize:10,color:P.urgent,letterSpacing:0.15,textTransform:"uppercase",marginRight:8}}>Miss it</strong>{it.consequence}</div>
+      </div>))}
+    </section>}
+    <footer style={{...wrap,paddingTop:32,paddingBottom:56,borderTop:`1px solid ${P.rule}`}}>
+      <div style={{fontFamily:mono,fontSize:11,color:P.mute,textAlign:"center",lineHeight:1.65}}>For informational purposes. Not legal, financial, or tax advice. Federal rules cited from ERISA, OWBPA, and IRC. State rules vary.</div>
+    </footer>
+  </div>;
+}
+const root = ReactDOM.createRoot(document.getElementById("root")); root.render(<App/>);
+</script>
+<script data-name="BMC-Widget" data-cfasync="false" src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js" data-id="gooboolygoo" data-description="Support me on Buy me a coffee!" data-message="Love this project? Donate to keep it going" data-color="#5F7FFF" data-position="Right" data-x_margin="18" data-y_margin="18"></script>
+</body>
+</html>

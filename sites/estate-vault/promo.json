@@ -1,0 +1,23 @@
+{
+  "generated_at": "2026-05-21T09:38:37.868Z",
+  "model": "claude-haiku-4-5",
+  "url": "https://gooboolygoo.github.io/projects/estate-vault/",
+  "hashtags": [
+    "estateplan",
+    "finance",
+    "privacy",
+    "webdev",
+    "indiedev"
+  ],
+  "x": {
+    "tweet": "Your family won't find the will. The life insurance card is in a drawer. The crypto seed phrase is on a Post-it. Estate Vault encrypts everything, client-side, and unlocks it for the right person when it matters.",
+    "reply_lead": "try it yourself"
+  },
+  "vertical_caption": "Your family won't find a single document when it matters most. Estate Vault keeps your will, insurance, crypto, and beneficiary forms encrypted and sealed. Only the right person can unlock it 🔐",
+  "shorts_description_lead": "Your family can't find the documents when you're gone. Estate Vault seals everything encrypted, client-side, and only opens for the right person when needed.",
+  "video": {
+    "title": "When Your Family Needs Your Documents",
+    "script": "The will is in a safe nobody knows the combination of. The life insurance card is somewhere in a drawer. The crypto seed phrase is on a Post-it next to the router. Your family will not find a single document when it matters most. Estate Vault fixes this. You encrypt everything client-side. Zero knowledge. When the time comes, the right person unlocks it. All on one page, nothing to install. Check it out.",
+    "word_count": 73
+  }
+}

@@ -1,0 +1,21 @@
+title: Cloud Bill
+blurb: Indie devs get surprise $400 AWS bills and can't tell which service caused it. Paste yours, see what is actually costing you, and get the specific commands to cut it. Free, no signup, nothing leaves your browser.
+tags:
+  - aws
+  - devops
+  - costs
+  - indiedev
+donate: true
+demo:
+  setup:
+    - { action: scroll_to, selector: "#root" }
+  steps:
+    - { action: wait, duration_s: 3 }
+    - { action: click, selector: '[data-testid="try-sample"]' }
+    - { action: wait, duration_s: 1.5 }
+    - { action: scroll_to, selector: "#input-panel" }
+    - { action: wait, duration_s: 1.5 }
+    - { action: click, selector: '[data-testid="analyze-btn"]' }
+    - { action: wait, duration_s: 4 }
+    - { action: scroll_to, selector: '[data-testid="summary"]' }
+    - { action: wait, duration_s: 5 }

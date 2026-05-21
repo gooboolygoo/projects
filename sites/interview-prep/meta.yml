@@ -1,0 +1,21 @@
+title: Hot Seat
+blurb: Glassdoor's data is years old. Companies have signature questions and signature traps. Type the company and the role and get the actual questions recent candidates were asked, what the interviewer is grading for, and the specific prep you have time to do tonight.
+tags:
+  - career
+  - interview
+  - ai
+  - product
+donate: true
+demo:
+  setup:
+    - { action: scroll_to, selector: "#root" }
+  steps:
+    - { action: wait, duration_s: 3 }
+    - { action: click, selector: '[data-testid="try-sample"]' }
+    - { action: wait, duration_s: 1.5 }
+    - { action: scroll_to, selector: "#input-panel" }
+    - { action: wait, duration_s: 1.5 }
+    - { action: click, selector: '[data-testid="analyze-btn"]' }
+    - { action: wait, duration_s: 4 }
+    - { action: scroll_to, selector: '[data-testid="summary"]' }
+    - { action: wait, duration_s: 6 }

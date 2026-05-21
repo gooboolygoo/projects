@@ -1,0 +1,19 @@
+title: RSU Math
+blurb: Most companies withhold federal tax on RSU vests at 22 percent. If your marginal rate is 32 or 37, you owe the rest in April. By then it has been spent. Enter your vest, see the gap, decide sell-to-cover. Free, runs in your browser.
+tags:
+  - finance
+  - tech
+  - taxes
+  - product
+donate: true
+demo:
+  setup:
+    - { action: scroll_to, selector: "#root" }
+  steps:
+    - { action: wait, duration_s: 3 }
+    - { action: scroll_to, selector: "#input-panel" }
+    - { action: wait, duration_s: 1 }
+    - { action: click, selector: '[data-testid="analyze-btn"]' }
+    - { action: wait, duration_s: 1.5 }
+    - { action: scroll_to, selector: '[data-testid="summary"]' }
+    - { action: wait, duration_s: 6 }

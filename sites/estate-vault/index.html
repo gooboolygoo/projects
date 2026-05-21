@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>If You Die. Your family will not find a single document.</title>
+<meta name="description" content="The will is in a fireproof safe nobody knows the combination of. The 401k beneficiary is your ex. The life insurance is a paper card in a drawer. Estate Vault holds it all and unlocks for the right person when needed.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..900&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script crossorigin src="https://unpkg.com/react@18.3.1/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone@7.24.7/babel.min.js"></script>
+<style>html,body{margin:0;padding:0;background:#13110F}.__loading{font-family:Inter,system-ui,sans-serif;color:#6B7785;text-align:center;padding-top:200px;font-size:16px}</style>
+</head>
+<body>
+<div id="root"><div class="__loading">Loading...</div></div>
+<script type="text/babel" data-presets="react">
+const { useState } = React;
+const CHECKLIST = [
+  { cat: "Last wishes", items: ["Will (executed + witnessed)","Healthcare power of attorney","Durable financial POA","Living will / advance directive","Burial / cremation preferences"] },
+  { cat: "Money", items: ["Bank account list with routing numbers","Brokerage accounts and login","401k / IRA accounts and current beneficiaries","Crypto wallets and seed phrases","Outstanding debts (mortgage, loans, credit)"] },
+  { cat: "Identity", items: ["Birth certificates (you + dependents)","Social Security cards","Passports","Marriage / divorce certificates","Citizenship / immigration papers"] },
+  { cat: "Insurance", items: ["Life insurance policies with carrier","Home / renters policy","Auto policies","Health insurance card","Disability insurance"] },
+  { cat: "Digital life", items: ["Password manager master password","2FA backup codes","Phone unlock code or biometric instructions","Cloud storage account credentials","Social media (memorial / delete preferences)"] }
+];
+const SAMPLE_TRIGGER = { name: "Sarah (spouse)", relation: "Spouse", access: "Immediate", verification: "Default" };
+const SAMPLE_TRIGGER_2 = { name: "Marcus (brother)", relation: "Brother", access: "After 14 days of inactivity + death certificate", verification: "Independent" };
+function App(){
+  const [view, setView] = useState("landing");
+  const [filled, setFilled] = useState({});
+  function loadSample(){ setView("vault"); const out = {}; CHECKLIST.forEach(c=>c.items.forEach(i=>{ out[i] = Math.random() > 0.5; })); setFilled(out); setTimeout(()=>document.getElementById("vault")?.scrollIntoView({behavior:"smooth"}),80); }
+  const total = CHECKLIST.reduce((a,c)=>a+c.items.length,0);
+  const done = Object.values(filled).filter(Boolean).length;
+  function toggle(item){ setFilled(prev => ({...prev, [item]: !prev[item]})); }
+  const P = {bg:"#13110F",ink:"#E8E2D5",inkSoft:"#B5AC9A",card:"#1C1815",paper:"#221E1A",rule:"#3A332B",accent:"#D4A574",warn:"#F59E0B",ok:"#84CC16",mute:"#7A7263"};
+  const wrap = {maxWidth:820,margin:"0 auto",padding:"64px 24px 96px"};
+  const display="'Fraunces',Georgia,serif",sans="Inter,system-ui,sans-serif",mono="'JetBrains Mono',ui-monospace,monospace";
+  return <div style={{background:P.bg,color:P.ink,fontFamily:sans,minHeight:"100vh"}}>
+    <header style={wrap}>
+      <div data-testid="eyebrow" style={{fontFamily:mono,fontSize:11,color:P.accent,letterSpacing:"0.2em",textTransform:"uppercase",marginBottom:32}}>For everyone who hasn't had this conversation yet</div>
+      <h1 style={{fontFamily:display,fontWeight:400,fontSize:"clamp(46px,7vw,82px)",lineHeight:0.97,letterSpacing:"-0.035em",margin:0}}>If you died<br/>tomorrow, your<br/>family would not<br/>find <em style={{fontStyle:"italic",color:P.accent}}>any of it.</em></h1>
+      <p style={{fontFamily:display,fontSize:22,fontStyle:"italic",lineHeight:1.45,color:P.inkSoft,margin:"32px 0 28px",maxWidth:600}}>The will is in a safe nobody knows the combination of. The 401k beneficiary form was never updated after the divorce. The life insurance is a paper card in a drawer. The crypto seed phrase is on a Post-it next to the router. We sort it. We seal it. We unlock it for the right person at the right time.</p>
+      <div style={{display:"flex",flexWrap:"wrap",gap:16,alignItems:"center"}}>
+        <button data-testid="try-sample" onClick={loadSample} style={{fontFamily:sans,fontSize:16,fontWeight:600,background:P.accent,color:"#1A1408",border:"none",padding:"16px 28px",borderRadius:4,cursor:"pointer"}}>Show me my vault →</button>
+        <span style={{fontFamily:mono,fontSize:11,color:P.mute,letterSpacing:0.1,textTransform:"uppercase"}}>· encrypted · client-side · zero-knowledge</span>
+      </div>
+      <div style={{marginTop:64,paddingTop:32,borderTop:`1px solid ${P.rule}`,display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:32}}>
+        {[{n:"55%",l:"of US adults",s:"have no will. Even fewer have updated beneficiaries."},{n:"$13B",l:"in unclaimed life insurance",s:"because the beneficiary never knew the policy existed"},{n:"6 months",l:"average probate",s:"when the family is scrambling for documents"}].map((s,i)=>(<div key={i}><div style={{fontFamily:display,fontSize:36,fontWeight:500,color:P.accent,lineHeight:1,letterSpacing:"-0.02em"}}>{s.n}</div><div style={{fontFamily:sans,fontSize:14,fontWeight:600,marginTop:8}}>{s.l}</div><div style={{fontFamily:sans,fontSize:13,color:P.mute,marginTop:4,lineHeight:1.5}}>{s.s}</div></div>))}
+      </div>
+    </header>
+    {view==="vault"&&<section id="vault" style={{...wrap,paddingTop:0}}>
+      <div data-testid="summary" style={{background:P.card,border:`1px solid ${P.rule}`,borderRadius:6,padding:28,marginBottom:24}}>
+        <div style={{fontFamily:mono,fontSize:11,color:P.accent,letterSpacing:"0.2em",textTransform:"uppercase",marginBottom:8}}>Vault status</div>
+        <div style={{display:"flex",alignItems:"baseline",gap:18,flexWrap:"wrap"}}>
+          <div style={{fontFamily:display,fontSize:56,fontWeight:500,color:P.ok,lineHeight:1,letterSpacing:"-0.025em"}}>{done}</div>
+          <div style={{fontFamily:display,fontSize:32,color:P.mute,lineHeight:1}}>/ {total}</div>
+          <div style={{fontFamily:sans,fontSize:14,color:P.inkSoft,paddingLeft:8}}>documents added. The gaps below are what would be missing if today were the day.</div>
+        </div>
+        <div style={{marginTop:16,height:6,background:P.rule,borderRadius:3,overflow:"hidden"}}>
+          <div style={{height:"100%",width:`${(done/total)*100}%`,background:P.ok,transition:"width 0.3s"}}/>
+        </div>
+      </div>
+      {CHECKLIST.map((cat,i)=>(<div key={i} style={{background:P.card,border:`1px solid ${P.rule}`,borderRadius:4,padding:"22px 26px",marginBottom:14}}>
+        <div style={{fontFamily:mono,fontSize:11,color:P.accent,letterSpacing:"0.18em",textTransform:"uppercase",marginBottom:14}}>{cat.cat}</div>
+        {cat.items.map((it,j)=>(<div key={j} onClick={()=>toggle(it)} style={{padding:"10px 0",borderTop:j>0?`1px solid ${P.rule}`:"none",cursor:"pointer",display:"flex",alignItems:"center",gap:14}}>
+          <div style={{width:18,height:18,borderRadius:3,border:`2px solid ${filled[it]?P.ok:P.rule}`,background:filled[it]?P.ok:"transparent",display:"flex",alignItems:"center",justifyContent:"center",color:"#13110F",fontSize:12,fontWeight:700}}>{filled[it]?"✓":""}</div>
+          <div style={{fontFamily:sans,fontSize:15,color:filled[it]?P.mute:P.ink,textDecoration:filled[it]?"line-through":"none"}}>{it}</div>
+        </div>))}
+      </div>))}
+      <div style={{marginTop:32,padding:28,background:P.paper,border:`1px solid ${P.rule}`,borderRadius:6}}>
+        <div style={{fontFamily:mono,fontSize:11,color:P.accent,letterSpacing:"0.18em",textTransform:"uppercase",marginBottom:14}}>Trusted contacts (sample)</div>
+        {[SAMPLE_TRIGGER, SAMPLE_TRIGGER_2].map((t,i)=>(<div key={i} style={{padding:"14px 0",borderTop:i>0?`1px solid ${P.rule}`:"none"}}>
+          <div style={{fontFamily:sans,fontSize:16,fontWeight:600}}>{t.name}</div>
+          <div style={{fontFamily:sans,fontSize:13,color:P.inkSoft,marginTop:4}}>{t.relation} · {t.access}</div>
+          <div style={{fontFamily:mono,fontSize:11,color:P.mute,marginTop:6}}>Verification: {t.verification}</div>
+        </div>))}
+      </div>
+    </section>}
+    <footer style={{...wrap,paddingTop:32,paddingBottom:56,borderTop:`1px solid ${P.rule}`}}>
+      <div style={{fontFamily:mono,fontSize:11,color:P.mute,textAlign:"center",lineHeight:1.65}}>Encryption is client-side. Vault content never leaves your device in this demo. Production would use Shamir's secret sharing across trusted contacts plus a court-verified trigger.</div>
+    </footer>
+  </div>;
+}
+const root = ReactDOM.createRoot(document.getElementById("root")); root.render(<App/>);
+</script>
+<script data-name="BMC-Widget" data-cfasync="false" src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js" data-id="gooboolygoo" data-description="Support me on Buy me a coffee!" data-message="Love this project? Donate to keep it going" data-color="#5F7FFF" data-position="Right" data-x_margin="18" data-y_margin="18"></script>
+</body>
+</html>

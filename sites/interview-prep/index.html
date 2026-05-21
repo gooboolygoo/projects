@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hot Seat. Interview prep that learns the company.</title>
+<meta name="description" content="Glassdoor data is decaying. Type a company and role, get the actual questions recent candidates were asked plus an AI mock interviewer that grades your answers.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..900&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script crossorigin src="https://unpkg.com/react@18.3.1/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone@7.24.7/babel.min.js"></script>
+<style>html,body{margin:0;padding:0;background:#0B0B0F}.__loading{font-family:Inter,system-ui,sans-serif;color:#6B7785;text-align:center;padding-top:200px;font-size:16px}</style>
+</head>
+<body>
+<div id="root"><div class="__loading">Loading...</div></div>
+<script type="text/babel" data-presets="react">
+const { useState } = React;
+const SAMPLE = { company: "Stripe", role: "Senior Backend Engineer" };
+const MOCK = {
+  company: "Stripe", role: "Senior Backend Engineer",
+  format: "5 rounds: phone screen (45m, system design lite), take-home (8h, payments primitives), virtual onsite (4 hours: 2 coding, 1 system design, 1 behavioral with hiring manager).",
+  signal: "Stripe weights API design taste heavily. They will give you a vague problem ('design a webhook delivery system') and judge how you push back on requirements before writing code. Stating 'I would clarify X before designing' scores higher than diving in.",
+  questions: [
+    { q: "Walk me through how you would design an idempotency system for our payments API.", note: "Stripe specifically: they want you to mention idempotency keys, request-response caching, the difference between safe-to-retry and not. If you skip retries on network timeout you lose this round." },
+    { q: "Tell me about a time you pushed back on a product manager.", note: "Behavioral. Stripe loves engineers who own product decisions. Vague 'I was firm' answers fail; specifics with the disagreement and what changed afterward succeed." },
+    { q: "How would you structure a webhook delivery service to guarantee at-least-once delivery?", note: "Look for: dead-letter queues, exponential backoff with jitter, signed payloads, replay tooling. Bonus for mentioning visibility timeout and consumer offset commits." },
+    { q: "What is the difference between optimistic and pessimistic locking, and when would you pick each?", note: "Concurrency control. They will follow up with: 'okay, but for a payments ledger?' (pessimistic) and 'what about a UI form?' (optimistic)." },
+    { q: "Why Stripe?", note: "Tier-1 indicator. 'I want to learn payments' is a fail. 'Your blog post about idempotency keys changed how I think about API design' is what they want. Have one specific Stripe artifact you can point to." }
+  ],
+  prep: [
+    "Read the Stripe API docs cover-to-cover. They will ask why a specific endpoint is shaped the way it is.",
+    "Skim Stripe's engineering blog. Cite something specific in your final round.",
+    "Practice writing code on a doc, not an IDE. Stripe screens use Google Docs.",
+    "Have one 'why I'm leaving' story tight. Hiring manager always asks."
+  ]
+};
+const delay = (ms) => new Promise(r => setTimeout(r, ms));
+function App(){
+  const [co, setCo] = useState("");
+  const [role, setRole] = useState("");
+  const [view, setView] = useState("landing");
+  const [out, setOut] = useState(null);
+  async function go(){ if(!co.trim()||!role.trim()) return; setView("loading"); await delay(2400); setOut(MOCK); setView("results"); setTimeout(()=>document.getElementById("results")?.scrollIntoView({behavior:"smooth"}),80); }
+  function loadSample(){ setCo(SAMPLE.company); setRole(SAMPLE.role); setView("landing"); }
+  const P = {bg:"#0B0B0F",ink:"#E8EAED",inkSoft:"#B0B8C4",card:"#15151D",paper:"#1A1A24",rule:"#2A2A38",accent:"#A78BFA",warn:"#FBBF24",mute:"#7A8595"};
+  const wrap = {maxWidth:820,margin:"0 auto",padding:"64px 24px 96px"};
+  const display="'Fraunces',Georgia,serif",sans="Inter,system-ui,sans-serif",mono="'JetBrains Mono',ui-monospace,monospace";
+  const input = {fontFamily:sans,fontSize:16,color:P.ink,background:P.bg,border:`1px solid ${P.rule}`,borderRadius:4,padding:"12px 16px",width:"100%",outline:"none"};
+  return <div style={{background:P.bg,color:P.ink,fontFamily:sans,minHeight:"100vh"}}>
+    <header style={wrap}>
+      <div data-testid="eyebrow" style={{fontFamily:mono,fontSize:11,color:P.accent,letterSpacing:"0.2em",textTransform:"uppercase",marginBottom:32}}>For your next final-round interview</div>
+      <h1 style={{fontFamily:display,fontWeight:400,fontSize:"clamp(46px,7vw,82px)",lineHeight:0.97,letterSpacing:"-0.035em",margin:0}}>The interview<br/>questions you'll get<br/>are <em style={{fontStyle:"italic",color:P.accent}}>predictable.</em></h1>
+      <p style={{fontFamily:display,fontSize:22,fontStyle:"italic",lineHeight:1.45,color:P.inkSoft,margin:"32px 0 28px",maxWidth:600}}>Glassdoor's data is years old. Companies have signature questions and signature traps. Type the company and role and get the actual questions recent candidates were asked, what the interviewer is grading for, and the specific prep you have time to do tonight.</p>
+      <div style={{display:"flex",flexWrap:"wrap",gap:16,alignItems:"center"}}>
+        <button data-testid="try-sample" onClick={loadSample} style={{fontFamily:sans,fontSize:16,fontWeight:600,background:P.accent,color:"#0F0820",border:"none",padding:"16px 28px",borderRadius:4,cursor:"pointer"}}>Try with Stripe + Senior Backend Engineer →</button>
+        <span style={{fontFamily:mono,fontSize:11,color:P.mute,letterSpacing:0.1,textTransform:"uppercase"}}>· free · no signup</span>
+      </div>
+      <div style={{marginTop:64,paddingTop:32,borderTop:`1px solid ${P.rule}`,display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:32}}>
+        {[{n:"5 rounds",l:"typical FAANG loop",s:"phone screen, coding, system design, behavioral, hiring manager"},{n:"45 min",l:"per round",s:"with 25 minutes of actual question time after warmup"},{n:"~3 questions",l:"per round",s:"and most companies repeat the same ones across candidates"}].map((s,i)=>(<div key={i}><div style={{fontFamily:display,fontSize:36,fontWeight:500,color:P.accent,lineHeight:1,letterSpacing:"-0.02em"}}>{s.n}</div><div style={{fontFamily:sans,fontSize:14,fontWeight:600,marginTop:8}}>{s.l}</div><div style={{fontFamily:sans,fontSize:13,color:P.mute,marginTop:4,lineHeight:1.5}}>{s.s}</div></div>))}
+      </div>
+    </header>
+    <section style={{...wrap,paddingTop:0}}>
+      <div id="input-panel" style={{background:P.paper,border:`1px solid ${P.rule}`,borderRadius:6,padding:28}}>
+        <div style={{fontFamily:mono,fontSize:11,color:P.accent,letterSpacing:"0.18em",textTransform:"uppercase",marginBottom:20}}>Step 1 of 2 · The role</div>
+        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:14}}>
+          <label><div style={{fontSize:12,color:P.mute,marginBottom:6,fontFamily:mono,letterSpacing:0.08,textTransform:"uppercase"}}>Company</div><input data-testid="company" value={co} onChange={e=>setCo(e.target.value)} placeholder="e.g. Stripe" style={input}/></label>
+          <label><div style={{fontSize:12,color:P.mute,marginBottom:6,fontFamily:mono,letterSpacing:0.08,textTransform:"uppercase"}}>Role</div><input data-testid="role" value={role} onChange={e=>setRole(e.target.value)} placeholder="e.g. Senior Backend Engineer" style={input}/></label>
+        </div>
+        <div style={{display:"flex",justifyContent:"flex-end",marginTop:16}}>
+          <button data-testid="analyze-btn" onClick={go} disabled={!co.trim()||!role.trim()||view==="loading"} style={{fontFamily:sans,fontSize:15,fontWeight:600,background:co.trim()&&role.trim()&&view!=="loading"?P.accent:P.rule,color:co.trim()&&role.trim()&&view!=="loading"?"#0F0820":P.mute,border:"none",padding:"12px 24px",borderRadius:4,cursor:co.trim()&&role.trim()&&view!=="loading"?"pointer":"not-allowed"}}>{view==="loading"?"Reading the loop...":"Prep me for this  →"}</button>
+        </div>
+      </div>
+    </section>
+    {view==="results"&&out&&<section id="results" style={{...wrap,paddingTop:32}}>
+      <div data-testid="summary" style={{background:P.card,border:`1px solid ${P.rule}`,borderRadius:6,padding:28,marginBottom:24}}>
+        <div style={{fontFamily:mono,fontSize:11,color:P.accent,letterSpacing:"0.2em",textTransform:"uppercase",marginBottom:8}}>Loop format · {out.company} · {out.role}</div>
+        <div style={{fontFamily:sans,fontSize:15,color:P.inkSoft,lineHeight:1.6}}>{out.format}</div>
+        <div style={{marginTop:16,padding:"14px 18px",background:"rgba(167,139,250,0.07)",borderLeft:`2px solid ${P.accent}`,borderRadius:2}}>
+          <div style={{fontFamily:mono,fontSize:10,color:P.accent,letterSpacing:"0.18em",textTransform:"uppercase",marginBottom:6}}>What they're actually grading</div>
+          <div style={{fontFamily:sans,fontSize:14,color:P.ink,lineHeight:1.55}}>{out.signal}</div>
+        </div>
+      </div>
+      <div style={{fontFamily:mono,fontSize:11,color:P.mute,letterSpacing:"0.15em",textTransform:"uppercase",marginBottom:14}}>Recent questions (last 90 days of candidate reports)</div>
+      {out.questions.map((q,i)=>(<div key={i} style={{background:P.card,border:`1px solid ${P.rule}`,borderLeft:`4px solid ${P.accent}`,borderRadius:4,padding:"20px 24px",marginBottom:12}}>
+        <div style={{fontFamily:sans,fontSize:16,fontWeight:600,color:P.ink}}>{q.q}</div>
+        <div style={{fontFamily:sans,fontSize:14,color:P.inkSoft,marginTop:8,lineHeight:1.55}}>{q.note}</div>
+      </div>))}
+      <div style={{marginTop:32,padding:24,background:P.paper,border:`1px solid ${P.rule}`,borderRadius:6}}>
+        <div style={{fontFamily:mono,fontSize:11,color:P.accent,letterSpacing:"0.18em",textTransform:"uppercase",marginBottom:14}}>Prep that fits in one evening</div>
+        <ol style={{margin:0,paddingLeft:20,fontFamily:sans,fontSize:14,color:P.ink,lineHeight:1.7}}>{out.prep.map((p,i)=>(<li key={i} style={{marginBottom:6}}>{p}</li>))}</ol>
+      </div>
+    </section>}
+    <footer style={{...wrap,paddingTop:32,paddingBottom:56,borderTop:`1px solid ${P.rule}`}}>
+      <div style={{fontFamily:mono,fontSize:11,color:P.mute,textAlign:"center",lineHeight:1.65}}>Question banks are illustrative. Production version pulls from candidate-submitted recent interviews.</div>
+    </footer>
+  </div>;
+}
+const root = ReactDOM.createRoot(document.getElementById("root")); root.render(<App/>);
+</script>
+<script data-name="BMC-Widget" data-cfasync="false" src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js" data-id="gooboolygoo" data-description="Support me on Buy me a coffee!" data-message="Love this project? Donate to keep it going" data-color="#5F7FFF" data-position="Right" data-x_margin="18" data-y_margin="18"></script>
+</body>
+</html>

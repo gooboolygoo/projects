@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RSU Math. Should you sell or hold?</title>
+<meta name="description" content="Your RSUs vest today. Tax withholding looks fine. It usually isn't. See your true after-tax position and whether sell-now or hold makes more sense given your bracket.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..900&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script crossorigin src="https://unpkg.com/react@18.3.1/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone@7.24.7/babel.min.js"></script>
+<style>html,body{margin:0;padding:0;background:#0E1B14}.__loading{font-family:Inter,system-ui,sans-serif;color:#6B7785;text-align:center;padding-top:200px;font-size:16px}</style>
+</head>
+<body>
+<div id="root"><div class="__loading">Loading...</div></div>
+<script type="text/babel" data-presets="react">
+const { useState, useMemo } = React;
+const fmt = (n) => "$" + Math.round(n).toLocaleString("en-US");
+function App(){
+  const [shares, setShares] = useState(400);
+  const [price, setPrice] = useState(185);
+  const [salary, setSalary] = useState(220000);
+  const [state, setState] = useState("CA");
+  const [view, setView] = useState("input");
+  const STATES = {CA:0.103,NY:0.0685,WA:0,TX:0,MA:0.05};
+  const calc = useMemo(()=>{
+    const gross = shares * price;
+    const fed = 0.32;
+    const stateRate = STATES[state] || 0;
+    const fica = 0.0145;
+    const totalTax = fed + stateRate + fica;
+    const withholding = gross * 0.22 + gross * stateRate + gross * fica;
+    const actualOwed = gross * totalTax;
+    const underwithheld = Math.max(0, actualOwed - withholding);
+    const net = gross - actualOwed;
+    return { gross, withholding, actualOwed, underwithheld, net, totalRate: totalTax, withholdingRate: 0.22 + stateRate + fica };
+  }, [shares, price, salary, state]);
+  function analyze(){ setView("results"); setTimeout(()=>document.getElementById("results")?.scrollIntoView({behavior:"smooth"}),80); }
+  const P = {bg:"#0E1B14",ink:"#E8EAED",inkSoft:"#B0B8C4",card:"#172419",paper:"#1C2D22",rule:"#2D3F33",accent:"#34D399",warn:"#FBBF24",danger:"#EF4444",mute:"#7A8595"};
+  const wrap = {maxWidth:820,margin:"0 auto",padding:"64px 24px 96px"};
+  const display="'Fraunces',Georgia,serif",sans="Inter,system-ui,sans-serif",mono="'JetBrains Mono',ui-monospace,monospace";
+  const inputStyle = {fontFamily:mono,fontSize:18,fontWeight:600,color:P.ink,background:P.bg,border:`1px solid ${P.rule}`,borderRadius:4,padding:"10px 14px",width:"100%",outline:"none"};
+  return <div style={{background:P.bg,color:P.ink,fontFamily:sans,minHeight:"100vh"}}>
+    <header style={wrap}>
+      <div data-testid="eyebrow" style={{fontFamily:mono,fontSize:11,color:P.accent,letterSpacing:"0.2em",textTransform:"uppercase",marginBottom:32}}>For anyone with RSUs vesting this year</div>
+      <h1 style={{fontFamily:display,fontWeight:400,fontSize:"clamp(46px,7vw,80px)",lineHeight:0.97,letterSpacing:"-0.035em",margin:0}}>Your RSU withholding<br/>is probably <em style={{fontStyle:"italic",color:P.danger}}>too low.</em></h1>
+      <p style={{fontFamily:display,fontSize:22,fontStyle:"italic",lineHeight:1.45,color:P.inkSoft,margin:"32px 0 28px",maxWidth:600}}>Most companies withhold federal tax on RSU vests at 22 percent. If your marginal rate is 32 percent or higher, you owe the rest in April. By then it has been spent. Enter your vest, see the gap, decide sell-or-hold.</p>
+      <div style={{marginTop:64,paddingTop:32,borderTop:`1px solid ${P.rule}`,display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:32}}>
+        {[{n:"22%",l:"default fed withholding",s:"on RSU vests under one million dollars"},{n:"37%",l:"your real bracket",s:"if you make over $578k single, $693k joint"},{n:"April 15",l:"when you find out",s:"that the IRS wants the difference"}].map((s,i)=>(<div key={i}><div style={{fontFamily:display,fontSize:36,fontWeight:500,color:P.accent,lineHeight:1,letterSpacing:"-0.02em"}}>{s.n}</div><div style={{fontFamily:sans,fontSize:14,fontWeight:600,marginTop:8}}>{s.l}</div><div style={{fontFamily:sans,fontSize:13,color:P.mute,marginTop:4,lineHeight:1.5}}>{s.s}</div></div>))}
+      </div>
+    </header>
+    <section style={{...wrap,paddingTop:0}}>
+      <div id="input-panel" style={{background:P.paper,border:`1px solid ${P.rule}`,borderRadius:6,padding:28}}>
+        <div style={{fontFamily:mono,fontSize:11,color:P.accent,letterSpacing:"0.18em",textTransform:"uppercase",marginBottom:20}}>Step 1 of 2 · Your vest</div>
+        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16,marginBottom:16}}>
+          <label><div style={{fontSize:12,color:P.mute,marginBottom:6,fontFamily:mono,letterSpacing:0.08,textTransform:"uppercase"}}>Shares vesting</div><input data-testid="shares" type="number" value={shares} onChange={e=>setShares(+e.target.value||0)} style={inputStyle}/></label>
+          <label><div style={{fontSize:12,color:P.mute,marginBottom:6,fontFamily:mono,letterSpacing:0.08,textTransform:"uppercase"}}>Share price ($)</div><input data-testid="price" type="number" value={price} onChange={e=>setPrice(+e.target.value||0)} style={inputStyle}/></label>
+          <label><div style={{fontSize:12,color:P.mute,marginBottom:6,fontFamily:mono,letterSpacing:0.08,textTransform:"uppercase"}}>Base salary ($/yr)</div><input data-testid="salary" type="number" value={salary} onChange={e=>setSalary(+e.target.value||0)} style={inputStyle}/></label>
+          <label><div style={{fontSize:12,color:P.mute,marginBottom:6,fontFamily:mono,letterSpacing:0.08,textTransform:"uppercase"}}>State</div><select value={state} onChange={e=>setState(e.target.value)} style={inputStyle}><option value="CA">California (10.3%)</option><option value="NY">New York (6.85%)</option><option value="MA">Massachusetts (5.0%)</option><option value="WA">Washington (0%)</option><option value="TX">Texas (0%)</option></select></label>
+        </div>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginTop:8,flexWrap:"wrap",gap:12}}>
+          <div style={{fontFamily:mono,fontSize:11,color:P.mute}}>Gross: {fmt(shares*price)}</div>
+          <button data-testid="analyze-btn" onClick={analyze} style={{fontFamily:sans,fontSize:15,fontWeight:600,background:P.accent,color:"#0A1A0F",border:"none",padding:"12px 24px",borderRadius:4,cursor:"pointer"}}>Show me the gap →</button>
+        </div>
+      </div>
+    </section>
+    {view==="results"&&<section id="results" style={{...wrap,paddingTop:32}}>
+      <div data-testid="summary" style={{background:P.card,border:`2px solid ${P.danger}`,borderRadius:6,padding:32,marginBottom:24}}>
+        <div style={{fontFamily:mono,fontSize:11,color:P.danger,letterSpacing:"0.2em",textTransform:"uppercase",marginBottom:8}}>Your underwithholding</div>
+        <div style={{fontFamily:display,fontSize:"clamp(40px,6vw,64px)",fontWeight:500,color:P.danger,lineHeight:1,letterSpacing:"-0.025em"}}>{fmt(calc.underwithheld)}</div>
+        <div style={{fontFamily:sans,fontSize:15,color:P.inkSoft,marginTop:10}}>is what you owe the IRS next April, that your employer is not withholding from this vest. Set it aside now or sell shares to cover.</div>
+      </div>
+      <div style={{display:"grid",gridTemplateColumns:"repeat(2,1fr)",gap:14}}>
+        {[{l:"Gross value of vest",v:calc.gross,c:P.ink},{l:"Total tax actually owed",v:calc.actualOwed,c:P.warn},{l:"Withholding (your paystub)",v:calc.withholding,c:P.accent},{l:"Net after true taxes",v:calc.net,c:P.ink}].map((r,i)=>(<div key={i} style={{background:P.card,border:`1px solid ${P.rule}`,borderRadius:4,padding:"18px 22px"}}>
+          <div style={{fontFamily:mono,fontSize:10,color:P.mute,letterSpacing:"0.18em",textTransform:"uppercase",marginBottom:6}}>{r.l}</div>
+          <div style={{fontFamily:display,fontSize:28,fontWeight:500,color:r.c}}>{fmt(r.v)}</div>
+        </div>))}
+      </div>
+      <div style={{marginTop:32,padding:"22px 24px",background:"rgba(52,211,153,0.06)",borderLeft:`3px solid ${P.accent}`,borderRadius:4}}>
+        <div style={{fontFamily:mono,fontSize:11,color:P.accent,letterSpacing:"0.18em",textTransform:"uppercase",marginBottom:8}}>What most people do here</div>
+        <div style={{fontFamily:sans,fontSize:15,color:P.ink,lineHeight:1.6}}>Sell-to-cover: sell enough shares the day of vest to bring your withholding up to the true tax rate. You eliminate the April surprise and the company already treated it as ordinary income, so there is no capital gains on a same-day sale. The remaining shares can be held for the long-term gains rate (more than one year) if you believe in the stock.</div>
+      </div>
+    </section>}
+    <footer style={{...wrap,paddingTop:32,paddingBottom:56,borderTop:`1px solid ${P.rule}`}}>
+      <div style={{fontFamily:mono,fontSize:11,color:P.mute,textAlign:"center",lineHeight:1.65}}>For educational purposes. Not tax advice. Rates use 2025 IRS brackets and FICA caps. Consult a CPA before acting on this.</div>
+    </footer>
+  </div>;
+}
+const root = ReactDOM.createRoot(document.getElementById("root")); root.render(<App/>);
+</script>
+<script data-name="BMC-Widget" data-cfasync="false" src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js" data-id="gooboolygoo" data-description="Support me on Buy me a coffee!" data-message="Love this project? Donate to keep it going" data-color="#5F7FFF" data-position="Right" data-x_margin="18" data-y_margin="18"></script>
+</body>
+</html>

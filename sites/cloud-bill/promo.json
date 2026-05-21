@@ -1,0 +1,23 @@
+{
+  "generated_at": "2026-05-21T09:38:34.372Z",
+  "model": "claude-haiku-4-5",
+  "url": "https://gooboolygoo.github.io/projects/cloud-bill/",
+  "hashtags": [
+    "aws",
+    "devops",
+    "indiedev",
+    "buildinpublic",
+    "webdev"
+  ],
+  "x": {
+    "tweet": "Your AWS bill arrived. $400 gone. But which service ate it? Paste your bill here, get the breakdown, and the exact cut commands.",
+    "reply_lead": "open it now →"
+  },
+  "vertical_caption": "Buried in a $400 AWS bill and have no idea which service caused it. Paste your bill, get the English translation, and the commands to kill the waste.",
+  "shorts_description_lead": "Confused by your AWS bill breakdown. Paste it here, get a plain English diagnosis of what's costing you, and the specific commands to cut it.",
+  "video": {
+    "title": "Decode Your Secret AWS Bill",
+    "script": "You got the AWS invoice. Four hundred bucks. But where did it go. Was it compute, storage, network, something you forgot you spun up three months ago. Most people stare at that PDF and just pay it. This thing reads your bill like a human and tells you exactly which service tanked your budget, then gives you the command to shut it down. No signup, nothing leaves your browser. Link in the description.",
+    "word_count": 73
+  }
+}
