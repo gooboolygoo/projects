@@ -1,0 +1,67 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>PR Patterns. What your engineer keeps getting feedback on.</title>
+<meta name="description" content="Code review comments on a single PR feel random. Across 50 PRs they form a pattern. See where your engineer is plateauing and where they have grown.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..900&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script crossorigin src="https://unpkg.com/react@18.3.1/umd/react.production.min.js"></script><script crossorigin src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js"></script><script src="https://unpkg.com/@babel/standalone@7.24.7/babel.min.js"></script>
+<style>html,body{margin:0;padding:0;background:#0D1117}.__loading{font-family:Inter,system-ui;color:#888;text-align:center;padding-top:200px}</style></head><body>
+<div id="root"><div class="__loading">Loading...</div></div>
+<script type="text/babel" data-presets="react">
+const { useState } = React;
+const SAMPLE = "github.com/acme/api · alex.chen · last 90 days · 47 PRs · 312 review comments";
+const MOCK = {
+  who: "Alex Chen", repo: "acme/api", window: "Last 90 days",
+  prs: 47, comments: 312, reviewers: 8,
+  patterns: [
+    { kind: "Recurring weakness", count: 18, title: "Forgets to handle the empty-array case", body: "Eighteen times in 90 days, reviewers (especially Maria and Jin) caught a code path that crashes or returns the wrong type on an empty list input. This is the single most common feedback. Worth a one-on-one item: 'When you write a list-processing function, add an empty-array test first.'", growth: "stable, no improvement over the window" },
+    { kind: "Recurring weakness", count: 11, title: "Error messages don't say what the user did wrong", body: "Eleven 'this error message is vague' comments. Pattern: throws generic Error('invalid request') instead of specifying which field was invalid. Reviewers are starting to leave the same comment word-for-word.", growth: "slightly worse, more frequent in last 30 days" },
+    { kind: "Growth", count: 6, title: "Migration safety improved sharply", body: "Six PRs touched DB migrations this quarter. First two got heavy 'this will lock the table' feedback. Last four were clean. Alex has clearly internalized concurrent index creation patterns.", growth: "real progress, no recent feedback on this" },
+    { kind: "Style", count: 22, title: "Long functions (>80 lines)", body: "22 comments about function length. Reviewers split: half want functions broken up, half don't care. This is a team-norms conversation, not an Alex issue. Worth raising in team standup.", growth: "team-pattern, not individual" }
+  ]
+};
+const delay = (ms) => new Promise(r => setTimeout(r, ms));
+function App(){
+  const [text,setText]=useState(""); const [view,setView]=useState("landing"); const [out,setOut]=useState(null);
+  async function go(){ if(!text.trim())return; setView("analyzing"); await delay(2400); setOut(MOCK); setView("results"); setTimeout(()=>document.getElementById("results")?.scrollIntoView({behavior:"smooth"}),80); }
+  function loadSample(){ setText(SAMPLE); setView("landing"); }
+  const P={bg:"#0D1117",ink:"#E8EAED",inkSoft:"#B0B8C4",card:"#161B22",paper:"#1C2129",rule:"#2A3441",accent:"#A5F3FC",warn:"#FBBF24",ok:"#34D399",mute:"#7A8595"};
+  const wrap={maxWidth:820,margin:"0 auto",padding:"64px 24px 96px"};
+  const display="'Fraunces',Georgia,serif",sans="Inter,system-ui,sans-serif",mono="'JetBrains Mono',ui-monospace,monospace";
+  function kindColor(k){return k==="Growth"?P.ok:k==="Style"?P.warn:"#F87171";}
+  return <div style={{background:P.bg,color:P.ink,fontFamily:sans,minHeight:"100vh"}}>
+    <header style={wrap}>
+      <div data-testid="eyebrow" style={{fontFamily:mono,fontSize:11,color:P.accent,letterSpacing:"0.2em",textTransform:"uppercase",marginBottom:32}}>For engineering managers preparing the next 1:1</div>
+      <h1 style={{fontFamily:display,fontWeight:400,fontSize:"clamp(46px,7vw,82px)",lineHeight:0.97,letterSpacing:"-0.035em",margin:0}}>Your engineer<br/>has gotten the same<br/>code review<br/><em style={{fontStyle:"italic",color:P.accent}}>18 times.</em></h1>
+      <p style={{fontFamily:display,fontSize:22,fontStyle:"italic",lineHeight:1.45,color:P.inkSoft,margin:"32px 0 28px",maxWidth:600}}>One PR's feedback looks like noise. Ninety days of it is a curriculum. Paste a GitHub repo and username, get the patterns that show where they are plateauing, where they have grown, and the one specific thing to put on the next 1:1.</p>
+      <div style={{display:"flex",flexWrap:"wrap",gap:16,alignItems:"center"}}>
+        <button data-testid="try-sample" onClick={loadSample} style={{fontFamily:sans,fontSize:16,fontWeight:600,background:P.accent,color:"#082030",border:"none",padding:"16px 28px",borderRadius:4,cursor:"pointer"}}>Try with a sample repo →</button>
+        <span style={{fontFamily:mono,fontSize:11,color:P.mute,letterSpacing:0.1,textTransform:"uppercase"}}>· free · for managers</span>
+      </div>
+    </header>
+    <section style={{...wrap,paddingTop:0}}>
+      <div id="input-panel" style={{background:P.paper,border:`1px solid ${P.rule}`,borderRadius:6,padding:28}}>
+        <div style={{fontFamily:mono,fontSize:11,color:P.accent,letterSpacing:"0.18em",textTransform:"uppercase",marginBottom:14}}>Step 1 of 2 · Repo and engineer</div>
+        <input data-testid="input" value={text} onChange={e=>setText(e.target.value)} placeholder="github.com/your-org/your-repo and the engineer's handle" style={{fontFamily:mono,fontSize:14,color:P.ink,border:`1px solid ${P.rule}`,borderRadius:4,padding:"14px 16px",outline:"none",background:P.bg,width:"100%"}}/>
+        <div style={{display:"flex",justifyContent:"flex-end",marginTop:14}}>
+          <button data-testid="analyze-btn" onClick={go} disabled={!text.trim()||view==="analyzing"} style={{fontFamily:sans,fontSize:15,fontWeight:600,background:text.trim()&&view!=="analyzing"?P.accent:P.rule,color:text.trim()&&view!=="analyzing"?"#082030":P.mute,border:"none",padding:"12px 24px",borderRadius:4,cursor:text.trim()&&view!=="analyzing"?"pointer":"not-allowed"}}>{view==="analyzing"?"Reading 90 days of PRs...":"Show patterns →"}</button>
+        </div>
+      </div>
+    </section>
+    {view==="results"&&out&&<section id="results" style={{...wrap,paddingTop:32}}>
+      <div data-testid="summary" style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:14,marginBottom:24}}>
+        {[{l:"PRs",v:out.prs},{l:"Comments",v:out.comments},{l:"Reviewers",v:out.reviewers}].map((r,i)=>(<div key={i} style={{background:P.card,border:`1px solid ${P.rule}`,borderRadius:6,padding:"18px 22px"}}><div style={{fontFamily:mono,fontSize:10,color:P.mute,letterSpacing:"0.18em",textTransform:"uppercase",marginBottom:6}}>{r.l}</div><div style={{fontFamily:display,fontSize:32,fontWeight:500,color:P.accent}}>{r.v}</div></div>))}
+      </div>
+      {out.patterns.map((p,i)=>(<div key={i} style={{background:P.card,border:`1px solid ${P.rule}`,borderLeft:`4px solid ${kindColor(p.kind)}`,borderRadius:4,padding:"20px 24px",marginBottom:14}}>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"baseline",marginBottom:6,flexWrap:"wrap",gap:8}}>
+          <div style={{fontFamily:mono,fontSize:10,color:kindColor(p.kind),letterSpacing:0.15,textTransform:"uppercase"}}>{p.kind} · {p.count} comments</div>
+        </div>
+        <div style={{fontFamily:sans,fontSize:17,fontWeight:600,marginBottom:8}}>{p.title}</div>
+        <div style={{fontFamily:sans,fontSize:14,color:P.inkSoft,lineHeight:1.55,marginBottom:8}}>{p.body}</div>
+        <div style={{fontFamily:mono,fontSize:11,color:P.mute,fontStyle:"italic"}}>trend: {p.growth}</div>
+      </div>))}
+    </section>}
+    <footer style={{...wrap,paddingTop:32,paddingBottom:56,borderTop:`1px solid ${P.rule}`}}><div style={{fontFamily:mono,fontSize:11,color:P.mute,textAlign:"center",lineHeight:1.65}}>Production version pulls from your GitHub via OAuth. Demo is illustrative.</div></footer>
+  </div>;
+}
+const root = ReactDOM.createRoot(document.getElementById("root")); root.render(<App/>);
+</script>
+<script data-name="BMC-Widget" data-cfasync="false" src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js" data-id="gooboolygoo" data-description="Support me on Buy me a coffee!" data-message="Love this project? Donate to keep it going" data-color="#5F7FFF" data-position="Right" data-x_margin="18" data-y_margin="18"></script>
+</body></html>

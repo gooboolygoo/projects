@@ -1,0 +1,87 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Standup. Async daily that nobody reads.</title>
+<meta name="description" content="Geekbot fires daily and your team scrolls past it. Paste the day's standup posts, get the summary and the two blockers worth escalating.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..900&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script crossorigin src="https://unpkg.com/react@18.3.1/umd/react.production.min.js"></script><script crossorigin src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js"></script><script src="https://unpkg.com/@babel/standalone@7.24.7/babel.min.js"></script>
+<style>html,body{margin:0;padding:0;background:#0B0B0B}.__loading{font-family:Inter,system-ui;color:#888;text-align:center;padding-top:200px}</style></head><body>
+<div id="root"><div class="__loading">Loading...</div></div>
+<script type="text/babel" data-presets="react">
+const { useState } = React;
+const SAMPLE = `Maya:
+Y: shipped the auth refactor, paired with Sam on the migration
+T: write the migration runbook, kickoff with infra
+B: none
+
+Sam:
+Y: code review on Maya's PR, kicked off the analytics ingest
+T: continue analytics ingest, blocked on schema review from Priya
+B: waiting on Priya since Monday for schema sign-off
+
+Dev:
+Y: rolled back the payments deploy, found root cause (race condition in webhook handler)
+T: write the fix + tests, redeploy in afternoon
+B: postmortem needs scheduling
+
+Priya:
+Y: customer call with Acme, drafted the security review
+T: respond to Sam's schema doc, finish Acme proposal
+B: none`;
+const MOCK = {
+  summary: "Maya shipped auth and pairs with Sam today. Sam is blocked on Priya since Monday (3 days). Dev fixed the payments outage and is shipping the fix today. Priya has the most context-switches.",
+  shipped: ["Auth refactor (Maya)", "Payments rollback + root cause (Dev)", "Acme security review draft (Priya)"],
+  blockers: [
+    { sev: "high", who: "Sam → Priya", what: "Analytics ingest blocked 3 days waiting for schema review", action: "Priya: respond to Sam's schema doc today." },
+    { sev: "med", who: "Dev", what: "Payments postmortem needs scheduling", action: "30-minute slot tomorrow, before the fix ships." }
+  ],
+  trends: ["Sam has been on the same blocker 3 days running — this is your escalation threshold.", "Dev has rolled back deploys twice this month. Worth a 1:1 thread on deploy confidence."]
+};
+const delay = (ms) => new Promise(r => setTimeout(r, ms));
+function App(){
+  const [text,setText]=useState(""); const [view,setView]=useState("landing"); const [out,setOut]=useState(null);
+  async function go(){ if(!text.trim())return; setView("analyzing"); await delay(2000); setOut(MOCK); setView("results"); setTimeout(()=>document.getElementById("results")?.scrollIntoView({behavior:"smooth"}),80); }
+  function loadSample(){ setText(SAMPLE); setView("landing"); }
+  const P={bg:"#0B0B0B",ink:"#E8EAED",inkSoft:"#B0B8C4",card:"#121214",paper:"#17171A",rule:"#2A2A2D",accent:"#84CC16",high:"#EF4444",med:"#FBBF24",mute:"#7A8595"};
+  const wrap={maxWidth:820,margin:"0 auto",padding:"64px 24px 96px"};
+  const display="'Fraunces',Georgia,serif",sans="Inter,system-ui,sans-serif",mono="'JetBrains Mono',ui-monospace,monospace";
+  return <div style={{background:P.bg,color:P.ink,fontFamily:sans,minHeight:"100vh"}}>
+    <header style={wrap}>
+      <div data-testid="eyebrow" style={{fontFamily:mono,fontSize:11,color:P.accent,letterSpacing:"0.2em",textTransform:"uppercase",marginBottom:32}}>For managers of distributed teams</div>
+      <h1 style={{fontFamily:display,fontWeight:400,fontSize:"clamp(46px,7vw,82px)",lineHeight:0.97,letterSpacing:"-0.035em",margin:0}}>Nobody reads<br/>the standup<br/><em style={{fontStyle:"italic",color:P.accent}}>thread.</em></h1>
+      <p style={{fontFamily:display,fontSize:22,fontStyle:"italic",lineHeight:1.45,color:P.inkSoft,margin:"32px 0 28px",maxWidth:600}}>Geekbot fires at 9am. Six people post. The thread is dead by 9:30. The blocker that should have been escalated sits there until Friday. Paste the day's posts, get the summary, the escalations, and the trend lines that show who needs a 1:1.</p>
+      <div style={{display:"flex",flexWrap:"wrap",gap:16,alignItems:"center"}}>
+        <button data-testid="try-sample" onClick={loadSample} style={{fontFamily:sans,fontSize:16,fontWeight:600,background:P.accent,color:"#0A1408",border:"none",padding:"16px 28px",borderRadius:4,cursor:"pointer"}}>Try with a sample standup →</button>
+        <span style={{fontFamily:mono,fontSize:11,color:P.mute,textTransform:"uppercase"}}>· free · nothing leaves your browser</span>
+      </div>
+    </header>
+    <section style={{...wrap,paddingTop:0}}>
+      <div id="input-panel" style={{background:P.paper,border:`1px solid ${P.rule}`,borderRadius:6,padding:28}}>
+        <div style={{fontFamily:mono,fontSize:11,color:P.accent,letterSpacing:"0.18em",textTransform:"uppercase",marginBottom:14}}>Step 1 of 2 · Paste today's standup</div>
+        <textarea data-testid="standup-input" value={text} onChange={e=>setText(e.target.value)} placeholder="Paste Slack/Geekbot/Slite standup posts" style={{width:"100%",minHeight:240,fontFamily:mono,fontSize:13,lineHeight:1.55,color:P.ink,border:`1px solid ${P.rule}`,borderRadius:4,padding:"14px 16px",outline:"none",background:P.bg,resize:"vertical"}}/>
+        <div style={{display:"flex",justifyContent:"flex-end",marginTop:14}}>
+          <button data-testid="analyze-btn" onClick={go} disabled={!text.trim()||view==="analyzing"} style={{fontFamily:sans,fontSize:15,fontWeight:600,background:text.trim()&&view!=="analyzing"?P.accent:P.rule,color:text.trim()&&view!=="analyzing"?"#0A1408":P.mute,border:"none",padding:"12px 24px",borderRadius:4,cursor:text.trim()&&view!=="analyzing"?"pointer":"not-allowed"}}>{view==="analyzing"?"Reading the team...":"Summarize and escalate →"}</button>
+        </div>
+      </div>
+    </section>
+    {view==="results"&&out&&<section id="results" style={{...wrap,paddingTop:32}}>
+      <div data-testid="summary" style={{background:P.card,border:`1px solid ${P.rule}`,borderLeft:`4px solid ${P.accent}`,borderRadius:4,padding:"22px 26px",marginBottom:22}}>
+        <div style={{fontFamily:mono,fontSize:11,color:P.accent,letterSpacing:"0.2em",textTransform:"uppercase",marginBottom:8}}>The pulse</div>
+        <div style={{fontFamily:sans,fontSize:16,lineHeight:1.55}}>{out.summary}</div>
+      </div>
+      <div style={{display:"grid",gridTemplateColumns:"1fr",gap:14}}>
+        {out.blockers.map((b,i)=>(<div key={i} style={{background:P.card,border:`1px solid ${P.rule}`,borderLeft:`4px solid ${b.sev==="high"?P.high:P.med}`,borderRadius:4,padding:"18px 22px"}}>
+          <div style={{fontFamily:mono,fontSize:10,color:b.sev==="high"?P.high:P.med,letterSpacing:0.15,textTransform:"uppercase",marginBottom:6}}>{b.sev==="high"?"ESCALATE":"FOLLOW UP"} · {b.who}</div>
+          <div style={{fontFamily:sans,fontSize:15,color:P.ink}}>{b.what}</div>
+          <div style={{fontFamily:sans,fontSize:13,color:P.inkSoft,marginTop:6,fontStyle:"italic"}}>→ {b.action}</div>
+        </div>))}
+      </div>
+      <div style={{marginTop:24,padding:"18px 22px",background:P.paper,border:`1px solid ${P.rule}`,borderRadius:4}}>
+        <div style={{fontFamily:mono,fontSize:10,color:P.accent,letterSpacing:0.15,textTransform:"uppercase",marginBottom:10}}>Worth a 1:1 thread</div>
+        <ul style={{margin:0,paddingLeft:18,fontFamily:sans,fontSize:14,color:P.inkSoft,lineHeight:1.7}}>{out.trends.map((s,i)=><li key={i}>{s}</li>)}</ul>
+      </div>
+    </section>}
+    <footer style={{...wrap,paddingTop:32,paddingBottom:56,borderTop:`1px solid ${P.rule}`}}><div style={{fontFamily:mono,fontSize:11,color:P.mute,textAlign:"center",lineHeight:1.65}}>Production version connects to Slack/Geekbot and auto-summarizes daily.</div></footer>
+  </div>;
+}
+const root = ReactDOM.createRoot(document.getElementById("root")); root.render(<App/>);
+</script>
+<script data-name="BMC-Widget" data-cfasync="false" src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js" data-id="gooboolygoo" data-description="Support me on Buy me a coffee!" data-message="Love this project? Donate to keep it going" data-color="#5F7FFF" data-position="Right" data-x_margin="18" data-y_margin="18"></script>
+</body></html>

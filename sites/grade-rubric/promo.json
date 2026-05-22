@@ -1,0 +1,23 @@
+{
+  "generated_at": "2026-05-22T02:34:08.621Z",
+  "model": "claude-haiku-4-5",
+  "url": "https://gooboolygoo.github.io/projects/grade-rubric/",
+  "hashtags": [
+    "teachertools",
+    "edtech",
+    "productivity",
+    "ai",
+    "education"
+  ],
+  "x": {
+    "tweet": "Grading 30 essays by Sunday? You could spend the whole weekend on it, or paste your rubric into a browser and get suggested scores plus draft comments in seconds. Free, runs offline.",
+    "reply_lead": "try it now"
+  },
+  "vertical_caption": "Your rubric. A student response. One paste. Get a score per criterion, a comment draft, and the one thing to tell them next time. No signup, runs in your browser.\">\n",
+  "shorts_description_lead": "Grading rubrics by hand takes forever. Paste your rubric and a student response, get suggested scores and editable feedback in seconds.",
+  "video": {
+    "title": "Grade Essays In Half The Time",
+    "script": "Most teachers I know spend Sundays grading. But what if you didn't have to? Rubric AI takes your rubric and a student response, and in seconds gives you a suggested score for each criterion, a draft comment you can edit in ten seconds flat, and the one insight that would actually move their grade next time. Paste your rubric once. Grade thirty essays in thirty minutes instead of thirty hours. Free, runs in your browser. Link in the description.",
+    "word_count": 79
+  }
+}

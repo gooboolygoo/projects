@@ -1,0 +1,23 @@
+{
+  "generated_at": "2026-05-22T02:34:27.505Z",
+  "model": "claude-haiku-4-5",
+  "url": "https://gooboolygoo.github.io/projects/ssl-watch/",
+  "hashtags": [
+    "devops",
+    "ssl",
+    "monitoring",
+    "webdev",
+    "sysadmin"
+  ],
+  "x": {
+    "tweet": "Let's Encrypt renews automatically. Until the day it doesn't, and your cert expires on a Sunday three days before anyone notices.",
+    "reply_lead": "paste your domains here"
+  },
+  "vertical_caption": "Paste your domains. See which certs are expiring when. Get a heads up a month early instead of a panic call from your CEO 🔒",
+  "shorts_description_lead": "Cert Watch shows you exactly when your SSL certificates expire, so you're not caught off guard when Let's Encrypt's auto-renewal slips. Paste your domains and get notified a month ahead.",
+  "video": {
+    "title": "Catch Expiring SSL Certs Before CEO Calls",
+    "script": "You trust Let's Encrypt to auto-renew. It works most of the time. But that one certificate, the one everyone forgot about, expires on a Sunday. Monday morning: CEO meeting. Sound familiar? Cert Watch fixes this. Paste your domains, see exactly when they expire, and get an email a month before instead of an hour after disaster. One page, no signup, runs right in your browser. Paste your domains and take 30 seconds to save yourself from the next renewal apocalypse. Link in the description.",
+    "word_count": 84
+  }
+}

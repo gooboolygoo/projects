@@ -1,0 +1,23 @@
+{
+  "generated_at": "2026-05-22T02:35:00.582Z",
+  "model": "claude-haiku-4-5",
+  "url": "https://gooboolygoo.github.io/projects/pr-feedback/",
+  "hashtags": [
+    "prfeedback",
+    "engineering",
+    "management",
+    "buildinpublic",
+    "webdev"
+  ],
+  "x": {
+    "tweet": "One code review comment is noise. Ninety days of patterns from the same engineer tells you exactly where they're stuck. Managers: paste a repo and handle, see the real growth arc.",
+    "reply_lead": "try it now"
+  },
+  "vertical_caption": "One code review comment is noise. Ninety days of patterns tells you exactly where your engineer keeps stumbling, and where they've genuinely grown. See it in one view.",
+  "shorts_description_lead": "Track what feedback your engineers keep getting over time. Paste a repo and GitHub handle to see their exact growth patterns and what to discuss in your next one-on-one.",
+  "video": {
+    "title": "See Your Engineer's Real Growth Arc",
+    "script": "One code review comment looks like noise. But ninety days of patterns from the same person tells a completely different story. PR Patterns surfaces exactly where your engineer keeps getting feedback, and where they've actually grown. For managers: paste a repo and a GitHub handle. No signup. Get the real growth arc and one concrete thing to discuss at the next one-on-one.",
+    "word_count": 62
+  }
+}

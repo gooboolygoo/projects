@@ -1,0 +1,70 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Cert Watch. The cert you forgot to renew.</title>
+<meta name="description" content="Web agencies and small SaaS forget to renew SSL certs. Embarrassing outages. Paste your domains, see what expires when, get the email when it gets close.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..900&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script crossorigin src="https://unpkg.com/react@18.3.1/umd/react.production.min.js"></script><script crossorigin src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js"></script><script src="https://unpkg.com/@babel/standalone@7.24.7/babel.min.js"></script>
+<style>html,body{margin:0;padding:0;background:#0F1117}.__loading{font-family:Inter,system-ui;color:#888;text-align:center;padding-top:200px}</style></head><body>
+<div id="root"><div class="__loading">Loading...</div></div>
+<script type="text/babel" data-presets="react">
+const { useState } = React;
+const SAMPLE = "acme.com\nblog.acme.com\napi.acme.com\ndashboard.acme.com\nclientportal.acme.com\nshop.acme.com\nstaging.acme.com";
+const MOCK = [
+  { host:"acme.com", cert_days:42, dns_days:188, sev:"watch" },
+  { host:"blog.acme.com", cert_days:42, dns_days:188, sev:"watch" },
+  { host:"api.acme.com", cert_days:8, dns_days:188, sev:"urgent" },
+  { host:"dashboard.acme.com", cert_days:55, dns_days:188, sev:"ok" },
+  { host:"clientportal.acme.com", cert_days:2, dns_days:42, sev:"critical" },
+  { host:"shop.acme.com", cert_days:64, dns_days:188, sev:"ok" },
+  { host:"staging.acme.com", cert_days:-3, dns_days:188, sev:"expired" }
+];
+const delay = (ms) => new Promise(r => setTimeout(r, ms));
+function App(){
+  const [text,setText]=useState(""); const [view,setView]=useState("landing"); const [out,setOut]=useState(null);
+  async function go(){ if(!text.trim())return; setView("analyzing"); await delay(1800); setOut(MOCK); setView("results"); setTimeout(()=>document.getElementById("results")?.scrollIntoView({behavior:"smooth"}),80); }
+  function loadSample(){ setText(SAMPLE); setView("landing"); }
+  const P={bg:"#0F1117",ink:"#E8EAED",inkSoft:"#B0B8C4",card:"#161A24",paper:"#1B2030",rule:"#2A3441",accent:"#10B981",critical:"#EF4444",urgent:"#F59E0B",watch:"#60A5FA",ok:"#10B981",expired:"#7A2A2A",mute:"#7A8595"};
+  const wrap={maxWidth:820,margin:"0 auto",padding:"64px 24px 96px"};
+  const display="'Fraunces',Georgia,serif",sans="Inter,system-ui,sans-serif",mono="'JetBrains Mono',ui-monospace,monospace";
+  function sevColor(s){return P[s]||P.mute;}
+  function sevLabel(s){return {critical:"CRITICAL",urgent:"URGENT",watch:"WATCH",ok:"OK",expired:"EXPIRED"}[s];}
+  return <div style={{background:P.bg,color:P.ink,fontFamily:sans,minHeight:"100vh"}}>
+    <header style={wrap}>
+      <div data-testid="eyebrow" style={{fontFamily:mono,fontSize:11,color:P.accent,letterSpacing:"0.2em",textTransform:"uppercase",marginBottom:32}}>For agencies managing 20+ client domains</div>
+      <h1 style={{fontFamily:display,fontWeight:400,fontSize:"clamp(46px,7vw,82px)",lineHeight:0.97,letterSpacing:"-0.035em",margin:0}}>The cert<br/>you forgot to renew<br/>is <em style={{fontStyle:"italic",color:P.accent}}>tomorrow's outage.</em></h1>
+      <p style={{fontFamily:display,fontSize:22,fontStyle:"italic",lineHeight:1.45,color:P.inkSoft,margin:"32px 0 28px",maxWidth:600}}>Let's Encrypt auto-renews until it doesn't. The client portal cert expires on a Sunday and Monday is a meeting with the CEO. Paste your domains, see what is expiring when, get the email a month before instead of an hour after.</p>
+      <div style={{display:"flex",flexWrap:"wrap",gap:16,alignItems:"center"}}>
+        <button data-testid="try-sample" onClick={loadSample} style={{fontFamily:sans,fontSize:16,fontWeight:600,background:P.accent,color:"#06281E",border:"none",padding:"16px 28px",borderRadius:4,cursor:"pointer"}}>Try with sample domains →</button>
+        <span style={{fontFamily:mono,fontSize:11,color:P.mute,textTransform:"uppercase"}}>· free · $5/mo for alerts</span>
+      </div>
+    </header>
+    <section style={{...wrap,paddingTop:0}}>
+      <div id="input-panel" style={{background:P.paper,border:`1px solid ${P.rule}`,borderRadius:6,padding:28}}>
+        <div style={{fontFamily:mono,fontSize:11,color:P.accent,letterSpacing:"0.18em",textTransform:"uppercase",marginBottom:14}}>Step 1 of 2 · Domains (one per line)</div>
+        <textarea data-testid="domains-input" value={text} onChange={e=>setText(e.target.value)} placeholder="example.com" style={{width:"100%",minHeight:180,fontFamily:mono,fontSize:14,lineHeight:1.55,color:P.ink,border:`1px solid ${P.rule}`,borderRadius:4,padding:"14px 16px",outline:"none",background:P.bg,resize:"vertical"}}/>
+        <div style={{display:"flex",justifyContent:"flex-end",marginTop:14}}>
+          <button data-testid="analyze-btn" onClick={go} disabled={!text.trim()||view==="analyzing"} style={{fontFamily:sans,fontSize:15,fontWeight:600,background:text.trim()&&view!=="analyzing"?P.accent:P.rule,color:text.trim()&&view!=="analyzing"?"#06281E":P.mute,border:"none",padding:"12px 24px",borderRadius:4,cursor:text.trim()&&view!=="analyzing"?"pointer":"not-allowed"}}>{view==="analyzing"?"Checking certs...":"Check expirations →"}</button>
+        </div>
+      </div>
+    </section>
+    {view==="results"&&out&&<section id="results" style={{...wrap,paddingTop:32}}>
+      <div data-testid="summary" style={{fontFamily:mono,fontSize:11,color:P.accent,letterSpacing:"0.2em",textTransform:"uppercase",marginBottom:18}}>{out.length} domains checked</div>
+      {out.map((d,i)=>(<div key={i} style={{background:P.card,border:`1px solid ${P.rule}`,borderLeft:`4px solid ${sevColor(d.sev)}`,borderRadius:4,padding:"16px 22px",marginBottom:10}}>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"baseline",flexWrap:"wrap",gap:12}}>
+          <div>
+            <div style={{fontFamily:mono,fontSize:10,color:sevColor(d.sev),letterSpacing:0.15,textTransform:"uppercase",marginBottom:4}}>{sevLabel(d.sev)}</div>
+            <div style={{fontFamily:mono,fontSize:14,color:P.ink,fontWeight:600}}>{d.host}</div>
+          </div>
+          <div style={{textAlign:"right"}}>
+            <div style={{fontFamily:mono,fontSize:11,color:P.mute,marginBottom:2}}>SSL cert</div>
+            <div style={{fontFamily:display,fontSize:20,color:sevColor(d.sev)}}>{d.cert_days<0?`expired ${-d.cert_days}d ago`:`${d.cert_days}d left`}</div>
+            <div style={{fontFamily:mono,fontSize:10,color:P.mute,marginTop:6}}>DNS: {d.dns_days}d left</div>
+          </div>
+        </div>
+      </div>))}
+    </section>}
+    <footer style={{...wrap,paddingTop:32,paddingBottom:56,borderTop:`1px solid ${P.rule}`}}><div style={{fontFamily:mono,fontSize:11,color:P.mute,textAlign:"center",lineHeight:1.65}}>Checks run from three regions. Alerts trigger at 30, 14, 7, and 1 day before expiry.</div></footer>
+  </div>;
+}
+const root = ReactDOM.createRoot(document.getElementById("root")); root.render(<App/>);
+</script>
+<script data-name="BMC-Widget" data-cfasync="false" src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js" data-id="gooboolygoo" data-description="Support me on Buy me a coffee!" data-message="Love this project? Donate to keep it going" data-color="#5F7FFF" data-position="Right" data-x_margin="18" data-y_margin="18"></script>
+</body></html>

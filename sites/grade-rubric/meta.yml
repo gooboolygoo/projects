@@ -1,0 +1,21 @@
+title: Rubric AI
+blurb: You did not become a teacher to spend Sundays grading. Paste your rubric and a student response, get a suggested score per criterion, a draft comment you can edit in ten seconds, and the one thing this student needs to hear that would move their grade next time. Free, runs in your browser.
+tags:
+  - education
+  - teachers
+  - ai
+  - product
+donate: true
+demo:
+  setup:
+    - { action: scroll_to, selector: "#root" }
+  steps:
+    - { action: wait, duration_s: 3 }
+    - { action: click, selector: '[data-testid="try-sample"]' }
+    - { action: wait, duration_s: 1.5 }
+    - { action: scroll_to, selector: "#input-panel" }
+    - { action: wait, duration_s: 1 }
+    - { action: click, selector: '[data-testid="analyze-btn"]' }
+    - { action: wait, duration_s: 3 }
+    - { action: scroll_to, selector: '[data-testid="summary"]' }
+    - { action: wait, duration_s: 6 }

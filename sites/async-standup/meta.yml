@@ -1,0 +1,21 @@
+title: Standup
+blurb: Geekbot fires at 9am. Six people post. The thread is dead by 9:30. The blocker that should have been escalated sits there until Friday. Paste the day's posts, get the summary, the escalations, and the trend lines that show who needs a one-on-one.
+tags:
+  - management
+  - remote
+  - ai
+  - product
+donate: true
+demo:
+  setup:
+    - { action: scroll_to, selector: "#root" }
+  steps:
+    - { action: wait, duration_s: 3 }
+    - { action: click, selector: '[data-testid="try-sample"]' }
+    - { action: wait, duration_s: 1.5 }
+    - { action: scroll_to, selector: "#input-panel" }
+    - { action: wait, duration_s: 1 }
+    - { action: click, selector: '[data-testid="analyze-btn"]' }
+    - { action: wait, duration_s: 3 }
+    - { action: scroll_to, selector: '[data-testid="summary"]' }
+    - { action: wait, duration_s: 6 }

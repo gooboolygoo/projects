@@ -1,0 +1,21 @@
+title: PR Patterns
+blurb: One PR's code review feedback looks like noise. Ninety days of it is a curriculum. See where your engineer is plateauing and where they have grown, with the exact item to put on the next one-on-one. For managers, paste a repo and a handle.
+tags:
+  - management
+  - engineering
+  - ai
+  - product
+donate: true
+demo:
+  setup:
+    - { action: scroll_to, selector: "#root" }
+  steps:
+    - { action: wait, duration_s: 3 }
+    - { action: click, selector: '[data-testid="try-sample"]' }
+    - { action: wait, duration_s: 1.5 }
+    - { action: scroll_to, selector: "#input-panel" }
+    - { action: wait, duration_s: 1 }
+    - { action: click, selector: '[data-testid="analyze-btn"]' }
+    - { action: wait, duration_s: 3.5 }
+    - { action: scroll_to, selector: '[data-testid="summary"]' }
+    - { action: wait, duration_s: 7 }

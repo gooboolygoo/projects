@@ -1,0 +1,17 @@
+title: On Call
+blurb: PagerDuty is built for 200-person orgs. Your team is three. Stop paying $200 a month for a rotation, an SMS, and a phone call. Five dollars per engineer per month for the rotation plus the runbook viewer that shows the right doc on the right alert.
+tags:
+  - devops
+  - oncall
+  - smb
+  - product
+donate: true
+demo:
+  setup:
+    - { action: scroll_to, selector: "#root" }
+  steps:
+    - { action: wait, duration_s: 3 }
+    - { action: click, selector: '[data-testid="try-sample"]' }
+    - { action: wait, duration_s: 2 }
+    - { action: scroll_to, selector: '[data-testid="summary"]' }
+    - { action: wait, duration_s: 7 }

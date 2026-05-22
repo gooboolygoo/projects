@@ -1,0 +1,67 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>On Call. A pager for teams of three.</title>
+<meta name="description" content="PagerDuty's enterprise pricing is overkill for a team of three. Five dollars per engineer per month for the rotation, the SMS, and the call escalation.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..900&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script crossorigin src="https://unpkg.com/react@18.3.1/umd/react.production.min.js"></script><script crossorigin src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js"></script><script src="https://unpkg.com/@babel/standalone@7.24.7/babel.min.js"></script>
+<style>html,body{margin:0;padding:0;background:#0B0F1A}.__loading{font-family:Inter,system-ui;color:#888;text-align:center;padding-top:200px}</style></head><body>
+<div id="root"><div class="__loading">Loading...</div></div>
+<script type="text/babel" data-presets="react">
+const { useState } = React;
+const ROSTER = ["alex","priya","sam"];
+function week(i){ const d=new Date(2026,4,18); d.setDate(d.getDate()+i*7); return d.toLocaleDateString("en-US",{month:"short",day:"numeric"}); }
+const SCHEDULE = Array.from({length:8},(_,i)=>({range:week(i)+" – "+week(i+1).replace(/^\w+ /,''),primary:ROSTER[i%3],secondary:ROSTER[(i+1)%3]}));
+const INCIDENTS = [
+  { ts:"2026-05-19 02:14", sev:"P2", title:"Postgres replication lag > 30s", who:"alex", resolved:"02:42 (28m)", body:"Read replica fell behind. Failed over to primary, alerted Sam in morning." },
+  { ts:"2026-05-15 11:08", sev:"P1", title:"Checkout flow 500s", who:"priya", resolved:"11:34 (26m)", body:"Bad deploy. Rolled back via runbook. Postmortem on Tuesday." },
+  { ts:"2026-05-12 04:50", sev:"P3", title:"Disk usage > 85%", who:"sam", resolved:"05:01 (11m)", body:"Cleaned old build artifacts. Auto-rotation cron now in place." }
+];
+function App(){
+  const [view,setView]=useState("landing"); const [test,setTest]=useState(false); const [paged,setPaged]=useState(false);
+  function loadSample(){ setView("dashboard"); setTimeout(()=>document.getElementById("dash")?.scrollIntoView({behavior:"smooth"}),80); }
+  function pageMe(){ setPaged(true); setTimeout(()=>setPaged(false),3000); }
+  const P={bg:"#0B0F1A",ink:"#E8EAED",inkSoft:"#B0B8C4",card:"#141926",paper:"#1A2030",rule:"#2A3441",accent:"#22D3EE",p1:"#EF4444",p2:"#FBBF24",p3:"#60A5FA",mute:"#7A8595"};
+  const wrap={maxWidth:820,margin:"0 auto",padding:"64px 24px 96px"};
+  const display="'Fraunces',Georgia,serif",sans="Inter,system-ui,sans-serif",mono="'JetBrains Mono',ui-monospace,monospace";
+  function sevColor(s){return s==="P1"?P.p1:s==="P2"?P.p2:P.p3;}
+  return <div style={{background:P.bg,color:P.ink,fontFamily:sans,minHeight:"100vh"}}>
+    <header style={wrap}>
+      <div data-testid="eyebrow" style={{fontFamily:mono,fontSize:11,color:P.accent,letterSpacing:"0.2em",textTransform:"uppercase",marginBottom:32}}>For three-engineer teams paying $200/mo for PagerDuty</div>
+      <h1 style={{fontFamily:display,fontWeight:400,fontSize:"clamp(46px,7vw,82px)",lineHeight:0.97,letterSpacing:"-0.035em",margin:0}}>PagerDuty is built<br/>for 200-person<br/>orgs. <em style={{fontStyle:"italic",color:P.accent}}>You're three.</em></h1>
+      <p style={{fontFamily:display,fontSize:22,fontStyle:"italic",lineHeight:1.45,color:P.inkSoft,margin:"32px 0 28px",maxWidth:600}}>You pay $200 a month for a rotation, an SMS, and a phone call. We do that for $15 a month for three engineers, plus a runbook viewer that shows the right doc on the right alert. No services menu, no incident severity matrix, no $99/seat tier.</p>
+      <div style={{display:"flex",flexWrap:"wrap",gap:16,alignItems:"center"}}>
+        <button data-testid="try-sample" onClick={loadSample} style={{fontFamily:sans,fontSize:16,fontWeight:600,background:P.accent,color:"#082030",border:"none",padding:"16px 28px",borderRadius:4,cursor:"pointer"}}>Show me the dashboard →</button>
+        <span style={{fontFamily:mono,fontSize:11,color:P.mute,textTransform:"uppercase"}}>· $5/engineer/month · cancel anytime</span>
+      </div>
+    </header>
+    {view==="dashboard"&&<section id="dash" style={{...wrap,paddingTop:0}}>
+      <div data-testid="summary" style={{background:P.card,border:`2px solid ${P.accent}`,borderRadius:6,padding:28,marginBottom:24}}>
+        <div style={{fontFamily:mono,fontSize:11,color:P.accent,letterSpacing:"0.2em",textTransform:"uppercase",marginBottom:8}}>On call right now</div>
+        <div style={{display:"flex",alignItems:"baseline",gap:24,flexWrap:"wrap"}}>
+          <div><div style={{fontFamily:display,fontSize:48,fontWeight:500,color:P.accent,lineHeight:1}}>alex</div><div style={{fontFamily:mono,fontSize:11,color:P.mute,marginTop:6}}>primary · until Tue 18:00</div></div>
+          <div><div style={{fontFamily:display,fontSize:48,fontWeight:500,color:P.inkSoft,lineHeight:1}}>priya</div><div style={{fontFamily:mono,fontSize:11,color:P.mute,marginTop:6}}>secondary</div></div>
+        </div>
+        <div style={{marginTop:18,display:"flex",gap:12}}>
+          <button onClick={pageMe} style={{fontFamily:sans,fontSize:13,fontWeight:600,background:paged?P.p1:P.accent,color:"#082030",border:"none",padding:"10px 18px",borderRadius:4,cursor:"pointer"}}>{paged?"Paging alex...":"Test page"}</button>
+          <button onClick={()=>setTest(!test)} style={{fontFamily:sans,fontSize:13,background:"transparent",color:P.ink,border:`1px solid ${P.rule}`,padding:"10px 18px",borderRadius:4,cursor:"pointer"}}>{test?"Hide schedule":"Show 8-week schedule"}</button>
+        </div>
+      </div>
+      {test&&<div style={{background:P.paper,border:`1px solid ${P.rule}`,borderRadius:6,padding:20,marginBottom:24}}>
+        <div style={{fontFamily:mono,fontSize:11,color:P.accent,letterSpacing:0.15,textTransform:"uppercase",marginBottom:14}}>Upcoming rotation (every-third-week)</div>
+        {SCHEDULE.map((w,i)=>(<div key={i} style={{display:"grid",gridTemplateColumns:"1.5fr 1fr 1fr",padding:"8px 0",borderTop:i>0?`1px solid ${P.rule}`:"none",fontFamily:mono,fontSize:13}}><div style={{color:P.inkSoft}}>{w.range}</div><div style={{color:P.ink}}><strong>{w.primary}</strong></div><div style={{color:P.mute}}>{w.secondary} (2nd)</div></div>))}
+      </div>}
+      <div style={{fontFamily:mono,fontSize:11,color:P.mute,letterSpacing:0.15,textTransform:"uppercase",marginBottom:12}}>Last 30 days · 3 incidents</div>
+      {INCIDENTS.map((it,i)=>(<div key={i} style={{background:P.card,border:`1px solid ${P.rule}`,borderLeft:`4px solid ${sevColor(it.sev)}`,borderRadius:4,padding:"16px 22px",marginBottom:10}}>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"baseline",marginBottom:6,flexWrap:"wrap",gap:8}}>
+          <div style={{fontFamily:mono,fontSize:11,color:sevColor(it.sev),letterSpacing:0.15}}>{it.sev} · {it.ts} · {it.who}</div>
+          <div style={{fontFamily:mono,fontSize:11,color:P.mute}}>resolved {it.resolved}</div>
+        </div>
+        <div style={{fontFamily:sans,fontSize:15,color:P.ink}}>{it.title}</div>
+        <div style={{fontFamily:sans,fontSize:13,color:P.inkSoft,marginTop:6,lineHeight:1.55}}>{it.body}</div>
+      </div>))}
+    </section>}
+    <footer style={{...wrap,paddingTop:32,paddingBottom:56,borderTop:`1px solid ${P.rule}`}}><div style={{fontFamily:mono,fontSize:11,color:P.mute,textAlign:"center",lineHeight:1.65}}>SMS and phone via Twilio. Pricing covers ~50 pages/month per engineer.</div></footer>
+  </div>;
+}
+const root = ReactDOM.createRoot(document.getElementById("root")); root.render(<App/>);
+</script>
+<script data-name="BMC-Widget" data-cfasync="false" src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js" data-id="gooboolygoo" data-description="Support me on Buy me a coffee!" data-message="Love this project? Donate to keep it going" data-color="#5F7FFF" data-position="Right" data-x_margin="18" data-y_margin="18"></script>
+</body></html>

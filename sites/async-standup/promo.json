@@ -1,0 +1,22 @@
+{
+  "generated_at": "2026-05-22T02:34:04.813Z",
+  "model": "claude-haiku-4-5",
+  "url": "https://gooboolygoo.github.io/projects/async-standup/",
+  "hashtags": [
+    "asyncwork",
+    "remotework",
+    "productivity",
+    "management"
+  ],
+  "x": {
+    "tweet": "your async standup gets 6 replies. nobody reads them. the escalation buried on message 4 sits until Friday. what if you pasted the thread and got the blockers sorted in 90 seconds",
+    "reply_lead": "try it →"
+  },
+  "vertical_caption": "Async standups get boring fast. Six people post, three people read, the blocker stays hidden. Paste today's thread, get the actual escalations pulled out and flagged.",
+  "shorts_description_lead": "Your standup thread is full of noise. This tool finds the blockers, trends, and who actually needs a one-on-one before you forget about them.",
+  "video": {
+    "title": "Extract Meaning From Standup Chaos",
+    "script": "Every morning, six people post standups. Nobody reads them. Critical blockers hide in the middle of the thread and stay stuck until Friday. This tool kills that loop. Paste the entire thread, it extracts the escalations, spots the trends, and tells you who's about to burn out. Runs in your browser, no setup. Link in the description.",
+    "word_count": 57
+  }
+}

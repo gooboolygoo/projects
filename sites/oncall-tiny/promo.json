@@ -1,0 +1,23 @@
+{
+  "generated_at": "2026-05-22T02:34:12.129Z",
+  "model": "claude-haiku-4-5",
+  "url": "https://gooboolygoo.github.io/projects/oncall-tiny/",
+  "hashtags": [
+    "oncall",
+    "devops",
+    "smb",
+    "indiedev",
+    "saas"
+  ],
+  "x": {
+    "tweet": "Your team is three engineers. PagerDuty wants $200 a month. There's a better way.",
+    "reply_lead": "built for small teams ↓"
+  },
+  "vertical_caption": "PagerDuty charges like you're a Fortune 500 company. What if your on-call pager actually cost what your team costs? 📟",
+  "shorts_description_lead": "A pager built for teams that aren't massive. Rotation plus runbook viewer, five dollars per engineer per month.",
+  "video": {
+    "title": "A Pager For Three Engineers",
+    "script": "You've got an alert at 3 AM. Your PagerDuty bill is $200 a month for a rotation, an SMS, and a phone call. Your team is three people. That math doesn't work. This does: five dollars per engineer per month. You get the rotation. You get the runbook viewer that shows you the right doc the moment the right alert fires. No overkill, no enterprise pricing. Link in the description.",
+    "word_count": 70
+  }
+}

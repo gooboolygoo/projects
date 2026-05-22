@@ -1,0 +1,72 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Rubric AI. Grade 30 essays in 30 minutes.</title>
+<meta name="description" content="Teachers spend their evenings grading. Paste a rubric and a student response, get a suggested grade plus a draft comment you can edit in 10 seconds.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..900&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script crossorigin src="https://unpkg.com/react@18.3.1/umd/react.production.min.js"></script><script crossorigin src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js"></script><script src="https://unpkg.com/@babel/standalone@7.24.7/babel.min.js"></script>
+<style>html,body{margin:0;padding:0;background:#F8F6F1}.__loading{font-family:Inter,system-ui;color:#888;text-align:center;padding-top:200px}</style></head><body>
+<div id="root"><div class="__loading">Loading...</div></div>
+<script type="text/babel" data-presets="react">
+const { useState } = React;
+const SAMPLE_RUBRIC = `9th grade history short answer: Causes of WW1
+- Thesis (4pts): names at least 2 distinct causes, claims one as primary
+- Evidence (4pts): two specific historical events with dates
+- Reasoning (4pts): explains causal mechanism, not just listing
+- Mechanics (3pts): complete sentences, paragraph form`;
+const SAMPLE_STUDENT = `World War 1 was caused by alliances and the assassination of Archduke Franz Ferdinand. The biggest reason was alliances, because once one country got attacked, all the others had to join in due to treaties. The shooting in Sarajevo in 1914 started it but the alliance system made it spread. Without all those mutual defense pacts, it would have stayed a small Austria-Serbia conflict.`;
+const MOCK = {
+  score: { thesis: 4, evidence: 2, reasoning: 4, mechanics: 3, total: 13, max: 15 },
+  comment: "Strong thesis with two distinct causes and a clear claim that alliances were primary. The causal reasoning is genuine — explaining the cascade rather than just listing. Evidence is the gap: you reference Sarajevo 1914 but no second dated event. Add Russia's mobilization on July 30 or Germany's Schlieffen Plan execution and you cap out the rubric. Mechanics solid.",
+  flags: [{ k: "Strength", v: "Causal reasoning is well above 9th grade average. They explain mechanism, not just sequence." }, { k: "Gap", v: "Second dated event missing. Worth a one-sentence note in your comment so they know what would have closed the gap." }, { k: "Likely next step", v: "If they revise, push them to find a specific causal chain (e.g. why Russia's mobilization triggered Germany's, not just \"alliances triggered war\")." }]
+};
+const delay = (ms) => new Promise(r => setTimeout(r, ms));
+function App(){
+  const [rubric,setRubric]=useState(""); const [resp,setResp]=useState(""); const [view,setView]=useState("landing"); const [out,setOut]=useState(null);
+  async function go(){ if(!rubric.trim()||!resp.trim())return; setView("analyzing"); await delay(2200); setOut(MOCK); setView("results"); setTimeout(()=>document.getElementById("results")?.scrollIntoView({behavior:"smooth"}),80); }
+  function loadSample(){ setRubric(SAMPLE_RUBRIC); setResp(SAMPLE_STUDENT); setView("landing"); }
+  const P={bg:"#F8F6F1",ink:"#1F1B16",inkSoft:"#5A544A",card:"#FFFFFF",rule:"#D9D2C2",accent:"#9C2A14",mute:"#8A8275"};
+  const wrap={maxWidth:820,margin:"0 auto",padding:"64px 24px 96px"};
+  const display="'Fraunces',Georgia,serif",sans="Inter,system-ui,sans-serif",mono="'JetBrains Mono',ui-monospace,monospace";
+  const inp={fontFamily:mono,fontSize:13,lineHeight:1.55,color:P.ink,border:`1px solid ${P.rule}`,borderRadius:4,padding:"14px 16px",outline:"none",background:P.bg,resize:"vertical",width:"100%"};
+  return <div style={{background:P.bg,color:P.ink,fontFamily:sans,minHeight:"100vh"}}>
+    <header style={wrap}>
+      <div data-testid="eyebrow" style={{fontFamily:mono,fontSize:11,color:P.accent,letterSpacing:"0.2em",textTransform:"uppercase",marginBottom:32}}>For teachers grading on Sunday night</div>
+      <h1 style={{fontFamily:display,fontWeight:400,fontSize:"clamp(46px,7vw,82px)",lineHeight:0.97,letterSpacing:"-0.035em",margin:0}}>You did not<br/>become a teacher<br/>to <em style={{fontStyle:"italic",color:P.accent}}>grade essays.</em></h1>
+      <p style={{fontFamily:display,fontSize:22,fontStyle:"italic",lineHeight:1.45,color:P.inkSoft,margin:"32px 0 28px",maxWidth:600}}>Most evening hours go to grading you could spend with your family. Paste your rubric and a student response. Get a suggested score per criterion, the comment draft, and the one thing this student needs to hear that would move their grade next time.</p>
+      <div style={{display:"flex",flexWrap:"wrap",gap:16,alignItems:"center"}}>
+        <button data-testid="try-sample" onClick={loadSample} style={{fontFamily:sans,fontSize:16,fontWeight:600,background:P.accent,color:"#FFF",border:"none",padding:"16px 28px",borderRadius:4,cursor:"pointer"}}>Try with a sample (9th grade history) →</button>
+        <span style={{fontFamily:mono,fontSize:11,color:P.mute,textTransform:"uppercase"}}>· free · nothing leaves your browser</span>
+      </div>
+    </header>
+    <section style={{...wrap,paddingTop:0}}>
+      <div id="input-panel" style={{background:P.card,border:`1px solid ${P.rule}`,borderRadius:6,padding:28}}>
+        <div style={{fontFamily:mono,fontSize:11,color:P.accent,letterSpacing:"0.18em",textTransform:"uppercase",marginBottom:14}}>Step 1 of 2 · Rubric and student response</div>
+        <label style={{display:"block",marginBottom:14}}><div style={{fontFamily:mono,fontSize:11,color:P.mute,marginBottom:6,textTransform:"uppercase",letterSpacing:0.1}}>Rubric</div><textarea data-testid="rubric-input" value={rubric} onChange={e=>setRubric(e.target.value)} placeholder="Paste the rubric criteria and point values." style={{...inp,minHeight:120}}/></label>
+        <label style={{display:"block"}}><div style={{fontFamily:mono,fontSize:11,color:P.mute,marginBottom:6,textTransform:"uppercase",letterSpacing:0.1}}>Student response</div><textarea data-testid="resp-input" value={resp} onChange={e=>setResp(e.target.value)} placeholder="Paste the student's response." style={{...inp,minHeight:140}}/></label>
+        <div style={{display:"flex",justifyContent:"flex-end",marginTop:14}}>
+          <button data-testid="analyze-btn" onClick={go} disabled={!rubric.trim()||!resp.trim()||view==="analyzing"} style={{fontFamily:sans,fontSize:15,fontWeight:600,background:rubric.trim()&&resp.trim()&&view!=="analyzing"?P.accent:P.rule,color:rubric.trim()&&resp.trim()&&view!=="analyzing"?"#FFF":P.mute,border:"none",padding:"12px 24px",borderRadius:4,cursor:rubric.trim()&&resp.trim()&&view!=="analyzing"?"pointer":"not-allowed"}}>{view==="analyzing"?"Reading the response...":"Grade this →"}</button>
+        </div>
+      </div>
+    </section>
+    {view==="results"&&out&&<section id="results" style={{...wrap,paddingTop:32}}>
+      <div data-testid="summary" style={{background:P.card,border:`2px solid ${P.accent}`,borderRadius:6,padding:28,marginBottom:24}}>
+        <div style={{fontFamily:mono,fontSize:11,color:P.accent,letterSpacing:"0.2em",textTransform:"uppercase",marginBottom:8}}>Suggested score</div>
+        <div style={{fontFamily:display,fontSize:"clamp(40px,5vw,56px)",fontWeight:500,color:P.accent,lineHeight:1}}>{out.score.total} / {out.score.max}</div>
+        <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:14,marginTop:20}}>
+          {[["Thesis",out.score.thesis,4],["Evidence",out.score.evidence,4],["Reasoning",out.score.reasoning,4],["Mechanics",out.score.mechanics,3]].map(([l,v,m],i)=>(<div key={i} style={{padding:"10px 0",borderTop:`1px solid ${P.rule}`}}><div style={{fontFamily:mono,fontSize:10,color:P.mute,letterSpacing:0.15,textTransform:"uppercase"}}>{l}</div><div style={{fontFamily:display,fontSize:22,color:P.ink,marginTop:2}}>{v}/{m}</div></div>))}
+        </div>
+      </div>
+      <div style={{background:P.card,border:`1px solid ${P.rule}`,borderRadius:4,padding:"22px 26px",marginBottom:14}}>
+        <div style={{fontFamily:mono,fontSize:10,color:P.accent,letterSpacing:"0.18em",textTransform:"uppercase",marginBottom:10}}>Draft comment (edit before sending)</div>
+        <div style={{fontFamily:sans,fontSize:15,lineHeight:1.6,color:P.ink}}>{out.comment}</div>
+      </div>
+      {out.flags.map((f,i)=>(<div key={i} style={{background:P.card,border:`1px solid ${P.rule}`,borderLeft:`3px solid ${P.accent}`,borderRadius:4,padding:"14px 20px",marginBottom:10}}>
+        <div style={{fontFamily:mono,fontSize:10,color:P.accent,letterSpacing:0.15,textTransform:"uppercase",marginBottom:4}}>{f.k}</div>
+        <div style={{fontFamily:sans,fontSize:14,color:P.inkSoft,lineHeight:1.55}}>{f.v}</div>
+      </div>))}
+    </section>}
+    <footer style={{...wrap,paddingTop:32,paddingBottom:56,borderTop:`1px solid ${P.rule}`}}><div style={{fontFamily:mono,fontSize:11,color:P.mute,textAlign:"center",lineHeight:1.65}}>Suggested scores are a starting point. Always read the response before posting a grade.</div></footer>
+  </div>;
+}
+const root = ReactDOM.createRoot(document.getElementById("root")); root.render(<App/>);
+</script>
+<script data-name="BMC-Widget" data-cfasync="false" src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js" data-id="gooboolygoo" data-description="Support me on Buy me a coffee!" data-message="Love this project? Donate to keep it going" data-color="#5F7FFF" data-position="Right" data-x_margin="18" data-y_margin="18"></script>
+</body></html>
