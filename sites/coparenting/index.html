@@ -1,0 +1,80 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Two Households. The shared calendar that isn't a courtroom.</title>
+<meta name="description" content="OurFamilyWizard is built like a deposition. Most divorced parents just want to know who has the kids next Tuesday. A friendlier shared calendar, message log, and expense split. Court-mode toggle is there if you ever need it.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..900&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script crossorigin src="https://unpkg.com/react@18.3.1/umd/react.production.min.js"></script><script crossorigin src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js"></script><script src="https://unpkg.com/@babel/standalone@7.24.7/babel.min.js"></script>
+<style>html,body{margin:0;padding:0;background:#F6F4EF}.__loading{font-family:Inter,system-ui;color:#888;text-align:center;padding-top:200px}</style></head><body>
+<div id="root"><div class="__loading">Loading...</div></div>
+<script type="text/babel" data-presets="react">
+const { useState } = React;
+const SCHED = [
+  { day:"Mon May 25", who:"A", kids:["Theo", "Lila"], note:"School pickup 3:15, soccer 4:30" },
+  { day:"Tue May 26", who:"A", kids:["Theo", "Lila"], note:"Dentist for Lila at 4pm" },
+  { day:"Wed May 27", who:"B", kids:["Theo", "Lila"], note:"Swap at 6pm at the park" },
+  { day:"Thu May 28", who:"B", kids:["Theo", "Lila"], note:"" },
+  { day:"Fri May 29", who:"B", kids:["Theo"], note:"Lila → sleepover at Maya's" },
+  { day:"Sat May 30", who:"A", kids:["Theo", "Lila"], note:"Theo birthday party at 2pm" },
+  { day:"Sun May 31", who:"A", kids:["Theo", "Lila"], note:"" }
+];
+const MSGS = [
+  { from:"B", t:"2 days ago", body:"Theo's strep test came back negative. He's clear for school Monday." },
+  { from:"A", t:"3 days ago", body:"Lila left her science fair board at your place. Can you bring it Wednesday at swap?" },
+  { from:"B", t:"4 days ago", body:"Got the dentist bill for Lila — $124, I'll split it through Splitwise." }
+];
+const EXP = [
+  { d:"May 18", item:"Lila dentist co-pay", total:124, who:"B paid", split:"50/50" },
+  { d:"May 12", item:"Theo soccer registration", total:280, who:"A paid", split:"50/50" },
+  { d:"May 04", item:"School pictures (both)", total:48, who:"A paid", split:"50/50" }
+];
+function App(){
+  const [view,setView]=useState("landing"); const [court,setCourt]=useState(false);
+  function open(){ setView("app"); setTimeout(()=>document.getElementById("calendar")?.scrollIntoView({behavior:"smooth"}),80); }
+  const P={bg:"#F6F4EF",ink:"#1F1B16",inkSoft:"#5A544A",card:"#FFFFFF",rule:"#D9D2C2",accent:"#0F766E",a:"#0F766E",b:"#9333EA",mute:"#8A8275"};
+  const wrap={maxWidth:820,margin:"0 auto",padding:"64px 24px 96px"};
+  const display="'Fraunces',Georgia,serif",sans="Inter,system-ui,sans-serif",mono="'JetBrains Mono',ui-monospace,monospace";
+  return <div style={{background:P.bg,color:P.ink,fontFamily:sans,minHeight:"100vh"}}>
+    <header style={wrap}>
+      <div data-testid="eyebrow" style={{fontFamily:mono,fontSize:11,color:P.accent,letterSpacing:"0.2em",textTransform:"uppercase",marginBottom:32}}>For divorced parents who do not need to litigate</div>
+      <h1 style={{fontFamily:display,fontWeight:400,fontSize:"clamp(46px,7vw,82px)",lineHeight:0.97,letterSpacing:"-0.035em",margin:0}}>You divorced.<br/>You did not<br/><em style={{fontStyle:"italic",color:P.accent}}>sign up for court.</em></h1>
+      <p style={{fontFamily:display,fontSize:22,fontStyle:"italic",lineHeight:1.45,color:P.inkSoft,margin:"32px 0 28px",maxWidth:600}}>OurFamilyWizard is $144 per parent per year and the UI is designed for evidence. Most ex-spouses just want a shared calendar, a chat log, and a way to split the dentist bill. Two Households is that. The court-mode toggle is there if you ever need it.</p>
+      <div style={{display:"flex",flexWrap:"wrap",gap:16,alignItems:"center"}}>
+        <button data-testid="try-sample" onClick={open} style={{fontFamily:sans,fontSize:16,fontWeight:600,background:P.accent,color:"#FFF",border:"none",padding:"16px 28px",borderRadius:4,cursor:"pointer"}}>Show me what it looks like →</button>
+        <span style={{fontFamily:mono,fontSize:11,color:P.mute,textTransform:"uppercase"}}>· $6/month for both parents · cancel anytime</span>
+      </div>
+    </header>
+    {view==="app"&&<section id="calendar" style={{...wrap,paddingTop:0}}>
+      <div data-testid="summary" style={{background:P.card,border:`1px solid ${P.rule}`,borderRadius:6,padding:28,marginBottom:14}}>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"baseline",marginBottom:14,flexWrap:"wrap",gap:8}}>
+          <div style={{fontFamily:mono,fontSize:11,color:P.accent,letterSpacing:0.15,textTransform:"uppercase"}}>This week</div>
+          <button onClick={()=>setCourt(!court)} style={{fontFamily:mono,fontSize:11,color:court?P.b:P.mute,background:"transparent",border:`1px solid ${P.rule}`,padding:"6px 12px",borderRadius:4,cursor:"pointer"}}>Court mode: {court?"on":"off"}</button>
+        </div>
+        {SCHED.map((s,i)=>(<div key={i} style={{padding:"12px 0",borderTop:i>0?`1px solid ${P.rule}`:"none",display:"grid",gridTemplateColumns:"100px 30px 1fr",gap:12,alignItems:"center"}}>
+          <div style={{fontFamily:mono,fontSize:12,color:P.mute}}>{s.day}</div>
+          <div style={{fontFamily:display,fontSize:18,fontWeight:600,color:s.who==="A"?P.a:P.b}}>{s.who}</div>
+          <div><div style={{fontFamily:sans,fontSize:14,color:P.ink}}>{s.kids.join(" + ")}</div>{s.note&&<div style={{fontFamily:sans,fontSize:12,color:P.inkSoft,marginTop:2}}>{s.note}</div>}</div>
+        </div>))}
+      </div>
+      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:14,marginTop:14}}>
+        <div style={{background:P.card,border:`1px solid ${P.rule}`,borderRadius:6,padding:24}}>
+          <div style={{fontFamily:mono,fontSize:11,color:P.accent,letterSpacing:0.15,textTransform:"uppercase",marginBottom:14}}>Messages</div>
+          {MSGS.map((m,i)=>(<div key={i} style={{padding:"10px 0",borderTop:i>0?`1px solid ${P.rule}`:"none"}}>
+            <div style={{display:"flex",justifyContent:"space-between",fontFamily:mono,fontSize:11,marginBottom:4}}><span style={{color:m.from==="A"?P.a:P.b,fontWeight:600}}>{m.from}</span><span style={{color:P.mute}}>{m.t}</span></div>
+            <div style={{fontFamily:sans,fontSize:13,color:P.ink}}>{m.body}</div>
+          </div>))}
+        </div>
+        <div style={{background:P.card,border:`1px solid ${P.rule}`,borderRadius:6,padding:24}}>
+          <div style={{fontFamily:mono,fontSize:11,color:P.accent,letterSpacing:0.15,textTransform:"uppercase",marginBottom:14}}>Expenses (last month)</div>
+          {EXP.map((e,i)=>(<div key={i} style={{padding:"10px 0",borderTop:i>0?`1px solid ${P.rule}`:"none"}}>
+            <div style={{display:"flex",justifyContent:"space-between",fontFamily:sans,fontSize:13}}><span>{e.item}</span><span style={{color:P.ink}}>${e.total}</span></div>
+            <div style={{fontFamily:mono,fontSize:11,color:P.mute,marginTop:2}}>{e.d} · {e.who} · {e.split}</div>
+          </div>))}
+        </div>
+      </div>
+      {court&&<div style={{marginTop:14,padding:"16px 22px",background:"rgba(147,51,234,0.08)",border:`1px solid ${P.b}`,borderRadius:4,fontFamily:sans,fontSize:13,color:P.ink}}><strong style={{fontFamily:mono,fontSize:10,color:P.b,letterSpacing:0.15,textTransform:"uppercase",marginRight:8}}>Court mode</strong>All messages, swaps, and expenses are now permanently timestamped and exportable as a PDF dossier suitable for filing.</div>}
+    </section>}
+    <footer style={{...wrap,paddingTop:32,paddingBottom:56,borderTop:`1px solid ${P.rule}`}}><div style={{fontFamily:mono,fontSize:11,color:P.mute,textAlign:"center",lineHeight:1.65}}>Court mode exports a tamper-evident PDF. We are not lawyers. If you need legal admissibility, consult counsel.</div></footer>
+  </div>;
+}
+const root = ReactDOM.createRoot(document.getElementById("root")); root.render(<App/>);
+</script>
+<script data-name="BMC-Widget" data-cfasync="false" src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js" data-id="gooboolygoo" data-description="Support me on Buy me a coffee!" data-message="Love this project? Donate to keep it going" data-color="#5F7FFF" data-position="Right" data-x_margin="18" data-y_margin="18"></script>
+</body></html>

@@ -1,0 +1,21 @@
+title: Past Due
+blurb: Three clients owe you 14,000 dollars. The follow-up email is the worst part of freelancing. Type the invoice, the client relationship, and how late they are. Get the right email at the right tone, plus the next three escalations and exactly when to send them.
+tags:
+  - freelance
+  - invoicing
+  - ai
+  - product
+donate: true
+demo:
+  setup:
+    - { action: scroll_to, selector: "#root" }
+  steps:
+    - { action: wait, duration_s: 3 }
+    - { action: click, selector: '[data-testid="try-sample"]' }
+    - { action: wait, duration_s: 1.5 }
+    - { action: scroll_to, selector: "#input-panel" }
+    - { action: wait, duration_s: 1 }
+    - { action: click, selector: '[data-testid="analyze-btn"]' }
+    - { action: wait, duration_s: 3 }
+    - { action: scroll_to, selector: '[data-testid="summary"]' }
+    - { action: wait, duration_s: 7 }

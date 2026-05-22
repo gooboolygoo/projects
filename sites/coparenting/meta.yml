@@ -1,0 +1,17 @@
+title: Two Households
+blurb: OurFamilyWizard is 144 dollars per parent per year and the UI is designed for evidence. Most ex-spouses just want a shared calendar, a chat log, and a way to split the dentist bill. Two Households is that. The court-mode toggle is there if you ever need it.
+tags:
+  - family
+  - parenting
+  - product
+  - softer
+donate: true
+demo:
+  setup:
+    - { action: scroll_to, selector: "#root" }
+  steps:
+    - { action: wait, duration_s: 3 }
+    - { action: click, selector: '[data-testid="try-sample"]' }
+    - { action: wait, duration_s: 2 }
+    - { action: scroll_to, selector: '[data-testid="summary"]' }
+    - { action: wait, duration_s: 8 }

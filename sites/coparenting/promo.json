@@ -1,0 +1,23 @@
+{
+  "generated_at": "2026-05-22T04:14:18.030Z",
+  "model": "claude-haiku-4-5",
+  "url": "https://gooboolygoo.github.io/projects/coparenting/",
+  "hashtags": [
+    "coparenting",
+    "familyapp",
+    "buildinpublic",
+    "webdev",
+    "indiedev"
+  ],
+  "x": {
+    "tweet": "you and your ex need to split the dentist bill and sync a calendar. OurFamilyWizard wants 144 bucks per parent per year. what if it was just that, with no courtroom vibes.",
+    "reply_lead": "open it here"
+  },
+  "vertical_caption": "your ex-spouse and you need a calendar. maybe a chat. definitely a way to split bills. two households is that. no login theater, no court-mode ui by default. 📅",
+  "shorts_description_lead": "A shared calendar, chat, and bill-splitter built for two households. No courtroom aesthetics, no subscription price tag.",
+  "video": {
+    "title": "A Calendar for Two Households",
+    "script": "If you're splitting custody, you need a shared calendar. You probably want to chat about logistics. And yes, someone needs to track who paid for braces. Most coparenting apps treat you like you're headed to court. Two Households just gives you the basics. A calendar that works, a message thread that sticks around, and a ledger. No legal theater, no per-parent subscription. Try it out.",
+    "word_count": 65
+  }
+}

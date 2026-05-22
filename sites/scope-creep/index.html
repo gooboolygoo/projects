@@ -1,0 +1,92 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>In Scope. Decide what is and is not part of the project.</title>
+<meta name="description" content="Your client just asked for one more thing. Was it in scope? Paste the SOW + the ask, get a yes/no with the exact contract line to reference, and the change-order email if no.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..900&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script crossorigin src="https://unpkg.com/react@18.3.1/umd/react.production.min.js"></script><script crossorigin src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js"></script><script src="https://unpkg.com/@babel/standalone@7.24.7/babel.min.js"></script>
+<style>html,body{margin:0;padding:0;background:#F8F5F0}.__loading{font-family:Inter,system-ui;color:#888;text-align:center;padding-top:200px}</style></head><body>
+<div id="root"><div class="__loading">Loading...</div></div>
+<script type="text/babel" data-presets="react">
+const { useState } = React;
+const SAMPLE_SOW = `Project: Brand identity refresh for Acme Co.
+Scope:
+- New wordmark + monogram
+- Color palette (primary + 3 supporting)
+- Typography (headline, body, mono)
+- Brand guidelines PDF (≤20 pages)
+- Three rounds of revisions on the wordmark
+Out of scope:
+- Website design or build
+- Marketing collateral (decks, social templates)
+- Photography or illustration
+- Brand voice/copywriting
+Timeline: 6 weeks. Fee: $18,000 flat.`;
+const SAMPLE_ASK = `Hey, this looks great! One more thing — can you also do quick Instagram post templates? Just like 5 layouts that we can reuse. Should be easy with the new fonts you picked.`;
+const MOCK = {
+  verdict: "out_of_scope",
+  confidence: 0.96,
+  why: "Instagram post templates are 'marketing collateral' which is explicitly listed under Out of scope. The 'easy with the new fonts' framing is the classic scope-creep softener: it makes the additional work sound small, but the time to design, revise, and package 5 templates is real.",
+  contract_line: "Out of scope: Marketing collateral (decks, social templates)",
+  effort_estimate: { hours: 8, fee_range: "$800–$1,400" },
+  email: `Hi Maria, glad you're loving the direction!
+
+Quick note on the Instagram templates: those fall outside our current scope (the SOW lists "marketing collateral (decks, social templates)" as out of scope). Happy to add them as a small change order — a set of 5 templates is roughly 8 hours of work at our rate, so $800 to $1,400 depending on revision rounds. Let me know if you'd like a quick estimate, and I'll keep the brand work moving in parallel.
+
+Best,
+[you]`,
+  alternates: [
+    { t:"If they want to push back", b:"\"It feels like it should be included\" is the common reply. Hold the line politely: \"The SOW specifically excluded social templates so we could keep the fee at $18k. We can either change the scope and the fee, or stick to plan A.\" The fee is the leverage." },
+    { t:"If you want to be generous", b:"You can offer ONE template as a gift to close the project warmly. Don't offer five — that becomes the new baseline for the next project." }
+  ]
+};
+const delay = (ms) => new Promise(r => setTimeout(r, ms));
+function App(){
+  const [sow,setSow]=useState(""); const [ask,setAsk]=useState(""); const [view,setView]=useState("landing"); const [out,setOut]=useState(null);
+  async function go(){ if(!sow.trim()||!ask.trim())return; setView("analyzing"); await delay(2200); setOut(MOCK); setView("results"); setTimeout(()=>document.getElementById("results")?.scrollIntoView({behavior:"smooth"}),80); }
+  function loadSample(){ setSow(SAMPLE_SOW); setAsk(SAMPLE_ASK); setView("landing"); }
+  const P={bg:"#F8F5F0",ink:"#1F1B16",inkSoft:"#5A544A",card:"#FFFFFF",rule:"#D9D2C2",accent:"#7C3F00",no:"#B91C1C",yes:"#15803D",mute:"#8A8275"};
+  const wrap={maxWidth:820,margin:"0 auto",padding:"64px 24px 96px"};
+  const display="'Fraunces',Georgia,serif",sans="Inter,system-ui,sans-serif",mono="'JetBrains Mono',ui-monospace,monospace";
+  const inp={fontFamily:mono,fontSize:13,lineHeight:1.55,color:P.ink,border:`1px solid ${P.rule}`,borderRadius:4,padding:"14px 16px",outline:"none",background:P.bg,resize:"vertical",width:"100%"};
+  return <div style={{background:P.bg,color:P.ink,fontFamily:sans,minHeight:"100vh"}}>
+    <header style={wrap}>
+      <div data-testid="eyebrow" style={{fontFamily:mono,fontSize:11,color:P.accent,letterSpacing:"0.2em",textTransform:"uppercase",marginBottom:32}}>For freelancers reading "just one more thing"</div>
+      <h1 style={{fontFamily:display,fontWeight:400,fontSize:"clamp(46px,7vw,82px)",lineHeight:0.97,letterSpacing:"-0.035em",margin:0}}>"Just one quick thing"<br/>is <em style={{fontStyle:"italic",color:P.accent}}>40% of your week.</em></h1>
+      <p style={{fontFamily:display,fontSize:22,fontStyle:"italic",lineHeight:1.45,color:P.inkSoft,margin:"32px 0 28px",maxWidth:600}}>The hardest part of scope creep is not having a shared answer. Paste your SOW and the latest "one more thing" ask. Get a clean in-scope / out-of-scope verdict, the exact contract line that supports it, and the polite change-order email if you need to bill for it.</p>
+      <div style={{display:"flex",flexWrap:"wrap",gap:16,alignItems:"center"}}>
+        <button data-testid="try-sample" onClick={loadSample} style={{fontFamily:sans,fontSize:16,fontWeight:600,background:P.accent,color:"#FFF",border:"none",padding:"16px 28px",borderRadius:4,cursor:"pointer"}}>Try with a sample SOW + ask →</button>
+        <span style={{fontFamily:mono,fontSize:11,color:P.mute,textTransform:"uppercase"}}>· free · runs in your browser</span>
+      </div>
+    </header>
+    <section style={{...wrap,paddingTop:0}}>
+      <div id="input-panel" style={{background:P.card,border:`1px solid ${P.rule}`,borderRadius:6,padding:28}}>
+        <div style={{fontFamily:mono,fontSize:11,color:P.accent,letterSpacing:"0.18em",textTransform:"uppercase",marginBottom:14}}>Step 1 of 2 · SOW + the latest ask</div>
+        <label style={{display:"block",marginBottom:14}}><div style={{fontFamily:mono,fontSize:11,color:P.mute,marginBottom:6,textTransform:"uppercase"}}>Statement of work</div><textarea data-testid="sow" value={sow} onChange={e=>setSow(e.target.value)} placeholder="Paste the scope section of your contract." style={{...inp,minHeight:140}}/></label>
+        <label style={{display:"block"}}><div style={{fontFamily:mono,fontSize:11,color:P.mute,marginBottom:6,textTransform:"uppercase"}}>Client's request</div><textarea data-testid="ask" value={ask} onChange={e=>setAsk(e.target.value)} placeholder="Paste the email or message asking for the additional thing." style={{...inp,minHeight:90}}/></label>
+        <div style={{display:"flex",justifyContent:"flex-end",marginTop:14}}>
+          <button data-testid="analyze-btn" onClick={go} style={{fontFamily:sans,fontSize:15,fontWeight:600,background:P.accent,color:"#FFF",border:"none",padding:"12px 24px",borderRadius:4,cursor:"pointer"}}>{view==="analyzing"?"Comparing...":"Is this in scope? →"}</button>
+        </div>
+      </div>
+    </section>
+    {view==="results"&&out&&<section id="results" style={{...wrap,paddingTop:32}}>
+      <div data-testid="summary" style={{background:P.card,border:`2px solid ${out.verdict==="out_of_scope"?P.no:P.yes}`,borderRadius:6,padding:28,marginBottom:24}}>
+        <div style={{fontFamily:mono,fontSize:11,color:out.verdict==="out_of_scope"?P.no:P.yes,letterSpacing:"0.2em",textTransform:"uppercase",marginBottom:8}}>Verdict · {Math.round(out.confidence*100)}% confident</div>
+        <div style={{fontFamily:display,fontSize:"clamp(38px,5vw,52px)",fontWeight:500,color:out.verdict==="out_of_scope"?P.no:P.yes,lineHeight:1}}>{out.verdict==="out_of_scope"?"Out of scope":"In scope"}</div>
+        <div style={{fontFamily:sans,fontSize:15,color:P.inkSoft,marginTop:12,lineHeight:1.55}}>{out.why}</div>
+        <div style={{marginTop:14,padding:"12px 16px",background:P.bg,borderRadius:4,fontFamily:mono,fontSize:13,color:P.ink,borderLeft:`2px solid ${P.accent}`}}>Contract line: "{out.contract_line}"</div>
+        <div style={{marginTop:14,fontFamily:mono,fontSize:12,color:P.mute}}>Effort: ~{out.effort_estimate.hours} hours · fee: {out.effort_estimate.fee_range}</div>
+      </div>
+      <div style={{background:P.card,border:`1px solid ${P.rule}`,borderRadius:4,padding:"22px 26px",marginBottom:14}}>
+        <div style={{fontFamily:mono,fontSize:10,color:P.accent,letterSpacing:"0.18em",textTransform:"uppercase",marginBottom:10}}>Reply (edit and send)</div>
+        <div style={{fontFamily:sans,fontSize:14,color:P.ink,whiteSpace:"pre-wrap",lineHeight:1.6}}>{out.email}</div>
+      </div>
+      {out.alternates.map((a,i)=>(<div key={i} style={{background:P.card,border:`1px solid ${P.rule}`,borderLeft:`3px solid ${P.accent}`,borderRadius:4,padding:"14px 22px",marginBottom:10}}>
+        <div style={{fontFamily:sans,fontSize:14,fontWeight:600,marginBottom:4}}>{a.t}</div>
+        <div style={{fontFamily:sans,fontSize:13,color:P.inkSoft,lineHeight:1.55}}>{a.b}</div>
+      </div>))}
+    </section>}
+    <footer style={{...wrap,paddingTop:32,paddingBottom:56,borderTop:`1px solid ${P.rule}`}}><div style={{fontFamily:mono,fontSize:11,color:P.mute,textAlign:"center",lineHeight:1.65}}>Informational. For ambiguous or high-value disputes, run it past a lawyer or a contract-savvy mentor.</div></footer>
+  </div>;
+}
+const root = ReactDOM.createRoot(document.getElementById("root")); root.render(<App/>);
+</script>
+<script data-name="BMC-Widget" data-cfasync="false" src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js" data-id="gooboolygoo" data-description="Support me on Buy me a coffee!" data-message="Love this project? Donate to keep it going" data-color="#5F7FFF" data-position="Right" data-x_margin="18" data-y_margin="18"></script>
+</body></html>

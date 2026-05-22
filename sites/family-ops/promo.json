@@ -1,0 +1,23 @@
+{
+  "generated_at": "2026-05-22T04:14:26.011Z",
+  "model": "claude-haiku-4-5",
+  "url": "https://gooboolygoo.github.io/projects/family-ops/",
+  "hashtags": [
+    "familyops",
+    "parenting",
+    "familycalendar",
+    "buildinpublic",
+    "webdev"
+  ],
+  "x": {
+    "tweet": "You already have a family calendar. The question is: who's driving Tuesday, did anyone pack cleats, and is someone expecting a swap next week. Carpool tracks the stuff other apps forget.",
+    "reply_lead": "live here"
+  },
+  "vertical_caption": "You have a family calendar. But does it handle who's driving Tuesday or whether cleats are packed? Carpool adds the one feature every family app forgets.",
+  "shorts_description_lead": "Stop juggling carpools and calendar notes. Carpool is the dashboard that tracks driving shifts, packing lists, and reciprocal swaps in one place.",
+  "video": {
+    "title": "The Carpool Calendar You Actually Need",
+    "script": "Every family calendar shows soccer at 4pm. None of them answer the hard questions: who's driving? Did anyone pack cleats? Is Jamal's mom expecting a swap next week? Carpool solves the stuff your regular calendar ignores. It's the family dashboard that actually tracks carpools, packing, and who owes who a pickup. Link in the description.",
+    "word_count": 55
+  }
+}

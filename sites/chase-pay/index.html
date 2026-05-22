@@ -1,0 +1,82 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Past Due. Chase invoices without the cringe.</title>
+<meta name="description" content="Three clients owe you $14,200 between them. The follow-up email is the worst part of freelancing. Paste the invoice + client tone, get the right email at the right cadence.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..900&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script crossorigin src="https://unpkg.com/react@18.3.1/umd/react.production.min.js"></script><script crossorigin src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js"></script><script src="https://unpkg.com/@babel/standalone@7.24.7/babel.min.js"></script>
+<style>html,body{margin:0;padding:0;background:#0E1118}.__loading{font-family:Inter,system-ui;color:#888;text-align:center;padding-top:200px}</style></head><body>
+<div id="root"><div class="__loading">Loading...</div></div>
+<script type="text/babel" data-presets="react">
+const { useState } = React;
+const SAMPLE = {
+  client:"Big Studio Co.",
+  amount: 6400,
+  days_late: 31,
+  relationship: "long-term, want to keep them",
+  history: "always pays, just slow"
+};
+const MOCK = {
+  cadence: [
+    { day:"Day 0", subject:"Just checking on invoice 2026-114", tone:"warm, no urgency", body:"Hey Jess, just floating up Invoice 2026-114 — net 30 was last Friday. Probably already in the queue, just making sure it didn't get lost. Happy to resend the PDF if helpful. Best, [you]" },
+    { day:"Day 14", subject:"Following up on Invoice 2026-114", tone:"firm, still warm", body:"Hey Jess, circling back on 2026-114. It's now two weeks past the net-30 date — should I get this to accounts payable directly? Want to make sure it's not stuck in your inbox. Let me know who to copy. Thanks, [you]" },
+    { day:"Day 30 (today)", subject:"Need to pause new work · Invoice 2026-114", tone:"professional, contract-grounded, sent", body:"Hey Jess, Invoice 2026-114 is now 31 days past due. Per our agreement (section 7, net 30 with 1.5% monthly late fee), I'm going to pause new deliverables on the current project until this is resolved. Happy to jump on a quick call if there's something blocking on your end. — [you]" },
+    { day:"Day 45", subject:"Final notice before collections · Invoice 2026-114", tone:"formal, escalation", body:"Hey Jess, this is the final notice on 2026-114 before I hand it to a collections agent. I'd much rather not. Could you let me know today whether AP can process this by Friday?" }
+  ],
+  contract_clauses: [
+    { t:"Late fee", b:"1.5% per month is the standard freelancer default. Most state laws cap at 18% APR (which 1.5%/mo equals)." },
+    { t:"Pause-work clause", b:"Section 7 of your contract gives you the right to stop work after 30 days non-payment. Use it; it shifts negotiation back to you." },
+    { t:"Net terms", b:"Net 30 is the default, but you can negotiate net 15 with new clients. They'll resist; the small ones who agree pay faster than the big ones who don't." }
+  ]
+};
+const delay = (ms) => new Promise(r => setTimeout(r, ms));
+function App(){
+  const [client,setClient]=useState(""); const [amount,setAmount]=useState(""); const [days,setDays]=useState(""); const [view,setView]=useState("landing"); const [out,setOut]=useState(null);
+  async function go(){ if(!client.trim())return; setView("analyzing"); await delay(2000); setOut(MOCK); setView("results"); setTimeout(()=>document.getElementById("results")?.scrollIntoView({behavior:"smooth"}),80); }
+  function loadSample(){ setClient(SAMPLE.client); setAmount(SAMPLE.amount); setDays(SAMPLE.days_late); setView("landing"); }
+  const P={bg:"#0E1118",ink:"#E8EAED",inkSoft:"#B0B8C4",card:"#161A24",paper:"#1B2030",rule:"#2A3441",accent:"#FB7185",warn:"#F59E0B",mute:"#7A8595"};
+  const wrap={maxWidth:820,margin:"0 auto",padding:"64px 24px 96px"};
+  const display="'Fraunces',Georgia,serif",sans="Inter,system-ui,sans-serif",mono="'JetBrains Mono',ui-monospace,monospace";
+  const inp={fontFamily:sans,fontSize:14,color:P.ink,background:P.bg,border:`1px solid ${P.rule}`,borderRadius:4,padding:"10px 14px",outline:"none",width:"100%"};
+  return <div style={{background:P.bg,color:P.ink,fontFamily:sans,minHeight:"100vh"}}>
+    <header style={wrap}>
+      <div data-testid="eyebrow" style={{fontFamily:mono,fontSize:11,color:P.accent,letterSpacing:"0.2em",textTransform:"uppercase",marginBottom:32}}>For freelancers and indie consultants</div>
+      <h1 style={{fontFamily:display,fontWeight:400,fontSize:"clamp(46px,7vw,82px)",lineHeight:0.97,letterSpacing:"-0.035em",margin:0}}>The cringey follow-up<br/>email, <em style={{fontStyle:"italic",color:P.accent}}>written for you.</em></h1>
+      <p style={{fontFamily:display,fontSize:22,fontStyle:"italic",lineHeight:1.45,color:P.inkSoft,margin:"32px 0 28px",maxWidth:600}}>Three clients owe you $14,000. The follow-up is the worst part of freelancing. Type the invoice, the client relationship, and how late they are. Get the right email at the right tone, plus the next three escalations and exactly when to send them.</p>
+      <div style={{display:"flex",flexWrap:"wrap",gap:16,alignItems:"center"}}>
+        <button data-testid="try-sample" onClick={loadSample} style={{fontFamily:sans,fontSize:16,fontWeight:600,background:P.accent,color:"#1F0814",border:"none",padding:"16px 28px",borderRadius:4,cursor:"pointer"}}>Try with a sample (Big Studio, 31 days late) →</button>
+        <span style={{fontFamily:mono,fontSize:11,color:P.mute,textTransform:"uppercase"}}>· free · runs in your browser</span>
+      </div>
+    </header>
+    <section style={{...wrap,paddingTop:0}}>
+      <div id="input-panel" style={{background:P.paper,border:`1px solid ${P.rule}`,borderRadius:6,padding:28}}>
+        <div style={{fontFamily:mono,fontSize:11,color:P.accent,letterSpacing:"0.18em",textTransform:"uppercase",marginBottom:14}}>Step 1 of 2 · The invoice</div>
+        <div style={{display:"grid",gridTemplateColumns:"2fr 1fr 1fr",gap:14}}>
+          <label><div style={{fontSize:11,color:P.mute,marginBottom:6,fontFamily:mono,letterSpacing:0.08,textTransform:"uppercase"}}>Client name</div><input data-testid="client" value={client} onChange={e=>setClient(e.target.value)} placeholder="Acme Co" style={inp}/></label>
+          <label><div style={{fontSize:11,color:P.mute,marginBottom:6,fontFamily:mono,letterSpacing:0.08,textTransform:"uppercase"}}>Amount</div><input data-testid="amount" value={amount} onChange={e=>setAmount(e.target.value)} placeholder="6400" style={inp}/></label>
+          <label><div style={{fontSize:11,color:P.mute,marginBottom:6,fontFamily:mono,letterSpacing:0.08,textTransform:"uppercase"}}>Days late</div><input data-testid="days" value={days} onChange={e=>setDays(e.target.value)} placeholder="31" style={inp}/></label>
+        </div>
+        <div style={{display:"flex",justifyContent:"flex-end",marginTop:16}}>
+          <button data-testid="analyze-btn" onClick={go} style={{fontFamily:sans,fontSize:15,fontWeight:600,background:P.accent,color:"#1F0814",border:"none",padding:"12px 24px",borderRadius:4,cursor:"pointer"}}>{view==="analyzing"?"Drafting...":"Write the email →"}</button>
+        </div>
+      </div>
+    </section>
+    {view==="results"&&out&&<section id="results" style={{...wrap,paddingTop:32}}>
+      <div data-testid="summary" style={{fontFamily:mono,fontSize:11,color:P.accent,letterSpacing:0.15,textTransform:"uppercase",marginBottom:14}}>Recommended cadence</div>
+      {out.cadence.map((m,i)=>(<div key={i} style={{background:P.card,border:`1px solid ${P.rule}`,borderLeft:`4px solid ${i===2?P.accent:P.rule}`,borderRadius:4,padding:"18px 22px",marginBottom:12}}>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"baseline",marginBottom:6,flexWrap:"wrap",gap:8}}>
+          <div style={{fontFamily:mono,fontSize:11,color:i===2?P.accent:P.mute,letterSpacing:0.15,textTransform:"uppercase"}}>{m.day} {i===2?"· this one to send today":""}</div>
+          <div style={{fontFamily:mono,fontSize:11,color:P.mute,fontStyle:"italic"}}>{m.tone}</div>
+        </div>
+        <div style={{fontFamily:sans,fontSize:14,fontWeight:600,color:P.ink,marginBottom:6}}>Subject: {m.subject}</div>
+        <div style={{fontFamily:sans,fontSize:14,color:P.inkSoft,lineHeight:1.6,whiteSpace:"pre-wrap"}}>{m.body}</div>
+      </div>))}
+      <div style={{marginTop:24,padding:24,background:P.paper,border:`1px solid ${P.rule}`,borderRadius:6}}>
+        <div style={{fontFamily:mono,fontSize:11,color:P.accent,letterSpacing:0.15,textTransform:"uppercase",marginBottom:14}}>Contract clauses to keep on hand</div>
+        {out.contract_clauses.map((c,i)=>(<div key={i} style={{padding:"10px 0",borderTop:i>0?`1px solid ${P.rule}`:"none"}}><div style={{fontFamily:sans,fontSize:14,fontWeight:600}}>{c.t}</div><div style={{fontFamily:sans,fontSize:13,color:P.inkSoft,lineHeight:1.55,marginTop:4}}>{c.b}</div></div>))}
+      </div>
+    </section>}
+    <footer style={{...wrap,paddingTop:32,paddingBottom:56,borderTop:`1px solid ${P.rule}`}}><div style={{fontFamily:mono,fontSize:11,color:P.mute,textAlign:"center",lineHeight:1.65}}>For informational use. Not legal advice. If the bill is large and the client is uncooperative, consult an attorney before invoking late fees.</div></footer>
+  </div>;
+}
+const root = ReactDOM.createRoot(document.getElementById("root")); root.render(<App/>);
+</script>
+<script data-name="BMC-Widget" data-cfasync="false" src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js" data-id="gooboolygoo" data-description="Support me on Buy me a coffee!" data-message="Love this project? Donate to keep it going" data-color="#5F7FFF" data-position="Right" data-x_margin="18" data-y_margin="18"></script>
+</body></html>

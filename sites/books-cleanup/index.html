@@ -1,0 +1,93 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Catch Up. Reconcile 8 months of QuickBooks in an afternoon.</title>
+<meta name="description" content="You haven't reconciled QuickBooks since last summer. Your bookkeeper quoted $1,500 to clean it up. Paste your transactions, get a categorization run, flag the anomalies, file the rest.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..900&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script crossorigin src="https://unpkg.com/react@18.3.1/umd/react.production.min.js"></script><script crossorigin src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js"></script><script src="https://unpkg.com/@babel/standalone@7.24.7/babel.min.js"></script>
+<style>html,body{margin:0;padding:0;background:#F7F4ED}.__loading{font-family:Inter,system-ui;color:#888;text-align:center;padding-top:200px}</style></head><body>
+<div id="root"><div class="__loading">Loading...</div></div>
+<script type="text/babel" data-presets="react">
+const { useState } = React;
+const SAMPLE = `2026-04-12 STRIPE PAYOUT $4,820.00
+2026-04-10 AMEX BUS PMT -$1,432.00
+2026-04-09 ZOOM US $14.99
+2026-04-09 SQUARE PAYOUT $2,180.00
+2026-04-08 ADOBE CC $59.99
+2026-04-07 AIRBNB-IRELAND $1,840.00
+2026-04-07 LINKEDIN PREMIUM $39.99
+2026-04-06 TRANSFER TO PERSONAL -$3,500.00
+2026-04-05 USPS POSTAGE $87.40
+2026-04-04 GOOGLE WORKSPACE $24.00
+2026-04-04 AMZN MKTPLACE $214.30
+2026-04-03 UBER EATS $32.40
+2026-04-03 STRIPE FEE -$192.20
+2026-04-02 PAYROLL - SARAH $2,800.00
+2026-04-02 BENEFITS - GUSTO $412.00
+2026-04-01 SF OFFICE RENT $1,950.00`;
+const MOCK = {
+  total: 16, categorized: 14, flagged: 2,
+  cats:[
+    { name:"Revenue", count:2, total:7000.00, items:["STRIPE PAYOUT","SQUARE PAYOUT"] },
+    { name:"Cost of services (Stripe fees)", count:1, total:192.20, items:["STRIPE FEE"] },
+    { name:"Payroll + benefits", count:2, total:3212.00, items:["PAYROLL - SARAH","BENEFITS - GUSTO"] },
+    { name:"Software subscriptions", count:4, total:138.97, items:["ZOOM US","ADOBE CC","LINKEDIN PREMIUM","GOOGLE WORKSPACE"] },
+    { name:"Rent + utilities", count:1, total:1950.00, items:["SF OFFICE RENT"] },
+    { name:"Office supplies", count:2, total:301.70, items:["USPS POSTAGE","AMZN MKTPLACE"] },
+    { name:"Owner distributions", count:1, total:3500.00, items:["TRANSFER TO PERSONAL"] },
+    { name:"Credit card payment (transfer, not expense)", count:1, total:1432.00, items:["AMEX BUS PMT"] }
+  ],
+  flagged: [
+    { line:"2026-04-07 AIRBNB-IRELAND $1,840.00", reason:"Looks like travel. Need to confirm business purpose. If a client visit, fully deductible as travel. If a retreat, partially deductible. If personal, do not categorize as business." },
+    { line:"2026-04-03 UBER EATS $32.40", reason:"Meal with no attendee or business purpose noted. Need to confirm to apply the 50% meals rule (vs personal)." }
+  ]
+};
+const delay = (ms) => new Promise(r => setTimeout(r, ms));
+function App(){
+  const [text,setText]=useState(""); const [view,setView]=useState("landing"); const [out,setOut]=useState(null);
+  async function go(){ if(!text.trim())return; setView("analyzing"); await delay(2200); setOut(MOCK); setView("results"); setTimeout(()=>document.getElementById("results")?.scrollIntoView({behavior:"smooth"}),80); }
+  function loadSample(){ setText(SAMPLE); setView("landing"); }
+  const P={bg:"#F7F4ED",ink:"#1F1B16",inkSoft:"#5A544A",card:"#FFFFFF",rule:"#D9D2C2",accent:"#7C2D12",warn:"#B45309",ok:"#15803D",mute:"#8A8275"};
+  const wrap={maxWidth:820,margin:"0 auto",padding:"64px 24px 96px"};
+  const display="'Fraunces',Georgia,serif",sans="Inter,system-ui,sans-serif",mono="'JetBrains Mono',ui-monospace,monospace";
+  return <div style={{background:P.bg,color:P.ink,fontFamily:sans,minHeight:"100vh"}}>
+    <header style={wrap}>
+      <div data-testid="eyebrow" style={{fontFamily:mono,fontSize:11,color:P.accent,letterSpacing:"0.2em",textTransform:"uppercase",marginBottom:32}}>For founders who haven't opened QuickBooks since June</div>
+      <h1 style={{fontFamily:display,fontWeight:400,fontSize:"clamp(46px,7vw,82px)",lineHeight:0.97,letterSpacing:"-0.035em",margin:0}}>Your bookkeeper<br/>quoted <em style={{fontStyle:"italic",color:P.accent}}>$1,500.</em><br/>It's an afternoon.</h1>
+      <p style={{fontFamily:display,fontSize:22,fontStyle:"italic",lineHeight:1.45,color:P.inkSoft,margin:"32px 0 28px",maxWidth:600}}>The catch-up is grim because nobody wants to think about it, not because it's hard. Paste your bank or Stripe transactions, get them categorized into the right Schedule C / chart of accounts buckets, with the three transactions flagged that need human review (and why).</p>
+      <div style={{display:"flex",flexWrap:"wrap",gap:16,alignItems:"center"}}>
+        <button data-testid="try-sample" onClick={loadSample} style={{fontFamily:sans,fontSize:16,fontWeight:600,background:P.accent,color:"#FFF",border:"none",padding:"16px 28px",borderRadius:4,cursor:"pointer"}}>Try with sample transactions →</button>
+        <span style={{fontFamily:mono,fontSize:11,color:P.mute,textTransform:"uppercase"}}>· free · runs in your browser</span>
+      </div>
+    </header>
+    <section style={{...wrap,paddingTop:0}}>
+      <div id="input-panel" style={{background:P.card,border:`1px solid ${P.rule}`,borderRadius:6,padding:28}}>
+        <div style={{fontFamily:mono,fontSize:11,color:P.accent,letterSpacing:"0.18em",textTransform:"uppercase",marginBottom:14}}>Step 1 of 2 · Paste transactions</div>
+        <textarea data-testid="tx-input" value={text} onChange={e=>setText(e.target.value)} placeholder="Date · description · amount, one per line. Bank export or Stripe CSV works." style={{width:"100%",minHeight:240,fontFamily:mono,fontSize:13,lineHeight:1.55,color:P.ink,border:`1px solid ${P.rule}`,borderRadius:4,padding:"14px 16px",outline:"none",background:P.bg,resize:"vertical"}}/>
+        <div style={{display:"flex",justifyContent:"flex-end",marginTop:14}}>
+          <button data-testid="analyze-btn" onClick={go} disabled={!text.trim()||view==="analyzing"} style={{fontFamily:sans,fontSize:15,fontWeight:600,background:text.trim()&&view!=="analyzing"?P.accent:P.rule,color:text.trim()&&view!=="analyzing"?"#FFF":P.mute,border:"none",padding:"12px 24px",borderRadius:4,cursor:text.trim()&&view!=="analyzing"?"pointer":"not-allowed"}}>{view==="analyzing"?"Reading 8 months...":"Sort everything →"}</button>
+        </div>
+      </div>
+    </section>
+    {view==="results"&&out&&<section id="results" style={{...wrap,paddingTop:32}}>
+      <div data-testid="summary" style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:14,marginBottom:24}}>
+        {[{l:"Transactions",v:out.total,c:P.accent},{l:"Auto-categorized",v:out.categorized,c:P.ok},{l:"Need review",v:out.flagged.length,c:P.warn}].map((r,i)=>(<div key={i} style={{background:P.card,border:`1px solid ${P.rule}`,borderRadius:6,padding:"18px 22px"}}><div style={{fontFamily:mono,fontSize:10,color:P.mute,letterSpacing:0.15,textTransform:"uppercase",marginBottom:6}}>{r.l}</div><div style={{fontFamily:display,fontSize:32,fontWeight:500,color:r.c}}>{r.v}</div></div>))}
+      </div>
+      <div style={{fontFamily:mono,fontSize:11,color:P.mute,letterSpacing:0.15,textTransform:"uppercase",marginBottom:12}}>Categorized</div>
+      {out.cats.map((c,i)=>(<div key={i} style={{background:P.card,border:`1px solid ${P.rule}`,borderRadius:4,padding:"14px 22px",marginBottom:8}}>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"baseline",flexWrap:"wrap",gap:8}}>
+          <div style={{fontFamily:sans,fontSize:14,fontWeight:600}}>{c.name}</div>
+          <div style={{fontFamily:mono,fontSize:13,color:P.ink}}>${c.total.toLocaleString("en-US",{minimumFractionDigits:2})}</div>
+        </div>
+        <div style={{fontFamily:mono,fontSize:11,color:P.mute,marginTop:4}}>{c.count} transactions · {c.items.slice(0,3).join(", ")}{c.items.length>3?"...":""}</div>
+      </div>))}
+      <div style={{fontFamily:mono,fontSize:11,color:P.warn,letterSpacing:0.15,textTransform:"uppercase",marginTop:24,marginBottom:12}}>Need human review</div>
+      {out.flagged.map((f,i)=>(<div key={i} style={{background:P.card,border:`1px solid ${P.rule}`,borderLeft:`4px solid ${P.warn}`,borderRadius:4,padding:"14px 22px",marginBottom:8}}>
+        <div style={{fontFamily:mono,fontSize:13,color:P.ink,marginBottom:6}}>{f.line}</div>
+        <div style={{fontFamily:sans,fontSize:13,color:P.inkSoft,lineHeight:1.55}}>{f.reason}</div>
+      </div>))}
+    </section>}
+    <footer style={{...wrap,paddingTop:32,paddingBottom:56,borderTop:`1px solid ${P.rule}`}}><div style={{fontFamily:mono,fontSize:11,color:P.mute,textAlign:"center",lineHeight:1.65}}>Informational. Export your categorized run as a CSV ready for QuickBooks Online or Xero in the production version.</div></footer>
+  </div>;
+}
+const root = ReactDOM.createRoot(document.getElementById("root")); root.render(<App/>);
+</script>
+<script data-name="BMC-Widget" data-cfasync="false" src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js" data-id="gooboolygoo" data-description="Support me on Buy me a coffee!" data-message="Love this project? Donate to keep it going" data-color="#5F7FFF" data-position="Right" data-x_margin="18" data-y_margin="18"></script>
+</body></html>

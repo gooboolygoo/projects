@@ -1,0 +1,23 @@
+{
+  "generated_at": "2026-05-22T04:14:30.770Z",
+  "model": "claude-haiku-4-5",
+  "url": "https://gooboolygoo.github.io/projects/scope-creep/",
+  "hashtags": [
+    "scopecreep",
+    "freelance",
+    "contracts",
+    "webdev",
+    "buildinpublic"
+  ],
+  "x": {
+    "tweet": "Your SOW says feature X is in scope. Your client just asked for feature Y, Z, and a complete redesign. Who's right? Paste both into this and get the exact contract line that settles it.",
+    "reply_lead": "try it free →"
+  },
+  "vertical_caption": "SOW vs the ask. When a client wants something \"just one more thing\", you need the contract line that proves in or out of scope. Paste both, get your answer.",
+  "shorts_description_lead": "When scope creep strikes, you need proof. Paste your SOW and the latest request. Get the exact contract language and a change-order email if you need it.",
+  "video": {
+    "title": "Scope Creep Has One Easy Answer",
+    "script": "You're three weeks in. Client emails: one more thing. Then another. Then they want the whole page redesigned. You're thinking overtime they didn't plan for. They're thinking that was always the deal. Who's actually right? Paste your original statement of work and whatever they just asked for. This tool reads both, finds the exact line in your contract that settles the argument, and if it's out of scope, generates the polite change-order email you can send back. No more guessing.",
+    "word_count": 80
+  }
+}

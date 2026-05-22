@@ -1,0 +1,23 @@
+{
+  "generated_at": "2026-05-22T04:14:13.844Z",
+  "model": "claude-haiku-4-5",
+  "url": "https://gooboolygoo.github.io/projects/chase-pay/",
+  "hashtags": [
+    "freelance",
+    "invoicing",
+    "ai",
+    "indiedev",
+    "buildinpublic"
+  ],
+  "x": {
+    "tweet": "Sending the third follow-up email to a late-paying client is its own special kind of dread. What if you could skip the cringe and let AI draft the exact tone for each escalation.",
+    "reply_lead": "try it out ↓"
+  },
+  "vertical_caption": "You've sent the invoice. Radio silence. Now you need to send a follow-up email but the tone has to be just right. Get AI-drafted subject lines and body copy for the first escalation through the final one.",
+  "shorts_description_lead": "Freelancers dread the follow-up email to late-paying clients. This tool generates the exact email at the exact tone you need, plus three escalations with timing.",
+  "video": {
+    "title": "Stop Dreading Invoice Follow-ups",
+    "script": "Fourteen thousand dollars owed. Three clients. And you have to send that follow-up email. You know the one. Too nice and they ignore it. Too firm and the relationship tanks. This tool lets you plug in the invoice amount, the client relationship, and how many days late they are. It generates the exact email at the exact tone you need, plus three escalations with timestamps for when to send them. No more guessing if you sound desperate or angry. Link in the description.",
+    "word_count": 83
+  }
+}

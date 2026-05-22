@@ -1,0 +1,23 @@
+{
+  "generated_at": "2026-05-22T04:14:09.428Z",
+  "model": "claude-haiku-4-5",
+  "url": "https://gooboolygoo.github.io/projects/books-cleanup/",
+  "hashtags": [
+    "bookkeeping",
+    "accounting",
+    "indiedev",
+    "buildinpublic",
+    "finance"
+  ],
+  "x": {
+    "tweet": "Eight months of unfiled transactions. Three flagged problems. One afternoon. Paste your bank or Stripe data, get it sorted into Schedule C buckets automatically.",
+    "reply_lead": "try it free ↓"
+  },
+  "vertical_caption": "Your catch-up is sitting there. Paste your bank or Stripe transactions; the tool flags exactly three that need you to decide, no busywork 📋",
+  "shorts_description_lead": "Eight months of unreconciled transactions meet Schedule C buckets in one go. Paste your data, get three flagged edge cases, move on.",
+  "video": {
+    "title": "Catch Up on Your Books",
+    "script": "You've got eight months of bank transactions sitting in a folder. Dreading it because it sounds tedious, not because it's hard. Here's the move: paste your Stripe or bank export into this page. It automatically categorizes everything into Schedule C buckets, then flags exactly three transactions that need your human judgment. You make three decisions, the categorization is done. Link in the description.",
+    "word_count": 63
+  }
+}

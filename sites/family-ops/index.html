@@ -1,0 +1,56 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Carpool. The family dashboard with carpools that actually work.</title>
+<meta name="description" content="You have three kids in five activities. Cozi has the calendar but nobody coordinates the soccer carpool. Carpool is the calendar plus the one feature Cozi keeps forgetting.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..900&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script crossorigin src="https://unpkg.com/react@18.3.1/umd/react.production.min.js"></script><script crossorigin src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js"></script><script src="https://unpkg.com/@babel/standalone@7.24.7/babel.min.js"></script>
+<style>html,body{margin:0;padding:0;background:#FEF7E8}.__loading{font-family:Inter,system-ui;color:#888;text-align:center;padding-top:200px}</style></head><body>
+<div id="root"><div class="__loading">Loading...</div></div>
+<script type="text/babel" data-presets="react">
+const { useState } = React;
+const KIDS=["Theo (8)","Lila (10)","June (5)"];
+const ACT=[
+  { d:"Mon", who:"Theo", what:"Soccer practice", time:"4:00–5:30pm", loc:"Hillside Field", carpool:{ driver:"Sarah K.", riders:["Theo","Jamal"] }, gear:"shin guards, cleats, water" },
+  { d:"Tue", who:"Lila", what:"Violin", time:"5:00–5:45pm", loc:"45 Oak St (teacher Maya)", carpool:null, gear:"violin, sheet music binder" },
+  { d:"Wed", who:"Theo", what:"Soccer game", time:"5:30pm kickoff", loc:"Ridge Park", carpool:{ driver:"YOU", riders:["Theo","Mia","Jamal"] }, gear:"uniform top, water, snacks for 3" },
+  { d:"Wed", who:"June", what:"Swim lesson", time:"5:00–5:30pm", loc:"Y", carpool:null, gear:"swimsuit, towel, goggles" },
+  { d:"Thu", who:"Lila", what:"Art class", time:"4:00–5:30pm", loc:"Community center", carpool:{ driver:"Marcus T.", riders:["Lila","Aria"] }, gear:"smock" },
+  { d:"Sat", who:"Theo", what:"Soccer tournament", time:"9am–noon", loc:"Hillside Field", carpool:{ driver:"YOU", riders:["Theo","Jamal","Mia"] }, gear:"uniform, breakfast, two waters" }
+];
+function App(){
+  const [view,setView]=useState("landing");
+  function open(){ setView("app"); setTimeout(()=>document.getElementById("week")?.scrollIntoView({behavior:"smooth"}),80); }
+  const P={bg:"#FEF7E8",ink:"#1F1B16",inkSoft:"#5A544A",card:"#FFFFFF",rule:"#E6D9B8",accent:"#D97706",me:"#16A34A",mute:"#8A8275"};
+  const wrap={maxWidth:820,margin:"0 auto",padding:"64px 24px 96px"};
+  const display="'Fraunces',Georgia,serif",sans="Inter,system-ui,sans-serif",mono="'JetBrains Mono',ui-monospace,monospace";
+  return <div style={{background:P.bg,color:P.ink,fontFamily:sans,minHeight:"100vh"}}>
+    <header style={wrap}>
+      <div data-testid="eyebrow" style={{fontFamily:mono,fontSize:11,color:P.accent,letterSpacing:"0.2em",textTransform:"uppercase",marginBottom:32}}>For parents juggling three kids and five activities</div>
+      <h1 style={{fontFamily:display,fontWeight:400,fontSize:"clamp(46px,7vw,82px)",lineHeight:0.97,letterSpacing:"-0.035em",margin:0}}>Cozi shows the<br/>calendar.<br/><em style={{fontStyle:"italic",color:P.accent}}>Nobody drives.</em></h1>
+      <p style={{fontFamily:display,fontSize:22,fontStyle:"italic",lineHeight:1.45,color:P.inkSoft,margin:"32px 0 28px",maxWidth:600}}>The hard part of family ops is not 'when is soccer.' It's 'who is driving Tuesday, did anyone pack the cleats, and is Jamal's mom expecting a swap next week.' Carpool is the calendar plus the carpool coordination that every other family app forgets.</p>
+      <div style={{display:"flex",flexWrap:"wrap",gap:16,alignItems:"center"}}>
+        <button data-testid="try-sample" onClick={open} style={{fontFamily:sans,fontSize:16,fontWeight:600,background:P.accent,color:"#FFF",border:"none",padding:"16px 28px",borderRadius:4,cursor:"pointer"}}>Show me a sample week →</button>
+        <span style={{fontFamily:mono,fontSize:11,color:P.mute,textTransform:"uppercase"}}>· $4/mo for the family · 14-day trial</span>
+      </div>
+    </header>
+    {view==="app"&&<section id="week" style={{...wrap,paddingTop:0}}>
+      <div data-testid="summary" style={{background:P.card,border:`1px solid ${P.rule}`,borderRadius:6,padding:24,marginBottom:14}}>
+        <div style={{fontFamily:mono,fontSize:11,color:P.accent,letterSpacing:0.15,textTransform:"uppercase",marginBottom:10}}>This week · 3 kids · 5 activities · 2 driving slots for you</div>
+        <div style={{fontFamily:sans,fontSize:14,color:P.inkSoft}}>{KIDS.join(" · ")}</div>
+      </div>
+      {ACT.map((a,i)=>(<div key={i} style={{background:P.card,border:`1px solid ${P.rule}`,borderLeft:`4px solid ${a.carpool&&a.carpool.driver==="YOU"?P.me:P.accent}`,borderRadius:4,padding:"16px 22px",marginBottom:10}}>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"baseline",flexWrap:"wrap",gap:8,marginBottom:6}}>
+          <div style={{fontFamily:mono,fontSize:11,color:P.mute,letterSpacing:0.1,textTransform:"uppercase"}}>{a.d} · {a.time}</div>
+          {a.carpool&&<div style={{fontFamily:mono,fontSize:11,color:a.carpool.driver==="YOU"?P.me:P.accent,fontWeight:600,textTransform:"uppercase",letterSpacing:0.1}}>{a.carpool.driver==="YOU"?"YOU drive":a.carpool.driver+" drives"}</div>}
+        </div>
+        <div style={{fontFamily:sans,fontSize:16,fontWeight:600}}>{a.who} · {a.what}</div>
+        <div style={{fontFamily:sans,fontSize:13,color:P.inkSoft,marginTop:4}}>{a.loc}</div>
+        {a.carpool&&<div style={{fontFamily:sans,fontSize:13,color:P.inkSoft,marginTop:6}}>Riders: {a.carpool.riders.join(", ")}</div>}
+        {a.gear&&<div style={{fontFamily:mono,fontSize:11,color:P.mute,marginTop:8}}>📦 {a.gear}</div>}
+      </div>))}
+    </section>}
+    <footer style={{...wrap,paddingTop:32,paddingBottom:56,borderTop:`1px solid ${P.rule}`}}><div style={{fontFamily:mono,fontSize:11,color:P.mute,textAlign:"center",lineHeight:1.65}}>Production version syncs to Google/Apple Calendar both ways and texts other carpool parents.</div></footer>
+  </div>;
+}
+const root = ReactDOM.createRoot(document.getElementById("root")); root.render(<App/>);
+</script>
+<script data-name="BMC-Widget" data-cfasync="false" src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js" data-id="gooboolygoo" data-description="Support me on Buy me a coffee!" data-message="Love this project? Donate to keep it going" data-color="#5F7FFF" data-position="Right" data-x_margin="18" data-y_margin="18"></script>
+</body></html>

@@ -1,0 +1,21 @@
+title: In Scope
+blurb: The hardest part of scope creep is not having a shared answer. Paste your SOW and the latest "one more thing" ask. Get a clean in-scope or out-of-scope verdict, the exact contract line that supports it, and the polite change-order email if you need to bill for it.
+tags:
+  - freelance
+  - contracts
+  - ai
+  - product
+donate: true
+demo:
+  setup:
+    - { action: scroll_to, selector: "#root" }
+  steps:
+    - { action: wait, duration_s: 3 }
+    - { action: click, selector: '[data-testid="try-sample"]' }
+    - { action: wait, duration_s: 1.5 }
+    - { action: scroll_to, selector: "#input-panel" }
+    - { action: wait, duration_s: 1 }
+    - { action: click, selector: '[data-testid="analyze-btn"]' }
+    - { action: wait, duration_s: 3 }
+    - { action: scroll_to, selector: '[data-testid="summary"]' }
+    - { action: wait, duration_s: 7 }

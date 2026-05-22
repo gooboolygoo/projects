@@ -1,0 +1,17 @@
+title: Carpool
+blurb: The hard part of family ops is not "when is soccer." It is "who is driving Tuesday, did anyone pack the cleats, and is Jamal's mom expecting a swap next week." Carpool is the calendar plus the one feature every other family app forgets.
+tags:
+  - family
+  - parenting
+  - calendar
+  - product
+donate: true
+demo:
+  setup:
+    - { action: scroll_to, selector: "#root" }
+  steps:
+    - { action: wait, duration_s: 3 }
+    - { action: click, selector: '[data-testid="try-sample"]' }
+    - { action: wait, duration_s: 2 }
+    - { action: scroll_to, selector: '[data-testid="summary"]' }
+    - { action: wait, duration_s: 8 }
