@@ -1,0 +1,23 @@
+{
+  "generated_at": "2026-05-22T01:59:31.878Z",
+  "model": "claude-haiku-4-5",
+  "url": "https://gooboolygoo.github.io/projects/cgm-decoder/",
+  "hashtags": [
+    "cgm",
+    "glucose",
+    "health",
+    "wellness",
+    "buildinpublic"
+  ],
+  "x": {
+    "tweet": "Your CGM spits out data daily but nobody tells you what it means. Paste a week of readings, get the patterns, the meals that spike you, and what actually moves your glucose 📊",
+    "reply_lead": "free, runs in your browser"
+  },
+  "vertical_caption": "Your CGM gives you numbers. This gives you answers. Paste a week of readings and find the meals that spike you, your patterns, and the four changes that would actually work 📊",
+  "shorts_description_lead": "You have CGM data but no idea what to do with it. Paste a week of readings and get the patterns, the meals that spike you, and four concrete changes that would actually move your glucose.",
+  "video": {
+    "title": "What Your CGM Actually Tells You",
+    "script": "You've been wearing a glucose monitor for weeks. It tracks your blood sugar all day, every day. But then what. You get numbers you don't understand. Meals that might spike you. Patterns buried in data. Glucose Decoder changes that. Paste a week of your CGM readings, and it shows you exactly which meals hit you hardest, what your glucose actually does, and four changes that would move your numbers. Free, runs right in your browser. Link in the description.",
+    "word_count": 79
+  }
+}

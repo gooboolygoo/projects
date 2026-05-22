@@ -1,0 +1,23 @@
+{
+  "generated_at": "2026-05-22T02:00:46.259Z",
+  "model": "claude-haiku-4-5",
+  "url": "https://gooboolygoo.github.io/projects/podcast-prep/",
+  "hashtags": [
+    "podcast",
+    "podcastprep",
+    "aitools",
+    "creator",
+    "indiedev"
+  ],
+  "x": {
+    "tweet": "Three hours of Wikipedia research before every podcast interview. What if you could get a guest dossier in 90 seconds instead?",
+    "reply_lead": "try it free here"
+  },
+  "vertical_caption": "Before your next podcast, type their name and get: what they're newly excited about, their default themes, and four questions they haven't been asked yet. 90 seconds. Free. No login.",
+  "shorts_description_lead": "Stop spending three hours on Wikipedia before each guest. Guestmap gives you a full podcast dossier in 90 seconds: their latest interests, favorite themes, and four fresh questions.",
+  "video": {
+    "title": "Podcast Guest Dossier In 90 Seconds",
+    "script": "You spend three hours on Wikipedia before every podcast interview. Reading bios, finding themes, writing questions nobody's asked them yet. What if you just typed their name instead? Guestmap pulls together what they're newly excited about, the themes they always default to, and four questions they haven't been asked. Ninety seconds. Free, runs in your browser. No signup. Link in the description.",
+    "word_count": 62
+  }
+}

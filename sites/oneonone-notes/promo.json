@@ -1,0 +1,23 @@
+{
+  "generated_at": "2026-05-22T01:59:35.578Z",
+  "model": "claude-haiku-4-5",
+  "url": "https://gooboolygoo.github.io/projects/oneonone-notes/",
+  "hashtags": [
+    "oneononones",
+    "management",
+    "ai",
+    "indiedev",
+    "webdev"
+  ],
+  "x": {
+    "tweet": "Your 1:1 notes are full of patterns you're missing. Run them through an AI built for management, not sales calls, and watch the themes emerge.",
+    "reply_lead": "free, runs in your browser"
+  },
+  "vertical_caption": "Your 1:1 notes are full of patterns. Paste them, get the recurring themes you stopped noticing, the followups you actually owe, and conversation starters for next time. Free.",
+  "shorts_description_lead": "Tired of one-on-one notes that tell you nothing? Paste your raw notes and surface the themes, forgotten followups, and talking points you actually need.",
+  "video": {
+    "title": "Pattern Recognition for Your 1:1s",
+    "script": "You take meeting notes but never actually review them. Next week comes, same conversation. You're missing the patterns hiding in your own writing. This tool does one thing: paste your raw 1:1 notes and it surfaces what you stopped noticing. Recurring themes your team keeps bringing up. Followups you forgot you owed. Prompts to open stronger next time. Built for management, not sales calls. Free, runs in your browser. Link in the description.",
+    "word_count": 73
+  }
+}

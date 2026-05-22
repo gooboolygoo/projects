@@ -1,0 +1,21 @@
+title: Guestmap
+blurb: "Stop spending three hours on Wikipedia before each podcast guest. Type their name, get the dossier: what they're newly excited about, the themes they always default to, and four questions they haven't been asked yet. Free, runs in your browser."
+tags:
+  - podcast
+  - creator
+  - ai
+  - product
+donate: true
+demo:
+  setup:
+    - { action: scroll_to, selector: "#root" }
+  steps:
+    - { action: wait, duration_s: 3 }
+    - { action: click, selector: '[data-testid="try-sample"]' }
+    - { action: wait, duration_s: 1.5 }
+    - { action: scroll_to, selector: "#input-panel" }
+    - { action: wait, duration_s: 1 }
+    - { action: click, selector: '[data-testid="analyze-btn"]' }
+    - { action: wait, duration_s: 3.5 }
+    - { action: scroll_to, selector: '[data-testid="summary"]' }
+    - { action: wait, duration_s: 7 }

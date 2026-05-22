@@ -1,0 +1,23 @@
+{
+  "generated_at": "2026-05-22T01:59:39.613Z",
+  "model": "claude-haiku-4-5",
+  "url": "https://gooboolygoo.github.io/projects/readlater/",
+  "hashtags": [
+    "readlater",
+    "productivity",
+    "webdev",
+    "indiedev",
+    "ai"
+  ],
+  "x": {
+    "tweet": "You have 2,400 saved links you'll never read. Stack turns that pile into actual skimmable summaries: paste a link, get the TL;DR, key passages, a tag. No signup, runs in your browser.",
+    "reply_lead": "try it now ↓"
+  },
+  "vertical_caption": "Your reading list is buried. Paste a link into Stack, get a TL;DR and key passages your brain might actually process, plus a tag so future-you can find it.",
+  "shorts_description_lead": "Your reading pile doesn't need more links. It needs summaries you'll actually skim. Paste, get key passages and tags, find them later.",
+  "video": {
+    "title": "Reading List That Actually Works",
+    "script": "You're sitting on thousands of saved links. You'll read maybe fifty. Stack fixes that. Paste any link, get back a short summary, the passages that matter, and a tag. When you actually need it later, you can find it again without scrolling forever. No signup, no ads, just runs right in your browser. Try it now.",
+    "word_count": 56
+  }
+}

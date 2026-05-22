@@ -1,0 +1,21 @@
+title: Otterly Different
+blurb: Every AI meeting note tool is built for sales calls. Your 1:1s deserve better. Paste raw notes, get the recurring themes you stopped noticing, the followups you owe but forgot, and the prompts to open next time. Free, runs in your browser.
+tags:
+  - management
+  - meetings
+  - ai
+  - product
+donate: true
+demo:
+  setup:
+    - { action: scroll_to, selector: "#root" }
+  steps:
+    - { action: wait, duration_s: 3 }
+    - { action: click, selector: '[data-testid="try-sample"]' }
+    - { action: wait, duration_s: 1.5 }
+    - { action: scroll_to, selector: "#input-panel" }
+    - { action: wait, duration_s: 1 }
+    - { action: click, selector: '[data-testid="analyze-btn"]' }
+    - { action: wait, duration_s: 3.5 }
+    - { action: scroll_to, selector: '[data-testid="summary"]' }
+    - { action: wait, duration_s: 6 }

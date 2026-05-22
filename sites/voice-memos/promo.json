@@ -1,0 +1,23 @@
+{
+  "generated_at": "2026-05-22T01:59:43.773Z",
+  "model": "claude-haiku-4-5",
+  "url": "https://gooboolygoo.github.io/projects/voice-memos/",
+  "hashtags": [
+    "voicememos",
+    "productivity",
+    "aitools",
+    "buildinpublic",
+    "notes"
+  ],
+  "x": {
+    "tweet": "Your voice memos are full of ideas you never acted on. Paste the transcript, get the actual notes: what needs doing, what you're stuck on, what's worth remembering.",
+    "reply_lead": "try it free →"
+  },
+  "vertical_caption": "You record voice memos but forget to write them down. Paste a transcript, get the actions, the open questions, and the themes worth keeping 📝",
+  "shorts_description_lead": "Tired of voice memos that go nowhere? Paste the transcript and get structured notes: actions, open questions, and key themes. All in your browser, no signup needed.",
+  "video": {
+    "title": "Turn Voice Memos Into Notes",
+    "script": "You record three voice memos a week. But by Friday, you can't remember what any of them were about. Memo Sense fixes that. Paste your transcript, and it pulls out what actually matters: the concrete actions you need to take, the open questions still bugging you, and the themes worth writing down. No account, no friction, runs right in your browser. Try it now.",
+    "word_count": 64
+  }
+}

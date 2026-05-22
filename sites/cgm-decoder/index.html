@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Glucose Decoder. What your CGM is actually telling you.</title>
+<meta name="description" content="Levels and Lingo give you glucose data but no idea what to do with it. Paste a week of readings and get the patterns, the meals that spike you, and the changes that would actually matter.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..900&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script crossorigin src="https://unpkg.com/react@18.3.1/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone@7.24.7/babel.min.js"></script>
+<style>html,body{margin:0;padding:0;background:#0D1411}.__loading{font-family:Inter,system-ui,sans-serif;color:#888;text-align:center;padding-top:200px;font-size:16px}</style>
+</head>
+<body>
+<div id="root"><div class="__loading">Loading...</div></div>
+<script type="text/babel" data-presets="react">
+const { useState } = React;
+const SAMPLE = `Date,Time,Glucose (mg/dL),Note
+2026-05-14,07:30,92,
+2026-05-14,08:00,98,oatmeal+banana
+2026-05-14,09:30,168,
+2026-05-14,10:30,184,
+2026-05-14,12:00,121,
+2026-05-14,12:30,108,salad+chicken
+2026-05-14,14:00,124,
+2026-05-14,15:00,118,
+2026-05-14,18:30,103,pasta dinner
+2026-05-14,19:30,189,
+2026-05-14,20:30,176,
+2026-05-14,22:00,138,
+[~672 more rows over 7 days]`;
+const MOCK = {
+  avg: 108, time_in_range: 78, spikes: 12,
+  patterns: [
+    { p: "Your oatmeal-and-banana breakfast spikes you to 184", why: "Even 'healthy' breakfasts of fast carbs without protein push non-diabetics to 180+. Your peak was 90 minutes post-meal. Acceptable peak under 140.", fix: "Add 20g protein (eggs, Greek yogurt) before the carbs. Same banana, different curve. Aim for peak under 140, return to baseline by 2hr." },
+    { p: "Pasta dinner spike held for 3.5 hours", why: "White pasta at 7pm + sedentary evening = sustained 170s well into sleep. Sleep glucose >140 reduces deep-sleep proportion by ~20%.", fix: "Walk 10 minutes immediately after dinner. Cuts the post-prandial peak by 30-50%. Or eat pasta at lunch when you'll move." },
+    { p: "Dawn phenomenon: you wake at 110, not 92", why: "Cortisol releases at 4-6am to prepare you to wake. For some non-diabetics this pushes morning glucose 15-25 above true fasting.", fix: "Not actionable, just don't blame breakfast. Your real fasting number is the 2am reading, not 7am." },
+    { p: "Walk-after-meal sessions averaged 12 mg/dL lower peaks", why: "Skeletal muscle uses glucose without insulin during light exercise. The biggest known free intervention.", fix: "Walk for 10-15 min after every meal that includes >40g carbs. No exceptions. The data is loud about this one." }
+  ]
+};
+const delay = (ms) => new Promise(r => setTimeout(r, ms));
+function App(){
+  const [text, setText] = useState("");
+  const [view, setView] = useState("landing");
+  const [out, setOut] = useState(null);
+  async function go(){ if(!text.trim()) return; setView("analyzing"); await delay(2200); setOut(MOCK); setView("results"); setTimeout(()=>document.getElementById("results")?.scrollIntoView({behavior:"smooth"}),80); }
+  function loadSample(){ setText(SAMPLE); setView("landing"); }
+  const P={bg:"#0D1411",ink:"#E8EAED",inkSoft:"#B0B8C4",card:"#161E1A",paper:"#1D2922",rule:"#2A3530",accent:"#34D399",warn:"#FBBF24",mute:"#7A8595"};
+  const wrap={maxWidth:820,margin:"0 auto",padding:"64px 24px 96px"};
+  const display="'Fraunces',Georgia,serif",sans="Inter,system-ui,sans-serif",mono="'JetBrains Mono',ui-monospace,monospace";
+  return <div style={{background:P.bg,color:P.ink,fontFamily:sans,minHeight:"100vh"}}>
+    <header style={wrap}>
+      <div data-testid="eyebrow" style={{fontFamily:mono,fontSize:11,color:P.accent,letterSpacing:"0.2em",textTransform:"uppercase",marginBottom:32}}>For Levels, Lingo, Stelo, and Nutrisense users</div>
+      <h1 style={{fontFamily:display,fontWeight:400,fontSize:"clamp(46px,7vw,80px)",lineHeight:0.97,letterSpacing:"-0.035em",margin:0}}>You paid $200 for a<br/>CGM and got a chart.<br/><em style={{fontStyle:"italic",color:P.accent}}>What now?</em></h1>
+      <p style={{fontFamily:display,fontSize:22,fontStyle:"italic",lineHeight:1.45,color:P.inkSoft,margin:"32px 0 28px",maxWidth:600}}>Levels and Lingo will tell you your glucose hit 184 after lunch. They will not tell you it was the banana, not the oatmeal, that caused it. Or that the post-meal walk you skipped would have cut the peak by 50 mg/dL. Paste a week of readings and get the patterns and the four changes that would actually move your numbers.</p>
+      <div style={{display:"flex",flexWrap:"wrap",gap:16,alignItems:"center"}}>
+        <button data-testid="try-sample" onClick={loadSample} style={{fontFamily:sans,fontSize:16,fontWeight:600,background:P.accent,color:"#0A1A0F",border:"none",padding:"16px 28px",borderRadius:4,cursor:"pointer"}}>Try with a week of sample data →</button>
+        <span style={{fontFamily:mono,fontSize:11,color:P.mute,letterSpacing:0.1,textTransform:"uppercase"}}>· free · runs in your browser</span>
+      </div>
+      <div style={{marginTop:64,paddingTop:32,borderTop:`1px solid ${P.rule}`,display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:32}}>
+        {[{n:"140 mg/dL",l:"max healthy peak",s:"after a meal for non-diabetics"},{n:"30-50%",l:"peak reduction",s:"from a 10-minute walk immediately after"},{n:"4 hr",l:"sleep glucose stays high",s:"after a late-evening pasta dinner"}].map((s,i)=>(<div key={i}><div style={{fontFamily:display,fontSize:36,fontWeight:500,color:P.accent,lineHeight:1,letterSpacing:"-0.02em"}}>{s.n}</div><div style={{fontFamily:sans,fontSize:14,fontWeight:600,marginTop:8}}>{s.l}</div><div style={{fontFamily:sans,fontSize:13,color:P.mute,marginTop:4,lineHeight:1.5}}>{s.s}</div></div>))}
+      </div>
+    </header>
+    <section style={{...wrap,paddingTop:0}}>
+      <div id="input-panel" style={{background:P.paper,border:`1px solid ${P.rule}`,borderRadius:6,padding:28}}>
+        <div style={{fontFamily:mono,fontSize:11,color:P.accent,letterSpacing:"0.18em",textTransform:"uppercase",marginBottom:16}}>Step 1 of 2 · Paste your CGM export</div>
+        <textarea data-testid="bill-input" value={text} onChange={e=>setText(e.target.value)} placeholder="Export from Levels, Lingo, or Stelo. CSV or just the readings." style={{width:"100%",minHeight:200,fontFamily:mono,fontSize:13,lineHeight:1.55,color:P.ink,border:`1px solid ${P.rule}`,borderRadius:4,padding:"14px 16px",outline:"none",background:P.bg,resize:"vertical"}}/>
+        <div style={{display:"flex",justifyContent:"flex-end",marginTop:16}}>
+          <button data-testid="analyze-btn" onClick={go} disabled={!text.trim()||view==="analyzing"} style={{fontFamily:sans,fontSize:15,fontWeight:600,background:text.trim()&&view!=="analyzing"?P.accent:P.rule,color:text.trim()&&view!=="analyzing"?"#0A1A0F":P.mute,border:"none",padding:"12px 24px",borderRadius:4,cursor:text.trim()&&view!=="analyzing"?"pointer":"not-allowed"}}>{view==="analyzing"?"Reading your week...":"Find my patterns  →"}</button>
+        </div>
+      </div>
+    </section>
+    {view==="results"&&out&&<section id="results" style={{...wrap,paddingTop:32}}>
+      <div data-testid="summary" style={{background:P.card,border:`1px solid ${P.rule}`,borderRadius:6,padding:28,marginBottom:24,display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:24}}>
+        {[{n:out.avg+" mg/dL",l:"weekly average"},{n:out.time_in_range+"%",l:"time in range (70-140)"},{n:out.spikes,l:"meals that hit 170+"}].map((s,i)=>(<div key={i}><div style={{fontFamily:display,fontSize:32,fontWeight:500,color:P.accent}}>{s.n}</div><div style={{fontFamily:sans,fontSize:12,color:P.mute,marginTop:4,textTransform:"uppercase",letterSpacing:0.1}}>{s.l}</div></div>))}
+      </div>
+      {out.patterns.map((p,i)=>(<div key={i} style={{background:P.card,border:`1px solid ${P.rule}`,borderLeft:`4px solid ${P.accent}`,borderRadius:4,padding:"22px 26px",marginBottom:14}}>
+        <div style={{fontFamily:sans,fontSize:16,fontWeight:600,marginBottom:8}}>{p.p}</div>
+        <div style={{fontFamily:sans,fontSize:14,color:P.inkSoft,lineHeight:1.55,marginBottom:12}}>{p.why}</div>
+        <div style={{padding:"10px 14px",background:"rgba(52,211,153,0.07)",borderLeft:`2px solid ${P.accent}`,borderRadius:2}}>
+          <div style={{fontFamily:mono,fontSize:10,color:P.accent,letterSpacing:0.18,textTransform:"uppercase",marginBottom:4}}>change to make</div>
+          <div style={{fontFamily:sans,fontSize:14,color:P.ink,lineHeight:1.55}}>{p.fix}</div>
+        </div>
+      </div>))}
+    </section>}
+    <footer style={{...wrap,paddingTop:32,paddingBottom:56,borderTop:`1px solid ${P.rule}`}}>
+      <div style={{fontFamily:mono,fontSize:11,color:P.mute,textAlign:"center",lineHeight:1.65}}>For wellness use, not for diabetics. Not medical advice. If diabetic, work with your endocrinologist. Reference ranges from ADA, ATTD consensus, and Levels published research.</div>
+    </footer>
+  </div>;
+}
+const root = ReactDOM.createRoot(document.getElementById("root")); root.render(<App/>);
+</script>
+<script data-name="BMC-Widget" data-cfasync="false" src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js" data-id="gooboolygoo" data-description="Support me on Buy me a coffee!" data-message="Love this project? Donate to keep it going" data-color="#5F7FFF" data-position="Right" data-x_margin="18" data-y_margin="18"></script>
+</body>
+</html>

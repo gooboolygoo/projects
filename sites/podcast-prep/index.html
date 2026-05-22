@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Guestmap. Podcast guest dossier in 90 seconds.</title>
+<meta name="description" content="Stop spending three hours on Wikipedia before each podcast guest. Type a name, get the dossier."><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..900&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script crossorigin src="https://unpkg.com/react@18.3.1/umd/react.production.min.js"></script><script crossorigin src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js"></script><script src="https://unpkg.com/@babel/standalone@7.24.7/babel.min.js"></script>
+<style>html,body{margin:0;padding:0;background:#0F0E0B}.__loading{font-family:Inter,system-ui,sans-serif;color:#888;text-align:center;padding-top:200px}</style></head><body>
+<div id="root"><div class="__loading">Loading...</div></div>
+<script type="text/babel" data-presets="react">
+const { useState } = React;
+const SAMPLE = "Cal Newport";
+const MOCK = { name: "Cal Newport", role: "Computer scientist at Georgetown, author of Deep Work, Slow Productivity",
+  recent: ["May 2026: published Slow Productivity in paperback","April 2026: NYT op-ed on attention residue and meetings","Q1 2026: relaunched Study Hacks blog with weekly cadence"],
+  talking_points: ["The 'pseudo-productivity' frame: knowledge workers were never given a definition of productivity, so they substituted visible activity","Why most calendar-blocking advice fails","His critique of Slack/email as the actual full-time job","Why he writes in longhand"],
+  themes_across_interviews: ["Always tells the 'four laws of productivity' story; have him skip it","Defensive when challenged on tenure-track privilege; better to ask him to acknowledge it up front","Comes alive on the 'craft' vs 'output' distinction"],
+  questions_to_ask: ["What's something you believed five years ago about productivity that you now think is wrong?","The book mentions 'do fewer things' but you wrote four books in six years. Reconcile that.","Where does AI fit in the slow-productivity frame? You've been quiet on it.","Your kids will enter a workforce shaped by agents. What advice are you giving them, specifically?"],
+  questions_to_avoid: ["What is deep work? (he's tired of explaining it)","Tell us about your background (covered in every other interview)"] };
+const delay = (ms) => new Promise(r => setTimeout(r, ms));
+function App(){
+  const [name, setName] = useState(""); const [view, setView] = useState("landing"); const [out, setOut] = useState(null);
+  async function go(){ if(!name.trim()) return; setView("loading"); await delay(2200); setOut(MOCK); setView("results"); setTimeout(()=>document.getElementById("results")?.scrollIntoView({behavior:"smooth"}),80); }
+  const P={bg:"#0F0E0B",ink:"#E8E2D5",inkSoft:"#B5AC9A",card:"#181612",paper:"#1F1C17",rule:"#322E27",accent:"#F59E0B",mute:"#7A7263"};
+  const wrap={maxWidth:820,margin:"0 auto",padding:"64px 24px 96px"};
+  const display="'Fraunces',Georgia,serif",sans="Inter,system-ui,sans-serif",mono="'JetBrains Mono',ui-monospace,monospace";
+  const input={fontFamily:sans,fontSize:16,color:P.ink,background:P.bg,border:`1px solid ${P.rule}`,borderRadius:4,padding:"12px 16px",width:"100%",outline:"none"};
+  return <div style={{background:P.bg,color:P.ink,fontFamily:sans,minHeight:"100vh"}}>
+    <header style={wrap}>
+      <div data-testid="eyebrow" style={{fontFamily:mono,fontSize:11,color:P.accent,letterSpacing:"0.2em",textTransform:"uppercase",marginBottom:32}}>For podcasters with a guest in 24 hours</div>
+      <h1 style={{fontFamily:display,fontWeight:400,fontSize:"clamp(46px,7vw,80px)",lineHeight:0.97,letterSpacing:"-0.035em",margin:0}}>Your guest is<br/>tired of <em style={{fontStyle:"italic",color:P.accent}}>the same<br/>three questions.</em></h1>
+      <p style={{fontFamily:display,fontSize:22,fontStyle:"italic",lineHeight:1.45,color:P.inkSoft,margin:"32px 0 28px",maxWidth:600}}>You spent three hours on Wikipedia and recent appearances and came up with what every other host has already asked. Get a dossier that tells you what they're newly excited about, the themes they always default to, and four questions they haven't been asked yet.</p>
+      <button data-testid="try-sample" onClick={()=>setName(SAMPLE)} style={{fontFamily:sans,fontSize:16,fontWeight:600,background:P.accent,color:"#1A1408",border:"none",padding:"16px 28px",borderRadius:4,cursor:"pointer"}}>Try with Cal Newport →</button>
+    </header>
+    <section style={{...wrap,paddingTop:0}}>
+      <div id="input-panel" style={{background:P.paper,border:`1px solid ${P.rule}`,borderRadius:6,padding:28}}>
+        <div style={{fontFamily:mono,fontSize:11,color:P.accent,letterSpacing:"0.18em",textTransform:"uppercase",marginBottom:14}}>Step 1 of 2 · Your guest</div>
+        <input data-testid="name" value={name} onChange={e=>setName(e.target.value)} placeholder="Cal Newport" style={input}/>
+        <div style={{display:"flex",justifyContent:"flex-end",marginTop:16}}>
+          <button data-testid="analyze-btn" onClick={go} disabled={!name.trim()||view==="loading"} style={{fontFamily:sans,fontSize:15,fontWeight:600,background:name.trim()&&view!=="loading"?P.accent:P.rule,color:name.trim()&&view!=="loading"?"#1A1408":P.mute,border:"none",padding:"12px 24px",borderRadius:4,cursor:name.trim()&&view!=="loading"?"pointer":"not-allowed"}}>{view==="loading"?"Building dossier...":"Build my dossier  →"}</button>
+        </div>
+      </div>
+    </section>
+    {view==="results"&&out&&<section id="results" style={{...wrap,paddingTop:32}}>
+      <div data-testid="summary" style={{background:P.card,border:`1px solid ${P.rule}`,borderRadius:6,padding:28,marginBottom:24}}>
+        <div style={{fontFamily:mono,fontSize:11,color:P.accent,letterSpacing:"0.2em",textTransform:"uppercase",marginBottom:6}}>Guest</div>
+        <div style={{fontFamily:display,fontSize:32,fontWeight:500}}>{out.name}</div>
+        <div style={{fontFamily:sans,fontSize:14,color:P.inkSoft,marginTop:6}}>{out.role}</div>
+      </div>
+      {[{t:"Newly excited about (last 60 days)",items:out.recent,c:P.accent},{t:"Talking points to draw out",items:out.talking_points,c:P.accent},{t:"What they always default to (steer away)",items:out.themes_across_interviews,c:"#FBBF24"},{t:"Questions to actually ask",items:out.questions_to_ask,c:P.accent},{t:"Questions they're tired of",items:out.questions_to_avoid,c:"#EF4444"}].map((sec,i)=>(<div key={i} style={{background:P.card,border:`1px solid ${P.rule}`,borderLeft:`4px solid ${sec.c}`,borderRadius:4,padding:"20px 24px",marginBottom:14}}>
+        <div style={{fontFamily:mono,fontSize:11,color:sec.c,letterSpacing:0.18,textTransform:"uppercase",marginBottom:10}}>{sec.t}</div>
+        <ul style={{margin:0,paddingLeft:20,fontFamily:sans,fontSize:14,color:P.inkSoft,lineHeight:1.65}}>{sec.items.map((it,j)=>(<li key={j} style={{marginBottom:6}}>{it}</li>))}</ul>
+      </div>))}
+    </section>}
+    <footer style={{...wrap,paddingTop:32,paddingBottom:56,borderTop:`1px solid ${P.rule}`}}>
+      <div style={{fontFamily:mono,fontSize:11,color:P.mute,textAlign:"center",lineHeight:1.65}}>Dossier content is illustrative in this demo. Production version aggregates recent interviews, blog posts, and public statements.</div>
+    </footer>
+  </div>;
+}
+const root = ReactDOM.createRoot(document.getElementById("root")); root.render(<App/>);
+</script>
+<script data-name="BMC-Widget" data-cfasync="false" src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js" data-id="gooboolygoo" data-description="Support me on Buy me a coffee!" data-message="Love this project? Donate to keep it going" data-color="#5F7FFF" data-position="Right" data-x_margin="18" data-y_margin="18"></script>
+</body></html>

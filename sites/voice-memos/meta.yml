@@ -1,0 +1,20 @@
+title: Memo Sense
+blurb: Voice memos rot in folders. The same three thoughts keep coming back because you never wrote them down. Paste a transcript, get the actions, the open questions, and the themes worth keeping. Free, runs in your browser.
+tags:
+  - productivity
+  - ai
+  - notes
+  - product
+donate: true
+demo:
+  setup: [{ action: scroll_to, selector: "#root" }]
+  steps:
+    - { action: wait, duration_s: 3 }
+    - { action: click, selector: '[data-testid="try-sample"]' }
+    - { action: wait, duration_s: 1.5 }
+    - { action: scroll_to, selector: "#input-panel" }
+    - { action: wait, duration_s: 1 }
+    - { action: click, selector: '[data-testid="analyze-btn"]' }
+    - { action: wait, duration_s: 3 }
+    - { action: scroll_to, selector: '[data-testid="summary"]' }
+    - { action: wait, duration_s: 6 }

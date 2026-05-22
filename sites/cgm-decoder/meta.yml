@@ -1,0 +1,21 @@
+title: Glucose Decoder
+blurb: Levels and Lingo give you glucose data but no idea what to do with it. Paste a week of CGM readings and get the patterns, the meals that spike you, and the four changes that would actually move your numbers. Free, runs in your browser.
+tags:
+  - health
+  - cgm
+  - wellness
+  - product
+donate: true
+demo:
+  setup:
+    - { action: scroll_to, selector: "#root" }
+  steps:
+    - { action: wait, duration_s: 3 }
+    - { action: click, selector: '[data-testid="try-sample"]' }
+    - { action: wait, duration_s: 1.5 }
+    - { action: scroll_to, selector: "#input-panel" }
+    - { action: wait, duration_s: 1 }
+    - { action: click, selector: '[data-testid="analyze-btn"]' }
+    - { action: wait, duration_s: 3.5 }
+    - { action: scroll_to, selector: '[data-testid="summary"]' }
+    - { action: wait, duration_s: 6 }

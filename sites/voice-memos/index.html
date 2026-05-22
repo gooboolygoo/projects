@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Memo Sense. Voice memos to actual notes.</title>
+<meta name="description" content="You record voice memos in the car and on walks. They sit in a folder. Get them turned into structured notes you can act on."><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..900&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script crossorigin src="https://unpkg.com/react@18.3.1/umd/react.production.min.js"></script><script crossorigin src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js"></script><script src="https://unpkg.com/@babel/standalone@7.24.7/babel.min.js"></script>
+<style>html,body{margin:0;padding:0;background:#161214}.__loading{font-family:Inter,system-ui,sans-serif;color:#888;text-align:center;padding-top:200px}</style></head><body>
+<div id="root"><div class="__loading">Loading...</div></div>
+<script type="text/babel" data-presets="react">
+const { useState } = React;
+const SAMPLE = "Okay so I'm thinking about this onboarding flow. We had three calls this week and people kept getting stuck at the same place which is the like the third screen where we ask them to connect their bank. Half of them just bounced out so the conversion data is terrible. Also Sarah mentioned that we should maybe try doing the bank connect after they've already seen value. Oh and I need to remember to ping Marcus about the design review on Tuesday. Hmm what else. The pricing page A/B test is winding down on Friday so we'll have numbers next week. I want to think about whether $39 is actually too low.";
+const MOCK = {
+  topic: "Onboarding conversion + open loops",
+  summary: "Bank-connect step on screen 3 is killing conversion. Sarah suggested moving it post-value. Adjacent threads: Marcus design review reminder, pricing A/B wrap Friday, and revisit whether $39 is too low.",
+  actions: [{ a: "Move bank-connect step to after first value moment", urg: "this week", why: "Three calls this week confirmed the drop-off pattern" },{ a: "Ping Marcus about Tuesday design review", urg: "today", why: "Mentioned mid-ramble; you will forget" },{ a: "Wait for Friday pricing A/B numbers before changing", urg: "Friday", why: "Test still running; decision blocked on data" },{ a: "Schedule pricing review meeting", urg: "next week", why: "Open question: is $39 too low? Doesn't get answered without forcing it" }],
+  themes: ["Conversion: third-screen drop-off is the consistent friction","Pricing: $39 is up for debate, but waiting on data"],
+  questions_to_resolve: ["What is the value moment we're moving bank-connect after?","If $39 is wrong, what's the next price point we'd test?"]
+};
+const delay = (ms) => new Promise(r => setTimeout(r, ms));
+function App(){
+  const [text, setText] = useState(""); const [view, setView] = useState("landing"); const [out, setOut] = useState(null);
+  async function go(){ if(!text.trim()) return; setView("loading"); await delay(2000); setOut(MOCK); setView("results"); setTimeout(()=>document.getElementById("results")?.scrollIntoView({behavior:"smooth"}),80); }
+  const P={bg:"#161214",ink:"#E8EAED",inkSoft:"#B0B8C4",card:"#1F1A1C",paper:"#251F22",rule:"#3A3134",accent:"#F472B6",mute:"#7A6F73"};
+  const wrap={maxWidth:820,margin:"0 auto",padding:"64px 24px 96px"};
+  const display="'Fraunces',Georgia,serif",sans="Inter,system-ui,sans-serif",mono="'JetBrains Mono',ui-monospace,monospace";
+  return <div style={{background:P.bg,color:P.ink,fontFamily:sans,minHeight:"100vh"}}>
+    <header style={wrap}>
+      <div data-testid="eyebrow" style={{fontFamily:mono,fontSize:11,color:P.accent,letterSpacing:"0.2em",textTransform:"uppercase",marginBottom:32}}>For anyone with 47 unplayed voice memos</div>
+      <h1 style={{fontFamily:display,fontWeight:400,fontSize:"clamp(46px,7vw,80px)",lineHeight:0.97,letterSpacing:"-0.035em",margin:0}}>You had a great<br/>idea in the car.<br/><em style={{fontStyle:"italic",color:P.accent}}>Now what?</em></h1>
+      <p style={{fontFamily:display,fontSize:22,fontStyle:"italic",lineHeight:1.45,color:P.inkSoft,margin:"32px 0 28px",maxWidth:600}}>Voice memos rot in folders. The same three thoughts keep coming back because you never wrote them down. Paste a transcript, get the actions, the open questions, and the themes worth keeping.</p>
+      <button data-testid="try-sample" onClick={()=>setText(SAMPLE)} style={{fontFamily:sans,fontSize:16,fontWeight:600,background:P.accent,color:"#16080F",border:"none",padding:"16px 28px",borderRadius:4,cursor:"pointer"}}>Try with a rambling sample →</button>
+    </header>
+    <section style={{...wrap,paddingTop:0}}>
+      <div id="input-panel" style={{background:P.paper,border:`1px solid ${P.rule}`,borderRadius:6,padding:28}}>
+        <div style={{fontFamily:mono,fontSize:11,color:P.accent,letterSpacing:"0.18em",textTransform:"uppercase",marginBottom:14}}>Step 1 of 2 · Your transcript</div>
+        <textarea data-testid="bill-input" value={text} onChange={e=>setText(e.target.value)} placeholder="Paste a voice memo transcript, or just type the rambling version" style={{width:"100%",minHeight:160,fontFamily:sans,fontSize:14,lineHeight:1.55,color:P.ink,border:`1px solid ${P.rule}`,borderRadius:4,padding:"14px 16px",outline:"none",background:P.bg,resize:"vertical"}}/>
+        <div style={{display:"flex",justifyContent:"flex-end",marginTop:14}}>
+          <button data-testid="analyze-btn" onClick={go} disabled={!text.trim()||view==="loading"} style={{fontFamily:sans,fontSize:15,fontWeight:600,background:text.trim()&&view!=="loading"?P.accent:P.rule,color:text.trim()&&view!=="loading"?"#16080F":P.mute,border:"none",padding:"12px 24px",borderRadius:4,cursor:text.trim()&&view!=="loading"?"pointer":"not-allowed"}}>{view==="loading"?"Listening...":"Make sense of this  →"}</button>
+        </div>
+      </div>
+    </section>
+    {view==="results"&&out&&<section id="results" style={{...wrap,paddingTop:32}}>
+      <div data-testid="summary" style={{background:P.card,border:`1px solid ${P.rule}`,borderRadius:6,padding:28,marginBottom:24}}>
+        <div style={{fontFamily:mono,fontSize:11,color:P.accent,letterSpacing:0.2,textTransform:"uppercase",marginBottom:6}}>Topic</div>
+        <div style={{fontFamily:display,fontSize:24,fontWeight:500,marginBottom:12}}>{out.topic}</div>
+        <div style={{fontFamily:sans,fontSize:14,color:P.inkSoft,lineHeight:1.6}}>{out.summary}</div>
+      </div>
+      <div style={{background:P.card,border:`1px solid ${P.rule}`,borderLeft:`4px solid ${P.accent}`,borderRadius:4,padding:"22px 26px",marginBottom:14}}>
+        <div style={{fontFamily:mono,fontSize:11,color:P.accent,letterSpacing:0.18,textTransform:"uppercase",marginBottom:12}}>Actions</div>
+        {out.actions.map((a,i)=>(<div key={i} style={{padding:"10px 0",borderTop:i>0?`1px solid ${P.rule}`:"none"}}>
+          <div style={{display:"flex",justifyContent:"space-between",fontFamily:sans,fontSize:14,fontWeight:600,marginBottom:4}}>{a.a}<span style={{fontFamily:mono,fontSize:11,color:P.accent}}>{a.urg}</span></div>
+          <div style={{fontFamily:sans,fontSize:13,color:P.inkSoft}}>{a.why}</div>
+        </div>))}
+      </div>
+      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:14}}>
+        <div style={{background:P.card,border:`1px solid ${P.rule}`,borderRadius:4,padding:"18px 22px"}}>
+          <div style={{fontFamily:mono,fontSize:10,color:P.mute,letterSpacing:0.18,textTransform:"uppercase",marginBottom:10}}>Themes worth saving</div>
+          <ul style={{margin:0,paddingLeft:18,fontFamily:sans,fontSize:13,color:P.inkSoft,lineHeight:1.6}}>{out.themes.map((t,i)=>(<li key={i} style={{marginBottom:5}}>{t}</li>))}</ul>
+        </div>
+        <div style={{background:P.card,border:`1px solid ${P.rule}`,borderRadius:4,padding:"18px 22px"}}>
+          <div style={{fontFamily:mono,fontSize:10,color:P.mute,letterSpacing:0.18,textTransform:"uppercase",marginBottom:10}}>Open questions</div>
+          <ul style={{margin:0,paddingLeft:18,fontFamily:sans,fontSize:13,color:P.inkSoft,lineHeight:1.6}}>{out.questions_to_resolve.map((q,i)=>(<li key={i} style={{marginBottom:5}}>{q}</li>))}</ul>
+        </div>
+      </div>
+    </section>}
+    <footer style={{...wrap,paddingTop:32,paddingBottom:56,borderTop:`1px solid ${P.rule}`}}>
+      <div style={{fontFamily:mono,fontSize:11,color:P.mute,textAlign:"center",lineHeight:1.65}}>Demo uses canned analysis. Production version handles audio upload and Whisper transcription locally.</div>
+    </footer>
+  </div>;
+}
+const root = ReactDOM.createRoot(document.getElementById("root")); root.render(<App/>);
+</script>
+<script data-name="BMC-Widget" data-cfasync="false" src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js" data-id="gooboolygoo" data-description="Support me on Buy me a coffee!" data-message="Love this project? Donate to keep it going" data-color="#5F7FFF" data-position="Right" data-x_margin="18" data-y_margin="18"></script>
+</body></html>

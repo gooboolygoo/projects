@@ -1,0 +1,20 @@
+title: Stack
+blurb: Pocket is done. Instapaper is sleepy. You have 2,400 saves you'll never read. Paste a link, get a TL;DR you'll actually skim, the key passages, and a tag so future-you can find it again. Free, runs in your browser.
+tags:
+  - reading
+  - ai
+  - productivity
+  - product
+donate: true
+demo:
+  setup: [{ action: scroll_to, selector: "#root" }]
+  steps:
+    - { action: wait, duration_s: 3 }
+    - { action: click, selector: '[data-testid="try-sample"]' }
+    - { action: wait, duration_s: 1.5 }
+    - { action: scroll_to, selector: "#input-panel" }
+    - { action: wait, duration_s: 1 }
+    - { action: click, selector: '[data-testid="analyze-btn"]' }
+    - { action: wait, duration_s: 3.5 }
+    - { action: scroll_to, selector: '[data-testid="summary"]' }
+    - { action: wait, duration_s: 6 }
