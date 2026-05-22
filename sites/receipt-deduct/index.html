@@ -1,0 +1,87 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Schedule C. Receipts to deductions, in plain English.</title>
+<meta name="description" content="You are self-employed. You have $2,400 in receipts in a shoebox. Most of them are deductible. Paste the list, get the Schedule C category for each, the IRS line number, and the deduction you're leaving on the table.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..900&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script crossorigin src="https://unpkg.com/react@18.3.1/umd/react.production.min.js"></script><script crossorigin src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js"></script><script src="https://unpkg.com/@babel/standalone@7.24.7/babel.min.js"></script>
+<style>html,body{margin:0;padding:0;background:#F5F1E8}.__loading{font-family:Inter,system-ui;color:#888;text-align:center;padding-top:200px}</style></head><body>
+<div id="root"><div class="__loading">Loading...</div></div>
+<script type="text/babel" data-presets="react">
+const { useState } = React;
+const SAMPLE = `Adobe Creative Cloud $59.99
+Notion Personal Pro $96
+Home internet (50% used for work) $80/mo
+Coffee meeting with client $24
+Standing desk $389
+Mailchimp annual $324
+Lyft to airport for conference $42
+Conference ticket $895
+Hotel for conference (2 nights) $440
+Lunch alone at conference $18
+Coursera AI specialization $399
+Costco bulk paper towels $32`;
+const MOCK = {
+  total_pasted: 12, deductible: 11, total_deduction: 2737.99, est_tax_saved: 821,
+  items: [
+    { input:"Adobe Creative Cloud $59.99/mo", amt:60, cat:"Other expenses", line:"Sch C Line 27a", note:"Software subscriptions are fully deductible. Annualize: $720/yr." },
+    { input:"Notion Personal Pro $96", amt:96, cat:"Other expenses", line:"Sch C Line 27a", note:"Productivity software. Fully deductible if used for business." },
+    { input:"Home internet (50% used for work) $80/mo", amt:480, cat:"Utilities", line:"Sch C Line 25", note:"Only the business-use percentage. 50% × $960/yr = $480. Keep a contemporaneous usage log." },
+    { input:"Coffee meeting with client $24", amt:12, cat:"Meals", line:"Sch C Line 24b", note:"Meals are 50% deductible. Note the client name and topic in your records." },
+    { input:"Standing desk $389", amt:389, cat:"Office equipment", line:"Sch C Line 22 (or §179)", note:"De minimis safe harbor lets you expense items under $2,500 in one year." },
+    { input:"Mailchimp annual $324", amt:324, cat:"Other expenses", line:"Sch C Line 27a", note:"Email marketing subscription. Fully deductible." },
+    { input:"Lyft to airport for conference $42", amt:42, cat:"Travel", line:"Sch C Line 24a", note:"Business travel transport. Fully deductible." },
+    { input:"Conference ticket $895", amt:895, cat:"Travel", line:"Sch C Line 24a (registration)", note:"Conference registration fees are fully deductible business travel." },
+    { input:"Hotel for conference (2 nights) $440", amt:440, cat:"Travel", line:"Sch C Line 24a", note:"Lodging during business travel is fully deductible." },
+    { input:"Lunch alone at conference $18", amt:9, cat:"Meals", line:"Sch C Line 24b", note:"Solo meals during business travel are 50% deductible." },
+    { input:"Coursera AI specialization $399", amt:0, cat:"NOT deductible", line:"—", note:"New-skill education is generally not deductible (IRS treats it as personal). Education to maintain/improve current job skills can be. AI is arguably either; conservative answer is no." },
+    { input:"Coursera AI specialization $399 (if used for current job)", amt:399, cat:"Other expenses", line:"Sch C Line 27a", note:"If you can show this directly improves your current consulting work, it qualifies." },
+    { input:"Costco bulk paper towels $32", amt:0, cat:"NOT deductible", line:"—", note:"Personal household items. Office paper towels are deductible if you have a dedicated home office (Sch C Line 22)." }
+  ]
+};
+const delay = (ms) => new Promise(r => setTimeout(r, ms));
+function App(){
+  const [text,setText]=useState(""); const [view,setView]=useState("landing"); const [out,setOut]=useState(null);
+  async function go(){ if(!text.trim())return; setView("analyzing"); await delay(2200); setOut(MOCK); setView("results"); setTimeout(()=>document.getElementById("results")?.scrollIntoView({behavior:"smooth"}),80); }
+  function loadSample(){ setText(SAMPLE); setView("landing"); }
+  const P={bg:"#F5F1E8",ink:"#1F1B16",inkSoft:"#5A544A",card:"#FFFFFF",rule:"#D9D2C2",accent:"#16A34A",ok:"#15803D",no:"#9CA3AF",mute:"#8A8275"};
+  const wrap={maxWidth:820,margin:"0 auto",padding:"64px 24px 96px"};
+  const display="'Fraunces',Georgia,serif",sans="Inter,system-ui,sans-serif",mono="'JetBrains Mono',ui-monospace,monospace";
+  return <div style={{background:P.bg,color:P.ink,fontFamily:sans,minHeight:"100vh"}}>
+    <header style={wrap}>
+      <div data-testid="eyebrow" style={{fontFamily:mono,fontSize:11,color:P.accent,letterSpacing:"0.2em",textTransform:"uppercase",marginBottom:32}}>For self-employed people, year-round or April panic</div>
+      <h1 style={{fontFamily:display,fontWeight:400,fontSize:"clamp(46px,7vw,82px)",lineHeight:0.97,letterSpacing:"-0.035em",margin:0}}>Your shoebox of<br/>receipts is worth<br/><em style={{fontStyle:"italic",color:P.accent}}>$821 in tax.</em></h1>
+      <p style={{fontFamily:display,fontSize:22,fontStyle:"italic",lineHeight:1.45,color:P.inkSoft,margin:"32px 0 28px",maxWidth:600}}>You are self-employed. You have a Notes app with line items, a shoebox of receipts, and dread. Paste them in. We tell you which Schedule C line each one belongs on, which 50%-rule applies, and the four things you bought that you should not deduct (and the conservative reason why).</p>
+      <div style={{display:"flex",flexWrap:"wrap",gap:16,alignItems:"center"}}>
+        <button data-testid="try-sample" onClick={loadSample} style={{fontFamily:sans,fontSize:16,fontWeight:600,background:P.accent,color:"#FFF",border:"none",padding:"16px 28px",borderRadius:4,cursor:"pointer"}}>Try with sample receipts →</button>
+        <span style={{fontFamily:mono,fontSize:11,color:P.mute,textTransform:"uppercase"}}>· free · runs in your browser</span>
+      </div>
+    </header>
+    <section style={{...wrap,paddingTop:0}}>
+      <div id="input-panel" style={{background:P.card,border:`1px solid ${P.rule}`,borderRadius:6,padding:28}}>
+        <div style={{fontFamily:mono,fontSize:11,color:P.accent,letterSpacing:"0.18em",textTransform:"uppercase",marginBottom:14}}>Step 1 of 2 · Paste receipts (one per line)</div>
+        <textarea data-testid="receipts-input" value={text} onChange={e=>setText(e.target.value)} placeholder="What you bought + amount + note. e.g. 'Adobe Creative Cloud $59.99/mo'" style={{width:"100%",minHeight:220,fontFamily:mono,fontSize:13,lineHeight:1.55,color:P.ink,border:`1px solid ${P.rule}`,borderRadius:4,padding:"14px 16px",outline:"none",background:P.bg,resize:"vertical"}}/>
+        <div style={{display:"flex",justifyContent:"flex-end",marginTop:14}}>
+          <button data-testid="analyze-btn" onClick={go} disabled={!text.trim()||view==="analyzing"} style={{fontFamily:sans,fontSize:15,fontWeight:600,background:text.trim()&&view!=="analyzing"?P.accent:P.rule,color:text.trim()&&view!=="analyzing"?"#FFF":P.mute,border:"none",padding:"12px 24px",borderRadius:4,cursor:text.trim()&&view!=="analyzing"?"pointer":"not-allowed"}}>{view==="analyzing"?"Categorizing...":"Sort my deductions →"}</button>
+        </div>
+      </div>
+    </section>
+    {view==="results"&&out&&<section id="results" style={{...wrap,paddingTop:32}}>
+      <div data-testid="summary" style={{background:P.card,border:`2px solid ${P.accent}`,borderRadius:6,padding:28,marginBottom:24}}>
+        <div style={{fontFamily:mono,fontSize:11,color:P.accent,letterSpacing:"0.2em",textTransform:"uppercase",marginBottom:8}}>Estimated tax saved</div>
+        <div style={{fontFamily:display,fontSize:"clamp(40px,5vw,56px)",fontWeight:500,color:P.accent,lineHeight:1}}>${out.est_tax_saved}</div>
+        <div style={{fontFamily:sans,fontSize:14,color:P.inkSoft,marginTop:8}}>from ${out.total_deduction.toFixed(2)} in deductions, assuming 30% effective rate (self-employment + federal + state).</div>
+      </div>
+      {out.items.map((it,i)=>(<div key={i} style={{background:P.card,border:`1px solid ${P.rule}`,borderLeft:`4px solid ${it.amt>0?P.ok:P.no}`,borderRadius:4,padding:"14px 22px",marginBottom:10}}>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"baseline",flexWrap:"wrap",gap:12}}>
+          <div style={{fontFamily:sans,fontSize:14,fontWeight:600}}>{it.input}</div>
+          <div style={{fontFamily:mono,fontSize:13,color:it.amt>0?P.ok:P.no}}>{it.amt>0?`$${it.amt} deductible`:"not deductible"}</div>
+        </div>
+        <div style={{fontFamily:mono,fontSize:11,color:P.mute,marginTop:4}}>{it.cat} · {it.line}</div>
+        <div style={{fontFamily:sans,fontSize:13,color:P.inkSoft,marginTop:6,lineHeight:1.55}}>{it.note}</div>
+      </div>))}
+    </section>}
+    <footer style={{...wrap,paddingTop:32,paddingBottom:56,borderTop:`1px solid ${P.rule}`}}><div style={{fontFamily:mono,fontSize:11,color:P.mute,textAlign:"center",lineHeight:1.65}}>Informational only, not tax advice. Categories follow current Schedule C and Pub 463/535. Consult a CPA for edge cases.</div></footer>
+  </div>;
+}
+const root = ReactDOM.createRoot(document.getElementById("root")); root.render(<App/>);
+</script>
+<script data-name="BMC-Widget" data-cfasync="false" src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js" data-id="gooboolygoo" data-description="Support me on Buy me a coffee!" data-message="Love this project? Donate to keep it going" data-color="#5F7FFF" data-position="Right" data-x_margin="18" data-y_margin="18"></script>
+</body></html>

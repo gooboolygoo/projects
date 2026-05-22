@@ -1,0 +1,23 @@
+{
+  "generated_at": "2026-05-22T03:06:26.538Z",
+  "model": "claude-haiku-4-5",
+  "url": "https://gooboolygoo.github.io/projects/honest-status/",
+  "hashtags": [
+    "devops",
+    "monitoring",
+    "statuspage",
+    "reliability",
+    "webdev"
+  ],
+  "x": {
+    "tweet": "Your status page just told the customer about the outage. Then your CEO asked who updated it. Spoiler: nobody had to.",
+    "reply_lead": "runs live right now"
+  },
+  "vertical_caption": "Status pages that refresh themselves. Five global regions, every 30 seconds, no human delays. What happens when the page can't lie?",
+  "shorts_description_lead": "A status page that probes your systems live, every 30 seconds from five regions worldwide. No human updates, no delays, no false reassurance.",
+  "video": {
+    "title": "A Status Page That Cannot Lie",
+    "script": "Most status pages get updated after your customers figure out something's broken. After the Slack thread is two pages deep. Honest Status works differently. It probes your systems live from five regions, every 30 seconds, with no human in the loop to delay it. The page shows what is actually happening right now because nobody can tell it otherwise. Check the link in the description.",
+    "word_count": 65
+  }
+}

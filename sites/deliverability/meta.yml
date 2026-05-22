@@ -1,0 +1,21 @@
+title: Inbox or Spam
+blurb: Your reply rate did not drop because of the subject line. Microsoft updated its DMARC enforcement in March. Gmail tightened unsubscribe headers in February. You do not get a warning email. The list just stops working. Type your sending domain and see where your last 500 sends actually landed.
+tags:
+  - email
+  - sales
+  - deliverability
+  - product
+donate: true
+demo:
+  setup:
+    - { action: scroll_to, selector: "#root" }
+  steps:
+    - { action: wait, duration_s: 3 }
+    - { action: click, selector: '[data-testid="try-sample"]' }
+    - { action: wait, duration_s: 1.5 }
+    - { action: scroll_to, selector: "#input-panel" }
+    - { action: wait, duration_s: 1 }
+    - { action: click, selector: '[data-testid="analyze-btn"]' }
+    - { action: wait, duration_s: 3.5 }
+    - { action: scroll_to, selector: '[data-testid="summary"]' }
+    - { action: wait, duration_s: 7 }

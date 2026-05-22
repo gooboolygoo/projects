@@ -1,0 +1,21 @@
+title: Honest Status
+blurb: Most status pages are updated by a human, after the customer noticed, after the incident chat is two pages long. Honest Status probes externally from five regions every 30 seconds. The page cannot lie because no one updates it.
+tags:
+  - devops
+  - monitoring
+  - product
+  - reliability
+donate: true
+demo:
+  setup:
+    - { action: scroll_to, selector: "#root" }
+  steps:
+    - { action: wait, duration_s: 3 }
+    - { action: click, selector: '[data-testid="try-sample"]' }
+    - { action: wait, duration_s: 1.5 }
+    - { action: scroll_to, selector: "#input-panel" }
+    - { action: wait, duration_s: 1 }
+    - { action: click, selector: '[data-testid="analyze-btn"]' }
+    - { action: wait, duration_s: 3 }
+    - { action: scroll_to, selector: '[data-testid="summary"]' }
+    - { action: wait, duration_s: 6 }

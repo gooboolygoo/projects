@@ -1,0 +1,81 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Etsy Ops. The dashboard Etsy will not give you.</title>
+<meta name="description" content="You run your Etsy shop from twelve browser tabs and a Google Sheet. Paste your shop name, get the one dashboard that shows orders, inventory, and the three listings hurting your search rank.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..900&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script crossorigin src="https://unpkg.com/react@18.3.1/umd/react.production.min.js"></script><script crossorigin src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js"></script><script src="https://unpkg.com/@babel/standalone@7.24.7/babel.min.js"></script>
+<style>html,body{margin:0;padding:0;background:#FAF5EE}.__loading{font-family:Inter,system-ui;color:#888;text-align:center;padding-top:200px}</style></head><body>
+<div id="root"><div class="__loading">Loading...</div></div>
+<script type="text/babel" data-presets="react">
+const { useState } = React;
+const SAMPLE = "TinyForestStudios";
+const MOCK = {
+  shop:"TinyForestStudios", last7:{orders:42,revenue:1856,refunds:1},
+  pending:[{id:"#84221",buyer:"Anna L.",total:48,wait_days:0,note:"Custom note + gift wrap"},{id:"#84217",buyer:"Marco T.",total:31,wait_days:1,note:""},{id:"#84210",buyer:"Cara P.",total:62,wait_days:2,note:"International, customs form prepared"}],
+  inventory:[{sku:"FX-22-OAK",name:"Oak ring dish, small",stock:3,velocity:"~1/day",status:"low"},{sku:"FX-04-BIRCH",name:"Birch coaster set",stock:18,velocity:"~3/day",status:"ok"},{sku:"FX-09-WAL",name:"Walnut bookmark",stock:0,velocity:"~1/day",status:"out"}],
+  listings_hurting:[
+    { title:"Reclaimed oak ring dish — minimalist", issue:"Last edited 14 months ago. Etsy's algorithm slightly favors recently-updated listings; a single keyword refresh would help.", action:"Open + add 'walnut alternative available' to the description, save. No price change required." },
+    { title:"Birch coaster set — sustainable", issue:"Cover photo is shop's oldest. New buyers spend 0.4s less on this thumbnail vs your newer covers.", action:"Reshoot cover photo with the same setup as your top-3 listings (overhead, paper background)." },
+    { title:"Walnut bookmark", issue:"Out of stock. Etsy is keeping the listing but reducing impressions until you mark in-stock again.", action:"Either restock and bump quantity, or temporarily archive and relist when ready." }
+  ]
+};
+const delay = (ms) => new Promise(r => setTimeout(r, ms));
+function App(){
+  const [text,setText]=useState(""); const [view,setView]=useState("landing"); const [out,setOut]=useState(null);
+  async function go(){ if(!text.trim())return; setView("analyzing"); await delay(2000); setOut(MOCK); setView("results"); setTimeout(()=>document.getElementById("results")?.scrollIntoView({behavior:"smooth"}),80); }
+  function loadSample(){ setText(SAMPLE); setView("landing"); }
+  const P={bg:"#FAF5EE",ink:"#1F1B16",inkSoft:"#5A544A",card:"#FFFFFF",rule:"#D9D2C2",accent:"#D97757",ok:"#65A30D",warn:"#D97706",out:"#B91C1C",mute:"#8A8275"};
+  const wrap={maxWidth:820,margin:"0 auto",padding:"64px 24px 96px"};
+  const display="'Fraunces',Georgia,serif",sans="Inter,system-ui,sans-serif",mono="'JetBrains Mono',ui-monospace,monospace";
+  function stColor(s){return s==="low"?P.warn:s==="out"?P.out:P.ok;}
+  return <div style={{background:P.bg,color:P.ink,fontFamily:sans,minHeight:"100vh"}}>
+    <header style={wrap}>
+      <div data-testid="eyebrow" style={{fontFamily:mono,fontSize:11,color:P.accent,letterSpacing:"0.2em",textTransform:"uppercase",marginBottom:32}}>For Etsy sellers running twelve tabs</div>
+      <h1 style={{fontFamily:display,fontWeight:400,fontSize:"clamp(46px,7vw,82px)",lineHeight:0.97,letterSpacing:"-0.035em",margin:0}}>The dashboard<br/>Etsy <em style={{fontStyle:"italic",color:P.accent}}>refuses to give you.</em></h1>
+      <p style={{fontFamily:display,fontSize:22,fontStyle:"italic",lineHeight:1.45,color:P.inkSoft,margin:"32px 0 28px",maxWidth:600}}>You run a real business out of twelve browser tabs and a Google Sheet. Pending orders here, inventory there, the listing performance buried three menus deep. Type your shop name and see the one dashboard: open orders, stock running low, and the three listings hurting your search rank with the specific fix for each.</p>
+      <div style={{display:"flex",flexWrap:"wrap",gap:16,alignItems:"center"}}>
+        <button data-testid="try-sample" onClick={loadSample} style={{fontFamily:sans,fontSize:16,fontWeight:600,background:P.accent,color:"#FFF",border:"none",padding:"16px 28px",borderRadius:4,cursor:"pointer"}}>Try with a sample shop →</button>
+        <span style={{fontFamily:mono,fontSize:11,color:P.mute,textTransform:"uppercase"}}>· free · $10/mo for the connected version</span>
+      </div>
+    </header>
+    <section style={{...wrap,paddingTop:0}}>
+      <div id="input-panel" style={{background:P.card,border:`1px solid ${P.rule}`,borderRadius:6,padding:28}}>
+        <div style={{fontFamily:mono,fontSize:11,color:P.accent,letterSpacing:"0.18em",textTransform:"uppercase",marginBottom:14}}>Step 1 of 2 · Your shop</div>
+        <input data-testid="shop-input" value={text} onChange={e=>setText(e.target.value)} placeholder="YourEtsyShopName" style={{fontFamily:mono,fontSize:14,color:P.ink,border:`1px solid ${P.rule}`,borderRadius:4,padding:"14px 16px",outline:"none",background:P.bg,width:"100%"}}/>
+        <div style={{display:"flex",justifyContent:"flex-end",marginTop:14}}>
+          <button data-testid="analyze-btn" onClick={go} disabled={!text.trim()||view==="analyzing"} style={{fontFamily:sans,fontSize:15,fontWeight:600,background:text.trim()&&view!=="analyzing"?P.accent:P.rule,color:text.trim()&&view!=="analyzing"?"#FFF":P.mute,border:"none",padding:"12px 24px",borderRadius:4,cursor:text.trim()&&view!=="analyzing"?"pointer":"not-allowed"}}>{view==="analyzing"?"Loading your shop...":"Show my dashboard →"}</button>
+        </div>
+      </div>
+    </section>
+    {view==="results"&&out&&<section id="results" style={{...wrap,paddingTop:32}}>
+      <div data-testid="summary" style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:14,marginBottom:24}}>
+        {[{l:"Orders (7d)",v:out.last7.orders,c:P.accent},{l:"Revenue (7d)",v:"$"+out.last7.revenue,c:P.ok},{l:"Refunds",v:out.last7.refunds,c:P.mute}].map((r,i)=>(<div key={i} style={{background:P.card,border:`1px solid ${P.rule}`,borderRadius:6,padding:"18px 22px"}}><div style={{fontFamily:mono,fontSize:10,color:P.mute,letterSpacing:0.15,textTransform:"uppercase",marginBottom:6}}>{r.l}</div><div style={{fontFamily:display,fontSize:30,fontWeight:500,color:r.c}}>{r.v}</div></div>))}
+      </div>
+      <div style={{background:P.card,border:`1px solid ${P.rule}`,borderRadius:6,padding:24,marginBottom:14}}>
+        <div style={{fontFamily:mono,fontSize:11,color:P.accent,letterSpacing:0.15,textTransform:"uppercase",marginBottom:14}}>Open orders</div>
+        {out.pending.map((p,i)=>(<div key={i} style={{padding:"12px 0",borderTop:i>0?`1px solid ${P.rule}`:"none",display:"grid",gridTemplateColumns:"1fr 1fr 80px 80px",gap:12,alignItems:"baseline"}}>
+          <div style={{fontFamily:mono,fontSize:13,color:P.ink}}>{p.id}</div>
+          <div style={{fontFamily:sans,fontSize:13,color:P.inkSoft}}>{p.buyer}{p.note&&<span style={{color:P.mute,fontStyle:"italic"}}> · {p.note}</span>}</div>
+          <div style={{fontFamily:mono,fontSize:13,color:P.ink,textAlign:"right"}}>${p.total}</div>
+          <div style={{fontFamily:mono,fontSize:11,color:p.wait_days>1?P.out:p.wait_days===1?P.warn:P.mute,textAlign:"right"}}>{p.wait_days===0?"today":p.wait_days+"d"}</div>
+        </div>))}
+      </div>
+      <div style={{background:P.card,border:`1px solid ${P.rule}`,borderRadius:6,padding:24,marginBottom:14}}>
+        <div style={{fontFamily:mono,fontSize:11,color:P.accent,letterSpacing:0.15,textTransform:"uppercase",marginBottom:14}}>Inventory</div>
+        {out.inventory.map((it,i)=>(<div key={i} style={{padding:"10px 0",borderTop:i>0?`1px solid ${P.rule}`:"none",display:"flex",justifyContent:"space-between",alignItems:"baseline",gap:12}}>
+          <div><div style={{fontFamily:sans,fontSize:14}}>{it.name}</div><div style={{fontFamily:mono,fontSize:11,color:P.mute,marginTop:2}}>{it.sku} · {it.velocity}</div></div>
+          <div style={{fontFamily:mono,fontSize:13,color:stColor(it.status),fontWeight:600}}>{it.status==="out"?"OUT":it.stock+" left"}</div>
+        </div>))}
+      </div>
+      <div style={{fontFamily:mono,fontSize:11,color:P.accent,letterSpacing:0.15,textTransform:"uppercase",marginBottom:12}}>Listings hurting your rank</div>
+      {out.listings_hurting.map((l,i)=>(<div key={i} style={{background:P.card,border:`1px solid ${P.rule}`,borderLeft:`4px solid ${P.warn}`,borderRadius:4,padding:"18px 22px",marginBottom:10}}>
+        <div style={{fontFamily:sans,fontSize:15,fontWeight:600,marginBottom:6}}>{l.title}</div>
+        <div style={{fontFamily:sans,fontSize:13,color:P.inkSoft,lineHeight:1.55,marginBottom:8}}>{l.issue}</div>
+        <div style={{fontFamily:sans,fontSize:13,color:P.ink,padding:"8px 12px",background:"rgba(217,119,87,0.07)",borderLeft:`2px solid ${P.accent}`,borderRadius:2}}><strong style={{fontFamily:mono,fontSize:10,color:P.accent,letterSpacing:0.15,textTransform:"uppercase",marginRight:8}}>do this</strong>{l.action}</div>
+      </div>))}
+    </section>}
+    <footer style={{...wrap,paddingTop:32,paddingBottom:56,borderTop:`1px solid ${P.rule}`}}><div style={{fontFamily:mono,fontSize:11,color:P.mute,textAlign:"center",lineHeight:1.65}}>Production version connects via Etsy's OAuth API.</div></footer>
+  </div>;
+}
+const root = ReactDOM.createRoot(document.getElementById("root")); root.render(<App/>);
+</script>
+<script data-name="BMC-Widget" data-cfasync="false" src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js" data-id="gooboolygoo" data-description="Support me on Buy me a coffee!" data-message="Love this project? Donate to keep it going" data-color="#5F7FFF" data-position="Right" data-x_margin="18" data-y_margin="18"></script>
+</body></html>

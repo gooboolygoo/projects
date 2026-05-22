@@ -1,0 +1,23 @@
+{
+  "generated_at": "2026-05-22T03:06:45.400Z",
+  "model": "claude-haiku-4-5",
+  "url": "https://gooboolygoo.github.io/projects/receipt-deduct/",
+  "hashtags": [
+    "taxes",
+    "freelance",
+    "selfemployed",
+    "taxseason",
+    "finance"
+  ],
+  "x": {
+    "tweet": "You have a shoebox of receipts and a spreadsheet of dread. We'll tell you which ones actually deduct and why the IRS cares.",
+    "reply_lead": "try it now →"
+  },
+  "vertical_caption": "Paste your receipts and line items. We'll tell you what you can actually deduct for Schedule C, which 50-percent rule applies, and which items will raise red flags 📋",
+  "shorts_description_lead": "Self-employed and drowning in receipt chaos? Paste your line items and we'll sort them into Schedule C deductions, explain the tax rules that apply, and flag risky ones.",
+  "video": {
+    "title": "Schedule C Deductions Made Clear",
+    "script": "You're self-employed. You've got receipts everywhere and no idea which ones actually deduct. Paste them in. We'll sort each one into the right Schedule C line, explain which tax rules apply, tell you if the IRS would flag it, and show you the conservative reason why. No jargon. Just answers. Try it on the link in the description.",
+    "word_count": 58
+  }
+}

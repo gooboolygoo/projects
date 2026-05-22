@@ -1,0 +1,21 @@
+title: Schedule C
+blurb: You are self-employed. You have a Notes app with line items and a shoebox of receipts and dread. Paste them in. We tell you which Schedule C line each one belongs on, which 50-percent rule applies, and the items you bought that you should not deduct with the conservative reason why.
+tags:
+  - taxes
+  - freelance
+  - finance
+  - product
+donate: true
+demo:
+  setup:
+    - { action: scroll_to, selector: "#root" }
+  steps:
+    - { action: wait, duration_s: 3 }
+    - { action: click, selector: '[data-testid="try-sample"]' }
+    - { action: wait, duration_s: 1.5 }
+    - { action: scroll_to, selector: "#input-panel" }
+    - { action: wait, duration_s: 1 }
+    - { action: click, selector: '[data-testid="analyze-btn"]' }
+    - { action: wait, duration_s: 3 }
+    - { action: scroll_to, selector: '[data-testid="summary"]' }
+    - { action: wait, duration_s: 7 }

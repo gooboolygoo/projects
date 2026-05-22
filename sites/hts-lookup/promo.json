@@ -1,0 +1,22 @@
+{
+  "generated_at": "2026-05-22T03:06:39.204Z",
+  "model": "claude-haiku-4-5",
+  "url": "https://gooboolygoo.github.io/projects/hts-lookup/",
+  "hashtags": [
+    "ecommerce",
+    "importing",
+    "logistics",
+    "tariffs"
+  ],
+  "x": {
+    "tweet": "Your customs broker charges $150 per shipment to guess. Paste a product description, get the actual HTS code, duty rate, and the two flags that stop containers at port.",
+    "reply_lead": "try it now →"
+  },
+  "vertical_caption": "Paste a product description. Get the right HTS tariff code, not the one your broker guessed. See the duty rate and compliance flags that matter 📦",
+  "shorts_description_lead": "Tariff codes wrong? That's expensive. Paste your product description and get the actual HTS code, duty rate, and port-hold flags in seconds.",
+  "video": {
+    "title": "Get Your Tariff Code Right",
+    "script": "Your customs broker looks up HTS codes for 150 dollars a pop. And they pick the safe code for them, not the cheapest legal one for you. Here's the thing: it takes ninety seconds to get it right yourself. Paste your product description, get the actual HTS code, the duty rate, and the two compliance flags that stop containers at port. No guessing. No middleman markup. Link in the description.",
+    "word_count": 70
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "generated_at": "2026-05-22T03:06:23.164Z",
+  "model": "claude-haiku-4-5",
+  "url": "https://gooboolygoo.github.io/projects/etsy-ops/",
+  "hashtags": [
+    "etsy",
+    "ecommerce",
+    "buildinpublic",
+    "indiedev",
+    "webdev"
+  ],
+  "x": {
+    "tweet": "You run your Etsy shop across twelve tabs. Pending orders, inventory, buried listings. One dashboard shows the three listings tanking your search rank and exactly how to fix each.",
+    "reply_lead": "see it live"
+  },
+  "vertical_caption": "Your Etsy shop is scattered. Tabs everywhere. But three of your listings are costing you search traffic. One dashboard shows which ones and the exact fix for each 📊",
+  "shorts_description_lead": "Etsy sellers juggle dozens of tabs to track orders, inventory, and performance. This dashboard consolidates it all and pinpoints the three listings hurting your search rank with specific fixes for each.",
+  "video": {
+    "title": "The Dashboard Etsy Won't Build",
+    "script": "You're running your Etsy shop across a dozen browser tabs. Inventory over here, pending orders over there, and somewhere buried in the Etsy menus, your listing performance sitting ignored. Three of your listings are actively tanking your search rank right now. This dashboard shows you exactly which three and gives you the specific fix for each one. No tabs, no hunting. One page. Check it out with the link in the description.",
+    "word_count": 72
+  }
+}

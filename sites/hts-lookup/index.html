@@ -1,0 +1,78 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>HTS Match. The right tariff code, not the close-enough one.</title>
+<meta name="description" content="You import from Shenzhen and your customs broker charges $150 per shipment to look up an HTS code. Paste a product description, get the right code, the duty rate, and the documentation that won't get you flagged.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..900&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script crossorigin src="https://unpkg.com/react@18.3.1/umd/react.production.min.js"></script><script crossorigin src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js"></script><script src="https://unpkg.com/@babel/standalone@7.24.7/babel.min.js"></script>
+<style>html,body{margin:0;padding:0;background:#0F1216}.__loading{font-family:Inter,system-ui;color:#888;text-align:center;padding-top:200px}</style></head><body>
+<div id="root"><div class="__loading">Loading...</div></div>
+<script type="text/babel" data-presets="react">
+const { useState } = React;
+const SAMPLE = "Stainless steel insulated water bottle, 20oz, with screw-on cap, sold under our private label";
+const MOCK = {
+  query: "Stainless steel insulated water bottle, 20oz, with screw-on cap",
+  primary: { code:"7323.93.0080", title:"Table, kitchen or other household articles, of stainless steel, kitchen or tableware", duty_general:0.02, duty_china:"+25% Section 301", confidence:0.91 },
+  alternates: [
+    { code:"9617.00.10", title:"Vacuum flasks and other vacuum vessels, not exceeding 1L", duty_general:0.073, duty_china:"+25% Section 301", confidence:0.06, why:"Could apply if marketed as a vacuum flask. Higher duty so customs prefers this; you should not unless it's accurate." },
+    { code:"7326.90.86", title:"Other articles of iron or steel", duty_general:0.029, duty_china:"+25% Section 301", confidence:0.03, why:"Catch-all category. Customs will reclassify if used carelessly." }
+  ],
+  flags: [
+    { sev:"warn", t:"Mark of origin required", body:"Imported retail items must be marked with country of origin (19 CFR 134). 'Made in China' on the bottom of the bottle, not just the box." },
+    { sev:"warn", t:"FDA notice on food contact", body:"Drinkware that contacts the mouth/liquid needs an FDA Prior Notice + import compliance. CBP can hold the shipment without it." },
+    { sev:"watch", t:"Section 301 list 3 tariffs apply", body:"China-origin goods under HTS 7323 are subject to the 25% Section 301 tariff. Confirm with your broker before contracts." }
+  ]
+};
+const delay = (ms) => new Promise(r => setTimeout(r, ms));
+function App(){
+  const [text,setText]=useState(""); const [view,setView]=useState("landing"); const [out,setOut]=useState(null);
+  async function go(){ if(!text.trim())return; setView("analyzing"); await delay(2200); setOut(MOCK); setView("results"); setTimeout(()=>document.getElementById("results")?.scrollIntoView({behavior:"smooth"}),80); }
+  function loadSample(){ setText(SAMPLE); setView("landing"); }
+  const P={bg:"#0F1216",ink:"#E8EAED",inkSoft:"#B0B8C4",card:"#171B22",paper:"#1C2129",rule:"#2A3441",accent:"#3B82F6",warn:"#F59E0B",watch:"#60A5FA",mute:"#7A8595"};
+  const wrap={maxWidth:820,margin:"0 auto",padding:"64px 24px 96px"};
+  const display="'Fraunces',Georgia,serif",sans="Inter,system-ui,sans-serif",mono="'JetBrains Mono',ui-monospace,monospace";
+  return <div style={{background:P.bg,color:P.ink,fontFamily:sans,minHeight:"100vh"}}>
+    <header style={wrap}>
+      <div data-testid="eyebrow" style={{fontFamily:mono,fontSize:11,color:P.accent,letterSpacing:"0.2em",textTransform:"uppercase",marginBottom:32}}>For Shopify and Amazon importers</div>
+      <h1 style={{fontFamily:display,fontWeight:400,fontSize:"clamp(46px,7vw,82px)",lineHeight:0.97,letterSpacing:"-0.035em",margin:0}}>One wrong HTS<br/>code costs you<br/><em style={{fontStyle:"italic",color:P.accent}}>4 to 11%</em> per shipment.</h1>
+      <p style={{fontFamily:display,fontSize:22,fontStyle:"italic",lineHeight:1.45,color:P.inkSoft,margin:"32px 0 28px",maxWidth:600}}>Your customs broker charges $150 per shipment to look up a tariff code. They pick the safe-for-them code, not the lowest-legal-for-you. Paste a product description, get the right HTS, the duty rate, and the two flags that will get the container held in port if you ignore them.</p>
+      <div style={{display:"flex",flexWrap:"wrap",gap:16,alignItems:"center"}}>
+        <button data-testid="try-sample" onClick={loadSample} style={{fontFamily:sans,fontSize:16,fontWeight:600,background:P.accent,color:"#08162A",border:"none",padding:"16px 28px",borderRadius:4,cursor:"pointer"}}>Try with a sample product →</button>
+        <span style={{fontFamily:mono,fontSize:11,color:P.mute,textTransform:"uppercase"}}>· free · current as of 2026 HTS revision</span>
+      </div>
+    </header>
+    <section style={{...wrap,paddingTop:0}}>
+      <div id="input-panel" style={{background:P.paper,border:`1px solid ${P.rule}`,borderRadius:6,padding:28}}>
+        <div style={{fontFamily:mono,fontSize:11,color:P.accent,letterSpacing:"0.18em",textTransform:"uppercase",marginBottom:14}}>Step 1 of 2 · Describe the product</div>
+        <textarea data-testid="desc-input" value={text} onChange={e=>setText(e.target.value)} placeholder="Material, function, intended use. The more specific the better." style={{width:"100%",minHeight:140,fontFamily:sans,fontSize:14,lineHeight:1.55,color:P.ink,border:`1px solid ${P.rule}`,borderRadius:4,padding:"14px 16px",outline:"none",background:P.bg,resize:"vertical"}}/>
+        <div style={{display:"flex",justifyContent:"flex-end",marginTop:14}}>
+          <button data-testid="analyze-btn" onClick={go} disabled={!text.trim()||view==="analyzing"} style={{fontFamily:sans,fontSize:15,fontWeight:600,background:text.trim()&&view!=="analyzing"?P.accent:P.rule,color:text.trim()&&view!=="analyzing"?"#08162A":P.mute,border:"none",padding:"12px 24px",borderRadius:4,cursor:text.trim()&&view!=="analyzing"?"pointer":"not-allowed"}}>{view==="analyzing"?"Searching HTSUS...":"Match my code →"}</button>
+        </div>
+      </div>
+    </section>
+    {view==="results"&&out&&<section id="results" style={{...wrap,paddingTop:32}}>
+      <div data-testid="summary" style={{background:P.card,border:`2px solid ${P.accent}`,borderRadius:6,padding:28,marginBottom:24}}>
+        <div style={{fontFamily:mono,fontSize:11,color:P.accent,letterSpacing:"0.2em",textTransform:"uppercase",marginBottom:8}}>Best match · {Math.round(out.primary.confidence*100)}% confident</div>
+        <div style={{fontFamily:display,fontSize:36,fontWeight:500,color:P.ink,lineHeight:1.1}}>{out.primary.code}</div>
+        <div style={{fontFamily:sans,fontSize:15,color:P.inkSoft,marginTop:8,lineHeight:1.5}}>{out.primary.title}</div>
+        <div style={{marginTop:14,fontFamily:mono,fontSize:13,color:P.inkSoft}}>General duty: <strong style={{color:P.ink}}>{(out.primary.duty_general*100).toFixed(1)}%</strong> · China origin: <strong style={{color:P.warn}}>{out.primary.duty_china}</strong></div>
+      </div>
+      <div style={{fontFamily:mono,fontSize:11,color:P.mute,letterSpacing:0.15,textTransform:"uppercase",marginBottom:12}}>Alternates considered</div>
+      {out.alternates.map((a,i)=>(<div key={i} style={{background:P.card,border:`1px solid ${P.rule}`,borderRadius:4,padding:"14px 22px",marginBottom:8}}>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"baseline",marginBottom:6,flexWrap:"wrap",gap:8}}>
+          <div style={{fontFamily:mono,fontSize:13,color:P.ink}}>{a.code}</div>
+          <div style={{fontFamily:mono,fontSize:11,color:P.mute}}>{Math.round(a.confidence*100)}% · duty {(a.duty_general*100).toFixed(1)}%</div>
+        </div>
+        <div style={{fontFamily:sans,fontSize:13,color:P.inkSoft,marginBottom:4}}>{a.title}</div>
+        <div style={{fontFamily:sans,fontSize:12,color:P.mute,fontStyle:"italic"}}>{a.why}</div>
+      </div>))}
+      <div style={{fontFamily:mono,fontSize:11,color:P.warn,letterSpacing:0.15,textTransform:"uppercase",marginTop:24,marginBottom:12}}>Compliance flags</div>
+      {out.flags.map((f,i)=>(<div key={i} style={{background:P.card,border:`1px solid ${P.rule}`,borderLeft:`4px solid ${f.sev==="warn"?P.warn:P.watch}`,borderRadius:4,padding:"14px 22px",marginBottom:10}}>
+        <div style={{fontFamily:sans,fontSize:15,fontWeight:600,marginBottom:6}}>{f.t}</div>
+        <div style={{fontFamily:sans,fontSize:13,color:P.inkSoft,lineHeight:1.55}}>{f.body}</div>
+      </div>))}
+    </section>}
+    <footer style={{...wrap,paddingTop:32,paddingBottom:56,borderTop:`1px solid ${P.rule}`}}><div style={{fontFamily:mono,fontSize:11,color:P.mute,textAlign:"center",lineHeight:1.65}}>Informational. CBP makes the final classification. Use a licensed customs broker for high-volume entries.</div></footer>
+  </div>;
+}
+const root = ReactDOM.createRoot(document.getElementById("root")); root.render(<App/>);
+</script>
+<script data-name="BMC-Widget" data-cfasync="false" src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js" data-id="gooboolygoo" data-description="Support me on Buy me a coffee!" data-message="Love this project? Donate to keep it going" data-color="#5F7FFF" data-position="Right" data-x_margin="18" data-y_margin="18"></script>
+</body></html>

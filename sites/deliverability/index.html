@@ -1,0 +1,80 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Inbox or Spam. Where your cold email actually lands.</title>
+<meta name="description" content="Your reply rate dropped 80% last week. You blame the subject line. It's your domain reputation. See where your sends land across Gmail, Outlook, Yahoo before you blast another 500.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..900&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script crossorigin src="https://unpkg.com/react@18.3.1/umd/react.production.min.js"></script><script crossorigin src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js"></script><script src="https://unpkg.com/@babel/standalone@7.24.7/babel.min.js"></script>
+<style>html,body{margin:0;padding:0;background:#0F1218}.__loading{font-family:Inter,system-ui;color:#888;text-align:center;padding-top:200px}</style></head><body>
+<div id="root"><div class="__loading">Loading...</div></div>
+<script type="text/babel" data-presets="react">
+const { useState } = React;
+const SAMPLE = "outbound@acme.io";
+const MOCK = {
+  domain:"acme.io", overall:"degraded",
+  providers:[
+    { name:"Gmail consumer", inbox:38, spam:52, missing:10, trend:"falling 3 weeks running" },
+    { name:"Gmail Workspace", inbox:61, spam:27, missing:12, trend:"stable" },
+    { name:"Outlook 365", inbox:14, spam:78, missing:8, trend:"falling fast" },
+    { name:"Yahoo", inbox:71, spam:22, missing:7, trend:"stable" }
+  ],
+  issues:[
+    { sev:"critical", t:"DMARC policy is p=none", body:"You're publishing DMARC but not enforcing it. Microsoft started downgrading senders without p=quarantine in March. This is your biggest single fix.", fix:"Move to p=quarantine pct=25 this week. Reassess in 14 days." },
+    { sev:"warn", t:"DKIM key is 1024-bit", body:"Most major providers now de-prioritize 1024-bit DKIM. Doesn't blacklist, but it's a soft penalty.", fix:"Rotate to a 2048-bit selector. Mailchimp/Sendgrid/Postmark all support it in 2 clicks." },
+    { sev:"warn", t:"No List-Unsubscribe-Post header", body:"Gmail/Yahoo require RFC 8058 one-click unsubscribe headers since Feb 2024 for senders over 5k/day. You're sending 8k.", fix:"Add both List-Unsubscribe and List-Unsubscribe-Post: List-Unsubscribe=One-Click to your ESP config." },
+    { sev:"watch", t:"Bounce rate at 4.2%", body:"Industry healthy is under 2%. Yours has been creeping for 6 weeks. Old list + no validation pipeline.", fix:"Run the list through ZeroBounce or NeverBounce, drop hard-bounce addresses, never re-add them." }
+  ]
+};
+const delay = (ms) => new Promise(r => setTimeout(r, ms));
+function App(){
+  const [text,setText]=useState(""); const [view,setView]=useState("landing"); const [out,setOut]=useState(null);
+  async function go(){ if(!text.trim())return; setView("analyzing"); await delay(2400); setOut(MOCK); setView("results"); setTimeout(()=>document.getElementById("results")?.scrollIntoView({behavior:"smooth"}),80); }
+  function loadSample(){ setText(SAMPLE); setView("landing"); }
+  const P={bg:"#0F1218",ink:"#E8EAED",inkSoft:"#B0B8C4",card:"#171B23",paper:"#1C212B",rule:"#2A3441",accent:"#06B6D4",critical:"#EF4444",warn:"#F59E0B",watch:"#60A5FA",ok:"#10B981",mute:"#7A8595"};
+  const wrap={maxWidth:820,margin:"0 auto",padding:"64px 24px 96px"};
+  const display="'Fraunces',Georgia,serif",sans="Inter,system-ui,sans-serif",mono="'JetBrains Mono',ui-monospace,monospace";
+  function sevColor(s){return P[s]||P.mute;}
+  return <div style={{background:P.bg,color:P.ink,fontFamily:sans,minHeight:"100vh"}}>
+    <header style={wrap}>
+      <div data-testid="eyebrow" style={{fontFamily:mono,fontSize:11,color:P.accent,letterSpacing:"0.2em",textTransform:"uppercase",marginBottom:32}}>For SDRs and founders running cold outbound</div>
+      <h1 style={{fontFamily:display,fontWeight:400,fontSize:"clamp(46px,7vw,82px)",lineHeight:0.97,letterSpacing:"-0.035em",margin:0}}>You're not getting<br/>fewer replies.<br/>You're <em style={{fontStyle:"italic",color:P.accent}}>in spam.</em></h1>
+      <p style={{fontFamily:display,fontSize:22,fontStyle:"italic",lineHeight:1.45,color:P.inkSoft,margin:"32px 0 28px",maxWidth:600}}>Your reply rate didn't drop because of the subject line. Microsoft updated its DMARC enforcement in March. Gmail tightened unsubscribe headers in February. You don't get a warning email. The list just stops working. Type your sending domain and see where your last 500 sends actually landed.</p>
+      <div style={{display:"flex",flexWrap:"wrap",gap:16,alignItems:"center"}}>
+        <button data-testid="try-sample" onClick={loadSample} style={{fontFamily:sans,fontSize:16,fontWeight:600,background:P.accent,color:"#06281E",border:"none",padding:"16px 28px",borderRadius:4,cursor:"pointer"}}>Try with a sample domain →</button>
+        <span style={{fontFamily:mono,fontSize:11,color:P.mute,textTransform:"uppercase"}}>· free · runs against seed inboxes</span>
+      </div>
+    </header>
+    <section style={{...wrap,paddingTop:0}}>
+      <div id="input-panel" style={{background:P.paper,border:`1px solid ${P.rule}`,borderRadius:6,padding:28}}>
+        <div style={{fontFamily:mono,fontSize:11,color:P.accent,letterSpacing:"0.18em",textTransform:"uppercase",marginBottom:14}}>Step 1 of 2 · Your sending address</div>
+        <input data-testid="domain-input" value={text} onChange={e=>setText(e.target.value)} placeholder="outbound@yourdomain.com" style={{fontFamily:mono,fontSize:14,color:P.ink,border:`1px solid ${P.rule}`,borderRadius:4,padding:"14px 16px",outline:"none",background:P.bg,width:"100%"}}/>
+        <div style={{display:"flex",justifyContent:"flex-end",marginTop:14}}>
+          <button data-testid="analyze-btn" onClick={go} disabled={!text.trim()||view==="analyzing"} style={{fontFamily:sans,fontSize:15,fontWeight:600,background:text.trim()&&view!=="analyzing"?P.accent:P.rule,color:text.trim()&&view!=="analyzing"?"#06281E":P.mute,border:"none",padding:"12px 24px",borderRadius:4,cursor:text.trim()&&view!=="analyzing"?"pointer":"not-allowed"}}>{view==="analyzing"?"Sending to seed inboxes...":"Check my deliverability →"}</button>
+        </div>
+      </div>
+    </section>
+    {view==="results"&&out&&<section id="results" style={{...wrap,paddingTop:32}}>
+      <div data-testid="summary" style={{background:P.card,border:`2px solid ${P.warn}`,borderRadius:6,padding:28,marginBottom:24}}>
+        <div style={{fontFamily:mono,fontSize:11,color:P.warn,letterSpacing:"0.2em",textTransform:"uppercase",marginBottom:8}}>{out.domain} · {out.overall}</div>
+        <div style={{display:"grid",gridTemplateColumns:"repeat(2,1fr)",gap:14,marginTop:14}}>
+          {out.providers.map((p,i)=>(<div key={i} style={{padding:"12px 16px",background:P.bg,borderRadius:4}}>
+            <div style={{fontFamily:mono,fontSize:11,color:P.mute,textTransform:"uppercase",letterSpacing:0.1,marginBottom:6}}>{p.name}</div>
+            <div style={{display:"flex",gap:14,fontFamily:mono,fontSize:13}}>
+              <span style={{color:P.ok}}>inbox {p.inbox}%</span>
+              <span style={{color:P.critical}}>spam {p.spam}%</span>
+              <span style={{color:P.mute}}>· {p.trend}</span>
+            </div>
+          </div>))}
+        </div>
+      </div>
+      {out.issues.map((it,i)=>(<div key={i} style={{background:P.card,border:`1px solid ${P.rule}`,borderLeft:`4px solid ${sevColor(it.sev)}`,borderRadius:4,padding:"20px 24px",marginBottom:12}}>
+        <div style={{fontFamily:mono,fontSize:10,color:sevColor(it.sev),letterSpacing:0.15,textTransform:"uppercase",marginBottom:4}}>{it.sev}</div>
+        <div style={{fontFamily:sans,fontSize:16,fontWeight:600}}>{it.t}</div>
+        <div style={{fontFamily:sans,fontSize:14,color:P.inkSoft,marginTop:8,lineHeight:1.55}}>{it.body}</div>
+        <div style={{marginTop:10,padding:"10px 14px",background:"rgba(6,182,212,0.07)",borderLeft:`2px solid ${P.accent}`,borderRadius:2,fontFamily:sans,fontSize:14,color:P.ink}}><strong style={{fontFamily:mono,fontSize:10,color:P.accent,letterSpacing:0.15,textTransform:"uppercase",marginRight:8}}>Fix</strong>{it.fix}</div>
+      </div>))}
+    </section>}
+    <footer style={{...wrap,paddingTop:32,paddingBottom:56,borderTop:`1px solid ${P.rule}`}}><div style={{fontFamily:mono,fontSize:11,color:P.mute,textAlign:"center",lineHeight:1.65}}>Seed inboxes refresh weekly across Gmail, Outlook, Yahoo, ProtonMail.</div></footer>
+  </div>;
+}
+const root = ReactDOM.createRoot(document.getElementById("root")); root.render(<App/>);
+</script>
+<script data-name="BMC-Widget" data-cfasync="false" src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js" data-id="gooboolygoo" data-description="Support me on Buy me a coffee!" data-message="Love this project? Donate to keep it going" data-color="#5F7FFF" data-position="Right" data-x_margin="18" data-y_margin="18"></script>
+</body></html>

@@ -1,0 +1,21 @@
+title: HTS Match
+blurb: Your customs broker charges 150 dollars per shipment to look up a tariff code. They pick the safe-for-them code, not the lowest-legal-for-you. Paste a product description, get the right HTS code, the duty rate, and the two compliance flags that will get the container held in port if you ignore them.
+tags:
+  - ecommerce
+  - importing
+  - logistics
+  - product
+donate: true
+demo:
+  setup:
+    - { action: scroll_to, selector: "#root" }
+  steps:
+    - { action: wait, duration_s: 3 }
+    - { action: click, selector: '[data-testid="try-sample"]' }
+    - { action: wait, duration_s: 1.5 }
+    - { action: scroll_to, selector: "#input-panel" }
+    - { action: wait, duration_s: 1 }
+    - { action: click, selector: '[data-testid="analyze-btn"]' }
+    - { action: wait, duration_s: 3 }
+    - { action: scroll_to, selector: '[data-testid="summary"]' }
+    - { action: wait, duration_s: 7 }

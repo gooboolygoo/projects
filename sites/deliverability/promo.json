@@ -1,0 +1,23 @@
+{
+  "generated_at": "2026-05-22T03:06:19.186Z",
+  "model": "claude-haiku-4-5",
+  "url": "https://gooboolygoo.github.io/projects/deliverability/",
+  "hashtags": [
+    "deliverability",
+    "coldemail",
+    "email",
+    "buildinpublic",
+    "emailmarketing"
+  ],
+  "x": {
+    "tweet": "Your cold email campaign stopped getting replies. You checked the subject line. You didn't check where your messages actually landed. Type your domain and find out.",
+    "reply_lead": "check deliverability →"
+  },
+  "vertical_caption": "Cold emails vanishing? Not always the copy. Gmail tightened unsubscribe headers in February. Microsoft enforced DMARC in March. No warning, the list just stops working. Type your domain and see where your last 500 sends landed.",
+  "shorts_description_lead": "Your cold email replies dropped, but the subject line wasn't the problem. Gmail and Microsoft changed authentication rules with no warning. Type your sending domain and see exactly where your messages actually landed.",
+  "video": {
+    "title": "Where Your Cold Email Actually Lands",
+    "script": "You send cold emails. Replies dry up. You assume the subject line failed. But Microsoft updated DMARC enforcement in March. Gmail tightened unsubscribe headers in February. No warning email arrives. The list just stops working. Type your sending domain into this tool and see where your last five hundred sends actually landed. It's usually not what you think. Link in the description.",
+    "word_count": 62
+  }
+}

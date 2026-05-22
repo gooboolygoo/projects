@@ -1,0 +1,21 @@
+title: Etsy Ops
+blurb: You run a real business out of twelve browser tabs and a Google Sheet. Pending orders here, inventory there, the listing performance buried three menus deep. Type your shop name and see the one dashboard, with the three listings hurting your search rank and the specific fix for each.
+tags:
+  - etsy
+  - ecommerce
+  - dashboard
+  - product
+donate: true
+demo:
+  setup:
+    - { action: scroll_to, selector: "#root" }
+  steps:
+    - { action: wait, duration_s: 3 }
+    - { action: click, selector: '[data-testid="try-sample"]' }
+    - { action: wait, duration_s: 1.5 }
+    - { action: scroll_to, selector: "#input-panel" }
+    - { action: wait, duration_s: 1 }
+    - { action: click, selector: '[data-testid="analyze-btn"]' }
+    - { action: wait, duration_s: 3 }
+    - { action: scroll_to, selector: '[data-testid="summary"]' }
+    - { action: wait, duration_s: 7 }

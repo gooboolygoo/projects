@@ -1,0 +1,80 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Honest Status. A status page that cannot lie.</title>
+<meta name="description" content="Your status page reports 'all systems operational' because nobody updated it. Customers know the truth before you do. Externally probed, no manual toggles, no aspirational fiction.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..900&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script crossorigin src="https://unpkg.com/react@18.3.1/umd/react.production.min.js"></script><script crossorigin src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js"></script><script src="https://unpkg.com/@babel/standalone@7.24.7/babel.min.js"></script>
+<style>html,body{margin:0;padding:0;background:#0E1318}.__loading{font-family:Inter,system-ui;color:#888;text-align:center;padding-top:200px}</style></head><body>
+<div id="root"><div class="__loading">Loading...</div></div>
+<script type="text/babel" data-presets="react">
+const { useState } = React;
+const SAMPLE = "api.acme.com/v1/health\napi.acme.com/v1/login\napp.acme.com\nbilling.acme.com";
+const MOCK = {
+  overall: "degraded", overall_msg: "Login is unhealthy from 2 of 5 regions. Payments OK.",
+  endpoints: [
+    { name:"api.acme.com/v1/health", status:"ok", p50:48, p99:120, regions:5 },
+    { name:"api.acme.com/v1/login", status:"degraded", p50:340, p99:2200, regions:5, note:"Frankfurt + Singapore returning 503s intermittently. Other regions clean." },
+    { name:"app.acme.com", status:"ok", p50:88, p99:240, regions:5 },
+    { name:"billing.acme.com", status:"ok", p50:120, p99:350, regions:5 }
+  ],
+  uptime: [
+    { name:"Login", days:[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0.6,0.95,1] },
+    { name:"API", days:Array(30).fill(1).map((v,i)=>i===27?0.9:v) },
+    { name:"App", days:Array(30).fill(1) },
+    { name:"Billing", days:Array(30).fill(1) }
+  ]
+};
+const delay = (ms) => new Promise(r => setTimeout(r, ms));
+function App(){
+  const [text,setText]=useState(""); const [view,setView]=useState("landing"); const [out,setOut]=useState(null);
+  async function go(){ if(!text.trim())return; setView("analyzing"); await delay(1800); setOut(MOCK); setView("results"); setTimeout(()=>document.getElementById("results")?.scrollIntoView({behavior:"smooth"}),80); }
+  function loadSample(){ setText(SAMPLE); setView("landing"); }
+  const P={bg:"#0E1318",ink:"#E8EAED",inkSoft:"#B0B8C4",card:"#161D26",paper:"#1B2330",rule:"#2A3441",accent:"#10B981",degraded:"#F59E0B",down:"#EF4444",mute:"#7A8595"};
+  const wrap={maxWidth:820,margin:"0 auto",padding:"64px 24px 96px"};
+  const display="'Fraunces',Georgia,serif",sans="Inter,system-ui,sans-serif",mono="'JetBrains Mono',ui-monospace,monospace";
+  function stColor(s){return s==="ok"?P.accent:s==="degraded"?P.degraded:P.down;}
+  return <div style={{background:P.bg,color:P.ink,fontFamily:sans,minHeight:"100vh"}}>
+    <header style={wrap}>
+      <div data-testid="eyebrow" style={{fontFamily:mono,fontSize:11,color:P.accent,letterSpacing:"0.2em",textTransform:"uppercase",marginBottom:32}}>For people whose customers know first</div>
+      <h1 style={{fontFamily:display,fontWeight:400,fontSize:"clamp(46px,7vw,82px)",lineHeight:0.97,letterSpacing:"-0.035em",margin:0}}>Your status page<br/>says <em style={{fontStyle:"italic",color:P.accent}}>"all systems operational."</em><br/>It is lying.</h1>
+      <p style={{fontFamily:display,fontSize:22,fontStyle:"italic",lineHeight:1.45,color:P.inkSoft,margin:"32px 0 28px",maxWidth:600}}>Most status pages are updated by a human, after the customer noticed, after the incident chat is two pages long. We probe externally from five regions every 30 seconds. The page cannot lie because no one updates it.</p>
+      <div style={{display:"flex",flexWrap:"wrap",gap:16,alignItems:"center"}}>
+        <button data-testid="try-sample" onClick={loadSample} style={{fontFamily:sans,fontSize:16,fontWeight:600,background:P.accent,color:"#06281E",border:"none",padding:"16px 28px",borderRadius:4,cursor:"pointer"}}>Try with sample endpoints →</button>
+        <span style={{fontFamily:mono,fontSize:11,color:P.mute,textTransform:"uppercase"}}>· free · $5/mo to publish public page</span>
+      </div>
+    </header>
+    <section style={{...wrap,paddingTop:0}}>
+      <div id="input-panel" style={{background:P.paper,border:`1px solid ${P.rule}`,borderRadius:6,padding:28}}>
+        <div style={{fontFamily:mono,fontSize:11,color:P.accent,letterSpacing:"0.18em",textTransform:"uppercase",marginBottom:14}}>Step 1 of 2 · Endpoints to monitor</div>
+        <textarea data-testid="endpoints-input" value={text} onChange={e=>setText(e.target.value)} placeholder="One URL per line. We probe each from 5 regions every 30 seconds." style={{width:"100%",minHeight:160,fontFamily:mono,fontSize:13,lineHeight:1.55,color:P.ink,border:`1px solid ${P.rule}`,borderRadius:4,padding:"14px 16px",outline:"none",background:P.bg,resize:"vertical"}}/>
+        <div style={{display:"flex",justifyContent:"flex-end",marginTop:14}}>
+          <button data-testid="analyze-btn" onClick={go} disabled={!text.trim()||view==="analyzing"} style={{fontFamily:sans,fontSize:15,fontWeight:600,background:text.trim()&&view!=="analyzing"?P.accent:P.rule,color:text.trim()&&view!=="analyzing"?"#06281E":P.mute,border:"none",padding:"12px 24px",borderRadius:4,cursor:text.trim()&&view!=="analyzing"?"pointer":"not-allowed"}}>{view==="analyzing"?"Probing from 5 regions...":"Show me reality →"}</button>
+        </div>
+      </div>
+    </section>
+    {view==="results"&&out&&<section id="results" style={{...wrap,paddingTop:32}}>
+      <div data-testid="summary" style={{background:P.card,border:`2px solid ${stColor(out.overall)}`,borderRadius:6,padding:28,marginBottom:24}}>
+        <div style={{fontFamily:mono,fontSize:11,color:stColor(out.overall),letterSpacing:"0.2em",textTransform:"uppercase",marginBottom:8}}>{out.overall}</div>
+        <div style={{fontFamily:display,fontSize:32,fontWeight:500,color:P.ink}}>{out.overall_msg}</div>
+      </div>
+      {out.endpoints.map((e,i)=>(<div key={i} style={{background:P.card,border:`1px solid ${P.rule}`,borderLeft:`4px solid ${stColor(e.status)}`,borderRadius:4,padding:"18px 22px",marginBottom:10}}>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"baseline",flexWrap:"wrap",gap:8}}>
+          <div style={{fontFamily:mono,fontSize:13,color:P.ink}}>{e.name}</div>
+          <div style={{fontFamily:mono,fontSize:11,color:stColor(e.status),textTransform:"uppercase",letterSpacing:0.15}}>{e.status}</div>
+        </div>
+        <div style={{fontFamily:mono,fontSize:11,color:P.mute,marginTop:6}}>p50 {e.p50}ms · p99 {e.p99}ms · {e.regions} regions</div>
+        {e.note&&<div style={{fontFamily:sans,fontSize:13,color:P.inkSoft,marginTop:6,fontStyle:"italic"}}>{e.note}</div>}
+      </div>))}
+      <div style={{marginTop:24,padding:24,background:P.paper,border:`1px solid ${P.rule}`,borderRadius:6}}>
+        <div style={{fontFamily:mono,fontSize:11,color:P.accent,letterSpacing:0.15,textTransform:"uppercase",marginBottom:14}}>30-day uptime</div>
+        {out.uptime.map((u,i)=>(<div key={i} style={{padding:"10px 0",borderTop:i>0?`1px solid ${P.rule}`:"none"}}>
+          <div style={{fontFamily:sans,fontSize:13,marginBottom:6}}>{u.name}</div>
+          <div style={{display:"grid",gridTemplateColumns:"repeat(30,1fr)",gap:2}}>{u.days.map((v,j)=>(<div key={j} style={{height:14,background:v>0.99?P.accent:v>0.5?P.degraded:P.down}}/>))}</div>
+        </div>))}
+      </div>
+    </section>}
+    <footer style={{...wrap,paddingTop:32,paddingBottom:56,borderTop:`1px solid ${P.rule}`}}><div style={{fontFamily:mono,fontSize:11,color:P.mute,textAlign:"center",lineHeight:1.65}}>Probes run from us-east, us-west, eu-west, ap-south, ap-east. No internal toggles.</div></footer>
+  </div>;
+}
+const root = ReactDOM.createRoot(document.getElementById("root")); root.render(<App/>);
+</script>
+<script data-name="BMC-Widget" data-cfasync="false" src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js" data-id="gooboolygoo" data-description="Support me on Buy me a coffee!" data-message="Love this project? Donate to keep it going" data-color="#5F7FFF" data-position="Right" data-x_margin="18" data-y_margin="18"></script>
+</body></html>
