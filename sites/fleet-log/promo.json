@@ -1,0 +1,23 @@
+{
+  "generated_at": "2026-05-22T04:26:19.581Z",
+  "model": "claude-haiku-4-5",
+  "url": "https://gooboolygoo.github.io/projects/fleet-log/",
+  "hashtags": [
+    "fleetmaint",
+    "tradestech",
+    "smb",
+    "indiedev",
+    "webdev"
+  ],
+  "x": {
+    "tweet": "Your oil change schedule lives in someone's head. 200 miles later, nobody notices. Truck Log tracks maintenance and costs for small fleets that Fleetio forgot about.",
+    "reply_lead": "built for mechanics ↓"
+  },
+  "vertical_caption": "Your fleet's maintenance happens on paper. Then it doesn't. Truck Log keeps service logs, reminders, and costs in one place for shops under 30 trucks.",
+  "shorts_description_lead": "Skip the clipboard and the missed oil changes. Truck Log is maintenance tracking, reminders, and cost reports for small fleets.",
+  "video": {
+    "title": "Stop Missing Service Deadlines",
+    "script": "You've got 12 trucks. The service logs are on clipboards, sticky notes, maybe a spreadsheet nobody updates. Then the transmission goes out and you're digging through boxes trying to remember the last time you serviced it. Truck Log puts maintenance reminders, service history, and cost tracking in one place. Built for small fleets that don't need enterprise software. Check it out via the link.",
+    "word_count": 64
+  }
+}

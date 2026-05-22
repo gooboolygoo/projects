@@ -1,0 +1,17 @@
+title: Program
+blurb: Trainerize and TrueCoach are 40 to 80 dollars a month. They are built for big-box facilities. You are one person with twelve clients. Pick a goal template, customize the program, send the client a link. Track adherence, log a check-in note, repeat.
+tags:
+  - fitness
+  - product
+  - smb
+  - solo
+donate: true
+demo:
+  setup:
+    - { action: scroll_to, selector: "#root" }
+  steps:
+    - { action: wait, duration_s: 3 }
+    - { action: click, selector: '[data-testid="try-sample"]' }
+    - { action: wait, duration_s: 2 }
+    - { action: scroll_to, selector: '[data-testid="summary"]' }
+    - { action: wait, duration_s: 8 }

@@ -1,0 +1,23 @@
+{
+  "generated_at": "2026-05-22T04:26:35.777Z",
+  "model": "claude-haiku-4-5",
+  "url": "https://gooboolygoo.github.io/projects/sam-discovery/",
+  "hashtags": [
+    "govcon",
+    "rfp",
+    "sam",
+    "indiedev",
+    "ai"
+  ],
+  "x": {
+    "tweet": "GovWin costs $30k/year. SAM.gov is free but basically impossible to use. We just built something in between: hand-matched RFPs to your exact NAICS codes, 4 per week, worth your bid team's time.",
+    "reply_lead": "see the matches"
+  },
+  "vertical_caption": "GovWin is thousands a year. SAM.gov is free but almost unusable. We read every new opportunity and surface the 4 this week actually worth your bid team's time 📋",
+  "shorts_description_lead": "Stop paying thousands for RFP tools. We match SAM.gov opportunities to your NAICS codes and surface exactly the ones worth bidding on, free.",
+  "video": {
+    "title": "Free RFP Matching For Government Contractors",
+    "script": "Most government contractors either pay thirty thousand a year for RFP software or waste hours drowning in SAM.gov noise. We built a middle ground. Hand-matched RFP opportunities, filtered to your exact NAICS codes and past performance. Four recommendations each week. No subscription. No drowning. Tap the link to see this week's matches.",
+    "word_count": 52
+  }
+}

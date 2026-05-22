@@ -1,0 +1,17 @@
+title: Dog Days
+blurb: Owners want to know the dog was walked and is OK. You want to send the invoice without 15 logins. Time to Pet is 50 dollars a month. Dog Days is the schedule, the GPS check-in, the photo-after-walk, and the recurring invoice, for 15 dollars.
+tags:
+  - pets
+  - smb
+  - product
+  - solo
+donate: true
+demo:
+  setup:
+    - { action: scroll_to, selector: "#root" }
+  steps:
+    - { action: wait, duration_s: 3 }
+    - { action: click, selector: '[data-testid="try-sample"]' }
+    - { action: wait, duration_s: 2 }
+    - { action: scroll_to, selector: '[data-testid="summary"]' }
+    - { action: wait, duration_s: 7 }

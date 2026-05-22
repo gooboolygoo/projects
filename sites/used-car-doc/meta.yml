@@ -1,0 +1,17 @@
+title: Lot Docs
+blurb: You sold 12 cars last month. Frazer and Wayne Reaves are built for franchised lots with floor planning. Lot Docs is the title transfers, financing paperwork, and state-specific compliance for sub-50-car independents, for 79 a month.
+tags:
+  - automotive
+  - smb
+  - product
+  - compliance
+donate: true
+demo:
+  setup:
+    - { action: scroll_to, selector: "#root" }
+  steps:
+    - { action: wait, duration_s: 3 }
+    - { action: click, selector: '[data-testid="try-sample"]' }
+    - { action: wait, duration_s: 2 }
+    - { action: scroll_to, selector: '[data-testid="summary"]' }
+    - { action: wait, duration_s: 8 }

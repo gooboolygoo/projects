@@ -1,0 +1,23 @@
+{
+  "generated_at": "2026-05-22T04:26:23.655Z",
+  "model": "claude-haiku-4-5",
+  "url": "https://gooboolygoo.github.io/projects/pt-program/",
+  "hashtags": [
+    "personaltraining",
+    "fitnesstech",
+    "solopreneur",
+    "indiedev",
+    "smb"
+  ],
+  "x": {
+    "tweet": "Selling small-group training? Trainerize wants 40-80 a month. Build custom programs from templates, share a link, track adherence. No per-seat licensing.",
+    "reply_lead": "build it free →"
+  },
+  "vertical_caption": "Your twelve clients don't need the 80-dollar-a-month platform your facility uses. Pick a template, customize it, send a link. Track who's actually doing the work 💪",
+  "shorts_description_lead": "Personal training programs without the 80-dollar-a-month seat license. Build from templates, send clients a link, track their adherence. Made for solo trainers.",
+  "video": {
+    "title": "Training Programs Without the Price Tag",
+    "script": "You're charging what. 50 a session. But your client management tool costs 80 a month. That's broken math. This lets you build workout programs from templates, customize them for each client, share a link. They log their reps and sets. You see what they completed and write a check-in note. No per-seat pricing. No hidden tiers. Works for solo trainers and small groups. Link is in the description.",
+    "word_count": 68
+  }
+}

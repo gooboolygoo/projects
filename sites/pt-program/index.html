@@ -1,0 +1,72 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Program. Personal training programs without a Trainerize seat.</title>
+<meta name="description" content="You build programs in Google Docs and send PDFs. Trainerize and TrueCoach are $40-80 a month. Here is the program builder, the client check-in, and the templates by goal — for solo trainers.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..900&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script crossorigin src="https://unpkg.com/react@18.3.1/umd/react.production.min.js"></script><script crossorigin src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js"></script><script src="https://unpkg.com/@babel/standalone@7.24.7/babel.min.js"></script>
+<style>html,body{margin:0;padding:0;background:#0E1318}.__loading{font-family:Inter,system-ui;color:#888;text-align:center;padding-top:200px}</style></head><body>
+<div id="root"><div class="__loading">Loading...</div></div>
+<script type="text/babel" data-presets="react">
+const { useState } = React;
+const GOALS = [
+  { id:"strength", name:"General strength", days:3, blocks:["squat","bench","deadlift","accessories"], who:"works for ~80% of new clients" },
+  { id:"hyper", name:"Hypertrophy", days:4, blocks:["upper push","upper pull","lower","accessories"], who:"for 'I want to look better' clients" },
+  { id:"powerlift", name:"Powerlifting peak", days:4, blocks:["squat day","bench day","deadlift day","conditioning"], who:"meet prep, 8-12 weeks out" },
+  { id:"postpartum", name:"Postpartum return", days:3, blocks:["pelvic floor","glutes/posterior","upper body","mobility"], who:"start 8 weeks postpartum, MD cleared" }
+];
+const SAMPLE_PROGRAM = {
+  client:"Jamie, female, 34, returning after pregnancy", goal:"postpartum", week:1,
+  sessions:[
+    { day:"Mon", focus:"Pelvic floor + glutes", exercises:[
+      { name:"Box squat to 12in box", sets:3, reps:8, rest:"90s", note:"Start light. Pelvic floor cue: exhale on the way up." },
+      { name:"Hip thrust (barbell)", sets:3, reps:10, rest:"90s", note:"Full extension at top, no overextension." },
+      { name:"Bird dog", sets:3, reps:"8/side", rest:"45s", note:"Slow, no swaying." },
+      { name:"Dead bug", sets:3, reps:"10/side", rest:"45s", note:"Breath on extension." }
+    ]},
+    { day:"Wed", focus:"Upper body + posture", exercises:[
+      { name:"Goblet squat", sets:3, reps:10, rest:"60s" },
+      { name:"DB row", sets:3, reps:"10/side", rest:"60s", note:"Cue scapular retraction." },
+      { name:"Pushup (incline OK)", sets:3, reps:"as many as good form allows", rest:"60s" },
+      { name:"Pallof press", sets:3, reps:"10/side", rest:"60s", note:"Anti-rotation. No twisting." }
+    ]},
+    { day:"Fri", focus:"Mobility + light", exercises:[
+      { name:"Walking 30 min", sets:1, reps:"30 min", rest:"--", note:"Pushing the stroller counts." },
+      { name:"Cat-cow", sets:2, reps:8, rest:"--" },
+      { name:"Hip 90/90", sets:2, reps:"5/side", rest:"--" }
+    ]}
+  ]
+};
+function App(){
+  const [view,setView]=useState("landing"); const [goal,setGoal]=useState("postpartum");
+  function open(){ setView("program"); setTimeout(()=>document.getElementById("p")?.scrollIntoView({behavior:"smooth"}),80); }
+  const P={bg:"#0E1318",ink:"#E8EAED",inkSoft:"#B0B8C4",card:"#161B22",paper:"#1B2030",rule:"#2A3441",accent:"#A3E635",mute:"#7A8595"};
+  const wrap={maxWidth:820,margin:"0 auto",padding:"64px 24px 96px"};
+  const display="'Fraunces',Georgia,serif",sans="Inter,system-ui,sans-serif",mono="'JetBrains Mono',ui-monospace,monospace";
+  return <div style={{background:P.bg,color:P.ink,fontFamily:sans,minHeight:"100vh"}}>
+    <header style={wrap}>
+      <div data-testid="eyebrow" style={{fontFamily:mono,fontSize:11,color:P.accent,letterSpacing:"0.2em",textTransform:"uppercase",marginBottom:32}}>For independent personal trainers with 5-20 clients</div>
+      <h1 style={{fontFamily:display,fontWeight:400,fontSize:"clamp(46px,7vw,82px)",lineHeight:0.97,letterSpacing:"-0.035em",margin:0}}>Your programs<br/>are <em style={{fontStyle:"italic",color:P.accent}}>Google Docs.</em><br/>Your clients deserve better.</h1>
+      <p style={{fontFamily:display,fontSize:22,fontStyle:"italic",lineHeight:1.45,color:P.inkSoft,margin:"32px 0 28px",maxWidth:600}}>Trainerize and TrueCoach are $40 to $80 a month. They're built for big-box facilities. You're one person with twelve clients. Pick a goal template, customize the program, send the client a link. Track adherence, log a check-in note, repeat.</p>
+      <div style={{display:"flex",flexWrap:"wrap",gap:16,alignItems:"center"}}>
+        <button data-testid="try-sample" onClick={open} style={{fontFamily:sans,fontSize:16,fontWeight:600,background:P.accent,color:"#1A2A08",border:"none",padding:"16px 28px",borderRadius:4,cursor:"pointer"}}>Try with a sample postpartum program →</button>
+        <span style={{fontFamily:mono,fontSize:11,color:P.mute,textTransform:"uppercase"}}>· $10/month for unlimited clients</span>
+      </div>
+    </header>
+    {view==="program"&&<section id="p" style={{...wrap,paddingTop:0}}>
+      <div data-testid="summary" style={{background:P.card,border:`1px solid ${P.rule}`,borderRadius:6,padding:24,marginBottom:14}}>
+        <div style={{fontFamily:mono,fontSize:11,color:P.accent,letterSpacing:0.15,textTransform:"uppercase",marginBottom:8}}>{SAMPLE_PROGRAM.client} · Week {SAMPLE_PROGRAM.week} · Postpartum return</div>
+      </div>
+      {SAMPLE_PROGRAM.sessions.map((s,i)=>(<div key={i} style={{background:P.card,border:`1px solid ${P.rule}`,borderLeft:`4px solid ${P.accent}`,borderRadius:4,padding:"18px 22px",marginBottom:12}}>
+        <div style={{fontFamily:mono,fontSize:11,color:P.accent,letterSpacing:0.15,textTransform:"uppercase",marginBottom:8}}>{s.day} · {s.focus}</div>
+        {s.exercises.map((e,j)=>(<div key={j} style={{padding:"10px 0",borderTop:j>0?`1px solid ${P.rule}`:"none"}}>
+          <div style={{display:"flex",justifyContent:"space-between",fontFamily:sans,fontSize:14,fontWeight:600}}><span>{e.name}</span><span style={{fontFamily:mono,color:P.mute,fontWeight:400}}>{e.sets}×{e.reps} · rest {e.rest}</span></div>
+          {e.note&&<div style={{fontFamily:sans,fontSize:12,color:P.inkSoft,marginTop:4,fontStyle:"italic"}}>{e.note}</div>}
+        </div>))}
+      </div>))}
+      <div style={{marginTop:14,padding:"16px 22px",background:P.paper,border:`1px solid ${P.rule}`,borderRadius:4,fontFamily:mono,fontSize:12,color:P.mute,textAlign:"center"}}>Share link sent to Jamie via SMS. She can log sets/reps and leave a note. You get a digest Friday evening.</div>
+    </section>}
+    <footer style={{...wrap,paddingTop:32,paddingBottom:56,borderTop:`1px solid ${P.rule}`}}><div style={{fontFamily:mono,fontSize:11,color:P.mute,textAlign:"center",lineHeight:1.65}}>Templates by goal · client-facing app · adherence tracking · video upload for form check.</div></footer>
+  </div>;
+}
+const root = ReactDOM.createRoot(document.getElementById("root")); root.render(<App/>);
+</script>
+<script data-name="BMC-Widget" data-cfasync="false" src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js" data-id="gooboolygoo" data-description="Support me on Buy me a coffee!" data-message="Love this project? Donate to keep it going" data-color="#5F7FFF" data-position="Right" data-x_margin="18" data-y_margin="18"></script>
+</body></html>

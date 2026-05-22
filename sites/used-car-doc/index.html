@@ -1,0 +1,60 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Lot Docs. Title work for the small used-car dealer.</title>
+<meta name="description" content="You sold 12 cars last month. The big DMS systems are $500/mo for features you do not need. Lot Docs handles title transfers, financing paperwork, and state-specific compliance for sub-50-car lots.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..900&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script crossorigin src="https://unpkg.com/react@18.3.1/umd/react.production.min.js"></script><script crossorigin src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js"></script><script src="https://unpkg.com/@babel/standalone@7.24.7/babel.min.js"></script>
+<style>html,body{margin:0;padding:0;background:#F5F1EA}.__loading{font-family:Inter,system-ui;color:#888;text-align:center;padding-top:200px}</style></head><body>
+<div id="root"><div class="__loading">Loading...</div></div>
+<script type="text/babel" data-presets="react">
+const { useState } = React;
+const DEALS = [
+  { id:"#1842", buyer:"R. Martinez", car:"'19 Honda Civic", price:14200, status:"title pending", state:"CA", days:6, due:"DMV by Jun 04" },
+  { id:"#1841", buyer:"L. Park", car:"'17 Subaru Forester", price:18900, status:"financing", state:"CA", days:3, due:"approval expected Wed" },
+  { id:"#1839", buyer:"K. Brown", car:"'21 Toyota Tacoma", price:31400, status:"closed", state:"CA", days:0, due:"" },
+  { id:"#1837", buyer:"M. Yu", car:"'18 Ford F-150", price:24100, status:"closed", state:"CA", days:0, due:"" }
+];
+const CHECKLIST = [
+  { k:"Title", v:"Signed by seller, notarized if required by state. Odometer disclosure REG-262 in CA over 10 years old." },
+  { k:"Bill of sale", v:"State-specific form. CA uses REG-135. Both copies signed." },
+  { k:"Reg transfer", v:"REG-227 if title is lost. Smog cert valid 90 days from sale date." },
+  { k:"Financing docs", v:"Truth in Lending (Reg Z) disclosure required. State usury cap (CA: 10% APR if not licensed lender)." },
+  { k:"Buyer notice", v:"Lemon Law buyer's guide (FTC Used Car Rule) posted on every car." }
+];
+function App(){
+  const [view,setView]=useState("landing");
+  function open(){ setView("dash"); setTimeout(()=>document.getElementById("d")?.scrollIntoView({behavior:"smooth"}),80); }
+  const P={bg:"#F5F1EA",ink:"#1F1B16",inkSoft:"#5A544A",card:"#FFFFFF",rule:"#D9D2C2",accent:"#7C2D12",progress:"#0EA5E9",done:"#15803D",mute:"#8A8275"};
+  const wrap={maxWidth:820,margin:"0 auto",padding:"64px 24px 96px"};
+  const display="'Fraunces',Georgia,serif",sans="Inter,system-ui,sans-serif",mono="'JetBrains Mono',ui-monospace,monospace";
+  function sc(s){return s==="closed"?P.done:s==="financing"?P.progress:P.accent;}
+  return <div style={{background:P.bg,color:P.ink,fontFamily:sans,minHeight:"100vh"}}>
+    <header style={wrap}>
+      <div data-testid="eyebrow" style={{fontFamily:mono,fontSize:11,color:P.accent,letterSpacing:"0.2em",textTransform:"uppercase",marginBottom:32}}>For used-car lots doing 10 to 40 cars/month</div>
+      <h1 style={{fontFamily:display,fontWeight:400,fontSize:"clamp(46px,7vw,82px)",lineHeight:0.97,letterSpacing:"-0.035em",margin:0}}>The DMS that<br/>costs $500/mo<br/>has <em style={{fontStyle:"italic",color:P.accent}}>features you'll never use.</em></h1>
+      <p style={{fontFamily:display,fontSize:22,fontStyle:"italic",lineHeight:1.45,color:P.inkSoft,margin:"32px 0 28px",maxWidth:600}}>You sold 12 cars last month. Frazer and Wayne Reaves are built for franchised lots with floor planning. Lot Docs is the title transfers, financing paperwork, and state-specific compliance for sub-50-car independents, for $79 a month.</p>
+      <div style={{display:"flex",flexWrap:"wrap",gap:16,alignItems:"center"}}>
+        <button data-testid="try-sample" onClick={open} style={{fontFamily:sans,fontSize:16,fontWeight:600,background:P.accent,color:"#FFF",border:"none",padding:"16px 28px",borderRadius:4,cursor:"pointer"}}>Show me a sample lot →</button>
+        <span style={{fontFamily:mono,fontSize:11,color:P.mute,textTransform:"uppercase"}}>· $79/mo · 30-day free</span>
+      </div>
+    </header>
+    {view==="dash"&&<section id="d" style={{...wrap,paddingTop:0}}>
+      <div data-testid="summary" style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:14,marginBottom:14}}>
+        {[{l:"This month",v:"12 sold",c:P.accent},{l:"Title pending",v:1,c:P.accent},{l:"DMV deadline",v:"Jun 04",c:P.accent}].map((r,i)=>(<div key={i} style={{background:P.card,border:`1px solid ${P.rule}`,borderRadius:6,padding:"18px 22px"}}><div style={{fontFamily:mono,fontSize:10,color:P.mute,letterSpacing:0.15,textTransform:"uppercase",marginBottom:6}}>{r.l}</div><div style={{fontFamily:display,fontSize:28,fontWeight:500,color:r.c}}>{r.v}</div></div>))}
+      </div>
+      {DEALS.map((d,i)=>(<div key={i} style={{background:P.card,border:`1px solid ${P.rule}`,borderLeft:`4px solid ${sc(d.status)}`,borderRadius:4,padding:"16px 22px",marginBottom:10}}>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"baseline",flexWrap:"wrap",gap:8}}>
+          <div><div style={{fontFamily:sans,fontSize:15,fontWeight:600}}>{d.id} · {d.buyer}</div><div style={{fontFamily:mono,fontSize:11,color:P.mute,marginTop:2}}>{d.car} · ${d.price.toLocaleString()}</div></div>
+          <div style={{textAlign:"right"}}><div style={{fontFamily:mono,fontSize:11,color:sc(d.status),textTransform:"uppercase",letterSpacing:0.1}}>{d.status}</div>{d.due&&<div style={{fontFamily:mono,fontSize:11,color:P.mute,marginTop:2}}>{d.due}</div>}</div>
+        </div>
+      </div>))}
+      <div style={{marginTop:24,padding:24,background:P.card,border:`1px solid ${P.rule}`,borderRadius:6}}>
+        <div style={{fontFamily:mono,fontSize:11,color:P.accent,letterSpacing:0.15,textTransform:"uppercase",marginBottom:14}}>Per-deal compliance checklist (CA)</div>
+        {CHECKLIST.map((c,i)=>(<div key={i} style={{padding:"10px 0",borderTop:i>0?`1px solid ${P.rule}`:"none"}}><div style={{fontFamily:sans,fontSize:14,fontWeight:600,marginBottom:4}}>{c.k}</div><div style={{fontFamily:sans,fontSize:13,color:P.inkSoft,lineHeight:1.55}}>{c.v}</div></div>))}
+      </div>
+    </section>}
+    <footer style={{...wrap,paddingTop:32,paddingBottom:56,borderTop:`1px solid ${P.rule}`}}><div style={{fontFamily:mono,fontSize:11,color:P.mute,textAlign:"center",lineHeight:1.65}}>State forms updated quarterly. Integrates with major state DMVs in CA, TX, FL, NY, IL, GA.</div></footer>
+  </div>;
+}
+const root = ReactDOM.createRoot(document.getElementById("root")); root.render(<App/>);
+</script>
+<script data-name="BMC-Widget" data-cfasync="false" src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js" data-id="gooboolygoo" data-description="Support me on Buy me a coffee!" data-message="Love this project? Donate to keep it going" data-color="#5F7FFF" data-position="Right" data-x_margin="18" data-y_margin="18"></script>
+</body></html>

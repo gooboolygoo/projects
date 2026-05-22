@@ -1,0 +1,51 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Dog Days. Pet sitter scheduling without Time To Pet.</title>
+<meta name="description" content="Time To Pet is $35-55/mo. You have 12 clients. Dog Days is the schedule, the GPS check-in, the recurring invoice, and the worried-owner text thread, for 15 dollars.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..900&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script crossorigin src="https://unpkg.com/react@18.3.1/umd/react.production.min.js"></script><script crossorigin src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js"></script><script src="https://unpkg.com/@babel/standalone@7.24.7/babel.min.js"></script>
+<style>html,body{margin:0;padding:0;background:#F8F4EC}.__loading{font-family:Inter,system-ui;color:#888;text-align:center;padding-top:200px}</style></head><body>
+<div id="root"><div class="__loading">Loading...</div></div>
+<script type="text/babel" data-presets="react">
+const { useState } = React;
+const WALKS = [
+  { d:"9:30 AM", dog:"Bella (golden, 4y)", owner:"Anna L.", duration:"30 min", status:"done", note:"Sniffed everything. Pooped once. Drank water at the park." },
+  { d:"11:00 AM", dog:"Tofu (corgi mix)", owner:"Marcus T.", duration:"30 min", status:"done", note:"Met two other dogs. Chill." },
+  { d:"1:00 PM", dog:"Cooper (boxer, 6y)", owner:"Priya K.", duration:"45 min", status:"in_progress" },
+  { d:"3:30 PM", dog:"Mochi (shiba)", owner:"Dev R.", duration:"30 min", status:"upcoming" },
+  { d:"5:00 PM", dog:"Bella (golden, 4y)", owner:"Anna L.", duration:"20 min", status:"upcoming" }
+];
+function App(){
+  const [view,setView]=useState("landing");
+  function open(){ setView("day"); setTimeout(()=>document.getElementById("day")?.scrollIntoView({behavior:"smooth"}),80); }
+  const P={bg:"#F8F4EC",ink:"#1F1B16",inkSoft:"#5A544A",card:"#FFFFFF",rule:"#D9D2C2",accent:"#B45309",done:"#15803D",progress:"#0EA5E9",mute:"#8A8275"};
+  const wrap={maxWidth:820,margin:"0 auto",padding:"64px 24px 96px"};
+  const display="'Fraunces',Georgia,serif",sans="Inter,system-ui,sans-serif",mono="'JetBrains Mono',ui-monospace,monospace";
+  function sc(s){return s==="done"?P.done:s==="in_progress"?P.progress:P.mute;}
+  return <div style={{background:P.bg,color:P.ink,fontFamily:sans,minHeight:"100vh"}}>
+    <header style={wrap}>
+      <div data-testid="eyebrow" style={{fontFamily:mono,fontSize:11,color:P.accent,letterSpacing:"0.2em",textTransform:"uppercase",marginBottom:32}}>For solo dog walkers and pet sitters</div>
+      <h1 style={{fontFamily:display,fontWeight:400,fontSize:"clamp(46px,7vw,82px)",lineHeight:0.97,letterSpacing:"-0.035em",margin:0}}>Time To Pet is $50<br/>a month. Your<br/><em style={{fontStyle:"italic",color:P.accent}}>twelve clients</em><br/>don't need that.</h1>
+      <p style={{fontFamily:display,fontSize:22,fontStyle:"italic",lineHeight:1.45,color:P.inkSoft,margin:"32px 0 28px",maxWidth:600}}>Owners want to know the dog was walked and is OK. You want to send the invoice without 15 logins. Dog Days is the schedule, the GPS check-in, the photo-after-walk, and the recurring invoice, for $15.</p>
+      <div style={{display:"flex",flexWrap:"wrap",gap:16,alignItems:"center"}}>
+        <button data-testid="try-sample" onClick={open} style={{fontFamily:sans,fontSize:16,fontWeight:600,background:P.accent,color:"#FFF",border:"none",padding:"16px 28px",borderRadius:4,cursor:"pointer"}}>Show me today's walks →</button>
+        <span style={{fontFamily:mono,fontSize:11,color:P.mute,textTransform:"uppercase"}}>· $15/month flat</span>
+      </div>
+    </header>
+    {view==="day"&&<section id="day" style={{...wrap,paddingTop:0}}>
+      <div data-testid="summary" style={{background:P.card,border:`1px solid ${P.rule}`,borderRadius:6,padding:24,marginBottom:14}}>
+        <div style={{fontFamily:mono,fontSize:11,color:P.accent,letterSpacing:0.15,textTransform:"uppercase",marginBottom:8}}>Today · 5 walks · 3.5 hours · $185 billable</div>
+      </div>
+      {WALKS.map((w,i)=>(<div key={i} style={{background:P.card,border:`1px solid ${P.rule}`,borderLeft:`4px solid ${sc(w.status)}`,borderRadius:4,padding:"16px 22px",marginBottom:10}}>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"baseline",flexWrap:"wrap",gap:8}}>
+          <div><div style={{fontFamily:sans,fontSize:15,fontWeight:600}}>{w.d} · {w.dog}</div><div style={{fontFamily:mono,fontSize:11,color:P.mute,marginTop:2}}>{w.owner} · {w.duration}</div></div>
+          <div style={{fontFamily:mono,fontSize:11,color:sc(w.status),letterSpacing:0.1,textTransform:"uppercase"}}>{w.status==="in_progress"?"walking now":w.status}</div>
+        </div>
+        {w.note&&<div style={{fontFamily:sans,fontSize:13,color:P.inkSoft,marginTop:6,fontStyle:"italic"}}>{w.note}</div>}
+      </div>))}
+    </section>}
+    <footer style={{...wrap,paddingTop:32,paddingBottom:56,borderTop:`1px solid ${P.rule}`}}><div style={{fontFamily:mono,fontSize:11,color:P.mute,textAlign:"center",lineHeight:1.65}}>Live GPS to owners during walk. Photo + note auto-sent at end. Invoices auto-charge cards monthly.</div></footer>
+  </div>;
+}
+const root = ReactDOM.createRoot(document.getElementById("root")); root.render(<App/>);
+</script>
+<script data-name="BMC-Widget" data-cfasync="false" src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js" data-id="gooboolygoo" data-description="Support me on Buy me a coffee!" data-message="Love this project? Donate to keep it going" data-color="#5F7FFF" data-position="Right" data-x_margin="18" data-y_margin="18"></script>
+</body></html>

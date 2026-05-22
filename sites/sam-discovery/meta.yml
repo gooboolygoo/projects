@@ -1,0 +1,21 @@
+title: RFP Match
+blurb: GovWin and Bloomberg Government charge 15 to 30 thousand a year. SAM.gov is free and almost unusable. We read every new opportunity, match it against your NAICS codes and past performance, and surface the four this week worth your bid team's time.
+tags:
+  - govcon
+  - rfp
+  - ai
+  - product
+donate: true
+demo:
+  setup:
+    - { action: scroll_to, selector: "#root" }
+  steps:
+    - { action: wait, duration_s: 3 }
+    - { action: click, selector: '[data-testid="try-sample"]' }
+    - { action: wait, duration_s: 1.5 }
+    - { action: scroll_to, selector: "#input-panel" }
+    - { action: wait, duration_s: 1 }
+    - { action: click, selector: '[data-testid="analyze-btn"]' }
+    - { action: wait, duration_s: 3 }
+    - { action: scroll_to, selector: '[data-testid="summary"]' }
+    - { action: wait, duration_s: 7 }

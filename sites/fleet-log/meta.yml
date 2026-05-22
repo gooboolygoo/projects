@@ -1,0 +1,17 @@
+title: Truck Log
+blurb: Your service log is a clipboard in the glove box. The transit van is 200 miles overdue for an oil change and nobody noticed. Truck Log is the maintenance reminders, document storage, and cost tracking for the small fleets Fleetio overlooked.
+tags:
+  - trades
+  - fleet
+  - smb
+  - product
+donate: true
+demo:
+  setup:
+    - { action: scroll_to, selector: "#root" }
+  steps:
+    - { action: wait, duration_s: 3 }
+    - { action: click, selector: '[data-testid="try-sample"]' }
+    - { action: wait, duration_s: 2 }
+    - { action: scroll_to, selector: '[data-testid="summary"]' }
+    - { action: wait, duration_s: 7 }

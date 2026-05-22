@@ -1,0 +1,61 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>RFP Match. SAM.gov for small primes who don't have $30k for GovWin.</title>
+<meta name="description" content="GovWin and Bloomberg Government charge thousands. SAM.gov's search is unusable. Type your NAICS codes and past performance, get the four RFPs this week that fit you.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..900&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script crossorigin src="https://unpkg.com/react@18.3.1/umd/react.production.min.js"></script><script crossorigin src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js"></script><script src="https://unpkg.com/@babel/standalone@7.24.7/babel.min.js"></script>
+<style>html,body{margin:0;padding:0;background:#0F1218}.__loading{font-family:Inter,system-ui;color:#888;text-align:center;padding-top:200px}</style></head><body>
+<div id="root"><div class="__loading">Loading...</div></div>
+<script type="text/babel" data-presets="react">
+const { useState } = React;
+const SAMPLE = "NAICS: 541512, 541511, 541519\nPast: VA EHR support, Army cyber pilot, NIST contract under 250k\nSize: 8(a) certified, woman-owned";
+const MOCK = [
+  { agency:"DHS / CBP", title:"Container scanning data integration", deadline:"due Jun 18, 2026", value:"$2.4M ceiling, 1 base + 4 options", fit:0.91, why:"Direct NAICS match (541512). Set aside for 8(a). Your VA EHR integration past performance is exactly the kind of evidence they want." },
+  { agency:"VA / VHA", title:"Telehealth pilot maintenance", deadline:"due Jul 02, 2026", value:"$1.1M, single award", fit:0.88, why:"Healthcare IT, NAICS 541512. Your VA EHR contract is the strongest possible past performance for this one." },
+  { agency:"Air Force / AFLCMC", title:"Cyber threat indicator pipeline", deadline:"due Jun 30, 2026", value:"$3.8M IDIQ", fit:0.76, why:"Your Army cyber pilot is relevant but Air Force prefers their own ecosystem vendors. Worth a no-bid letter unless you have a security clearance team." },
+  { agency:"NIH / NIAID", title:"Genomic data warehouse migration", deadline:"due Jul 15, 2026", value:"$880K firm-fixed", fit:0.71, why:"Smaller, fits your size. NAICS 541511. No healthcare data past performance shown but adjacent to your VA work." }
+];
+const delay = (ms) => new Promise(r => setTimeout(r, ms));
+function App(){
+  const [text,setText]=useState(""); const [view,setView]=useState("landing"); const [out,setOut]=useState(null);
+  async function go(){ if(!text.trim())return; setView("analyzing"); await delay(2200); setOut(MOCK); setView("results"); setTimeout(()=>document.getElementById("results")?.scrollIntoView({behavior:"smooth"}),80); }
+  function loadSample(){ setText(SAMPLE); setView("landing"); }
+  const P={bg:"#0F1218",ink:"#E8EAED",inkSoft:"#B0B8C4",card:"#171B22",paper:"#1B2030",rule:"#2A3441",accent:"#22C55E",mute:"#7A8595"};
+  const wrap={maxWidth:820,margin:"0 auto",padding:"64px 24px 96px"};
+  const display="'Fraunces',Georgia,serif",sans="Inter,system-ui,sans-serif",mono="'JetBrains Mono',ui-monospace,monospace";
+  return <div style={{background:P.bg,color:P.ink,fontFamily:sans,minHeight:"100vh"}}>
+    <header style={wrap}>
+      <div data-testid="eyebrow" style={{fontFamily:mono,fontSize:11,color:P.accent,letterSpacing:"0.2em",textTransform:"uppercase",marginBottom:32}}>For small primes priced out of GovWin</div>
+      <h1 style={{fontFamily:display,fontWeight:400,fontSize:"clamp(46px,7vw,82px)",lineHeight:0.97,letterSpacing:"-0.035em",margin:0}}>SAM.gov's search<br/>was built to be<br/><em style={{fontStyle:"italic",color:P.accent}}>impossible</em>.</h1>
+      <p style={{fontFamily:display,fontSize:22,fontStyle:"italic",lineHeight:1.45,color:P.inkSoft,margin:"32px 0 28px",maxWidth:600}}>GovWin and Bloomberg Government charge $15-30k a year. SAM.gov is free and almost unusable. We read every new opportunity, match it against your NAICS codes and past performance, and surface the four this week worth your bid team's time.</p>
+      <div style={{display:"flex",flexWrap:"wrap",gap:16,alignItems:"center"}}>
+        <button data-testid="try-sample" onClick={loadSample} style={{fontFamily:sans,fontSize:16,fontWeight:600,background:P.accent,color:"#0A2218",border:"none",padding:"16px 28px",borderRadius:4,cursor:"pointer"}}>Try with a sample profile →</button>
+        <span style={{fontFamily:mono,fontSize:11,color:P.mute,textTransform:"uppercase"}}>· $99/month · cancel anytime</span>
+      </div>
+    </header>
+    <section style={{...wrap,paddingTop:0}}>
+      <div id="input-panel" style={{background:P.paper,border:`1px solid ${P.rule}`,borderRadius:6,padding:28}}>
+        <div style={{fontFamily:mono,fontSize:11,color:P.accent,letterSpacing:"0.18em",textTransform:"uppercase",marginBottom:14}}>Step 1 of 2 · Your firm</div>
+        <textarea data-testid="profile-input" value={text} onChange={e=>setText(e.target.value)} placeholder="NAICS codes, past performance (agencies, contract sizes), socioeconomic certifications" style={{width:"100%",minHeight:140,fontFamily:mono,fontSize:13,lineHeight:1.55,color:P.ink,border:`1px solid ${P.rule}`,borderRadius:4,padding:"14px 16px",outline:"none",background:P.bg,resize:"vertical"}}/>
+        <div style={{display:"flex",justifyContent:"flex-end",marginTop:14}}>
+          <button data-testid="analyze-btn" onClick={go} disabled={!text.trim()||view==="analyzing"} style={{fontFamily:sans,fontSize:15,fontWeight:600,background:text.trim()&&view!=="analyzing"?P.accent:P.rule,color:text.trim()&&view!=="analyzing"?"#0A2218":P.mute,border:"none",padding:"12px 24px",borderRadius:4,cursor:text.trim()&&view!=="analyzing"?"pointer":"not-allowed"}}>{view==="analyzing"?"Scanning SAM.gov...":"Match RFPs →"}</button>
+        </div>
+      </div>
+    </section>
+    {view==="results"&&out&&<section id="results" style={{...wrap,paddingTop:32}}>
+      <div data-testid="summary" style={{fontFamily:mono,fontSize:11,color:P.accent,letterSpacing:0.15,textTransform:"uppercase",marginBottom:14}}>{out.length} opportunities this week worth bidding</div>
+      {out.map((r,i)=>(<div key={i} style={{background:P.card,border:`1px solid ${P.rule}`,borderLeft:`4px solid ${r.fit>=0.85?P.accent:P.mute}`,borderRadius:4,padding:"20px 24px",marginBottom:12}}>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"baseline",flexWrap:"wrap",gap:8,marginBottom:6}}>
+          <div style={{fontFamily:mono,fontSize:11,color:P.accent,letterSpacing:0.15,textTransform:"uppercase"}}>{r.agency} · {r.deadline}</div>
+          <div style={{fontFamily:mono,fontSize:11,color:r.fit>=0.85?P.accent:P.mute}}>{Math.round(r.fit*100)}% fit</div>
+        </div>
+        <div style={{fontFamily:sans,fontSize:16,fontWeight:600,marginBottom:6}}>{r.title}</div>
+        <div style={{fontFamily:mono,fontSize:12,color:P.inkSoft,marginBottom:8}}>{r.value}</div>
+        <div style={{fontFamily:sans,fontSize:13,color:P.inkSoft,lineHeight:1.55}}>{r.why}</div>
+      </div>))}
+    </section>}
+    <footer style={{...wrap,paddingTop:32,paddingBottom:56,borderTop:`1px solid ${P.rule}`}}><div style={{fontFamily:mono,fontSize:11,color:P.mute,textAlign:"center",lineHeight:1.65}}>Indexes every SAM.gov posting daily. Production version emails you Mon/Wed/Fri.</div></footer>
+  </div>;
+}
+const root = ReactDOM.createRoot(document.getElementById("root")); root.render(<App/>);
+</script>
+<script data-name="BMC-Widget" data-cfasync="false" src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js" data-id="gooboolygoo" data-description="Support me on Buy me a coffee!" data-message="Love this project? Donate to keep it going" data-color="#5F7FFF" data-position="Right" data-x_margin="18" data-y_margin="18"></script>
+</body></html>

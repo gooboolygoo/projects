@@ -1,0 +1,23 @@
+{
+  "generated_at": "2026-05-22T04:26:48.599Z",
+  "model": "claude-haiku-4-5",
+  "url": "https://gooboolygoo.github.io/projects/walker-crm/",
+  "hashtags": [
+    "petsitting",
+    "smb",
+    "saas",
+    "indiedev",
+    "buildinpublic"
+  ],
+  "x": {
+    "tweet": "Pet sitters at 15 bucks a month vs. 50? Dog Days handles scheduling, GPS check-ins, walk photos, and invoicing. Time to Pet costs way more. What are you actually paying for.",
+    "reply_lead": "schedule and track here"
+  },
+  "vertical_caption": "Tired of $50 pet sitter software? Dog Days does scheduling, GPS check-ins, walk photos, and invoices for 15 a month. That's it.",
+  "shorts_description_lead": "Pet sitter software that actually costs what it should. Schedule walks, verify GPS check-ins, collect walk photos, and invoice automatically. No $50 subscriptions required.",
+  "video": {
+    "title": "Pet Sitter Scheduling Without the Markup",
+    "script": "Pet sitters need scheduling, GPS proof the walk happened, photos from the walk, and an invoice sent out. Time to Pet does all that for 50 dollars a month. Dog Days does it for 15. No signup theater, no feature bloat, no sales call. Load the page, set up your schedule, send your first invoice. That's the product.",
+    "word_count": 58
+  }
+}

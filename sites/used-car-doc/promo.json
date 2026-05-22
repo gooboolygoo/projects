@@ -1,0 +1,23 @@
+{
+  "generated_at": "2026-05-22T04:26:40.344Z",
+  "model": "claude-haiku-4-5",
+  "url": "https://gooboolygoo.github.io/projects/used-car-doc/",
+  "hashtags": [
+    "automotive",
+    "smb",
+    "businesstools",
+    "indiedev",
+    "buildinpublic"
+  ],
+  "x": {
+    "tweet": "Running a 10-40 car lot? Title transfers, financing docs, and state compliance paperwork is eating your time. Lot Docs handles it for 79 a month.",
+    "reply_lead": "automate the paperwork →"
+  },
+  "vertical_caption": "You're spending 15 hours a month on title work instead of selling cars. Lot Docs automates the compliance docs for independent used-car dealers. Built for sub-50-car lots, not the big franchises.",
+  "shorts_description_lead": "Small used-car dealers waste hours on title transfers, financing paperwork, and state compliance. Lot Docs does it automatically for 79 a month.",
+  "video": {
+    "title": "Automate Your Lot Paperwork",
+    "script": "You sold a car last week. Then came six hours of title transfers, financing docs, and state-specific paperwork. Most dealers don't talk about this part, but it's the tax on selling. Lot Docs is built for independent used-car lots under 50 cars. It handles title work, financing compliance, and state-specific requirements. No franchise systems, no $500-a-month seat licenses. Just 79 a month and the paperwork is done. Check the link to see how it works.",
+    "word_count": 75
+  }
+}
