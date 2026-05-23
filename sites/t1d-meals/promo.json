@@ -1,0 +1,23 @@
+{
+  "generated_at": "2026-05-23T03:29:57.955Z",
+  "model": "claude-haiku-4-5",
+  "url": "https://gooboolygoo.github.io/projects/t1d-meals/",
+  "hashtags": [
+    "t1dlife",
+    "diabetes",
+    "buildinpublic",
+    "healthtech",
+    "webdev"
+  ],
+  "x": {
+    "tweet": "Ten minutes before a meeting and you need to log your meal. Snap a photo. We estimate the carbs, remember what you usually eat, predict your glucose, and suggest a bolus. One tap to your pump.",
+    "reply_lead": "try it now"
+  },
+  "vertical_caption": "Logging carbs shouldn't require a recipe breakdown. Snap your plate, we estimate portions, recall your patterns, and suggest a bolus in seconds. For anyone managing T1D in the real world.",
+  "shorts_description_lead": "Tired of entering every ingredient? Snap your meal and get a carb estimate plus bolus suggestion in seconds. Built for T1D management without the friction.",
+  "video": {
+    "title": "Snap Your Meal, Get a Bolus",
+    "script": "Most glucose logging apps want you to hunt down every ingredient. Your blood sugar doesn't wait five minutes while you scroll through MyFitnessPal. Snap Carbs uses your phone camera to estimate carbs from a photo, learns your eating patterns, recalls similar meals from your history, predicts how your glucose will respond, and suggests the right bolus dose. One tap to your pump. No recipe database. No guessing. Link in the description.",
+    "word_count": 71
+  }
+}

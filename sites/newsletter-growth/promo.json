@@ -1,0 +1,23 @@
+{
+  "generated_at": "2026-05-23T03:29:40.737Z",
+  "model": "claude-haiku-4-5",
+  "url": "https://gooboolygoo.github.io/projects/newsletter-growth/",
+  "hashtags": [
+    "newsletter",
+    "creatortools",
+    "analytics",
+    "buildinpublic",
+    "productivity"
+  ],
+  "x": {
+    "tweet": "Your newsletter sent 12 emails. Exactly one of them got you 312 new subscribers. The other 11 kept the secret. Send Score figures out which.",
+    "reply_lead": "see the breakdown ↓"
+  },
+  "vertical_caption": "Which of your last 12 newsletter sends actually worked? Send Score reads the data, finds the patterns, tells you what to write more of. 📊",
+  "shorts_description_lead": "Your analytics show growth numbers but not the why. Send Score compares your last 12 newsletter sends and tells you exactly which patterns drive new subscribers.",
+  "video": {
+    "title": "Which Subject Line Actually Worked",
+    "script": "You sent 12 newsletters this year. One of them got you 312 new subscribers. The other 11 just faded into inboxes. What was different about the one that hit. Send Score compares your last dozen sends, finds the patterns in subject lines, timing, topics. It tells you what to write more of and what to retire. No guessing. Just data. Link in the description.",
+    "word_count": 64
+  }
+}

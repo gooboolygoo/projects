@@ -1,0 +1,100 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Counter. The offer negotiation playbook nobody gave you.</title>
+<meta name="description" content="You got the offer. You're going to say yes too fast. Paste the offer plus your situation. Get the counter email, the talking points, and the comp data that supports your ask.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..900&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script crossorigin src="https://unpkg.com/react@18.3.1/umd/react.production.min.js"></script><script crossorigin src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js"></script><script src="https://unpkg.com/@babel/standalone@7.24.7/babel.min.js"></script>
+<style>html,body{margin:0;padding:0;background:#0E0B14}.__loading{font-family:Inter,system-ui;color:#888;text-align:center;padding-top:200px}</style></head><body>
+<div id="root"><div class="__loading">Loading...</div></div>
+<script type="text/babel" data-presets="react">
+const { useState } = React;
+const SAMPLE = `Role: Senior Software Engineer
+Company: 800-person Series D, SF + remote
+Offer: $185k base + $80k stock (4-yr, 1-yr cliff) + 10% sign-on
+Competing: nothing concrete yet
+Your last comp: $172k base + 60k stock at a startup`;
+const MOCK = {
+  market: { p50:"$210k base, $120k stock", p75:"$235k base, $160k stock", source:"Levels.fyi + Glassdoor, same level, same location, last 60 days" },
+  verdict: "The base is below P50 for this level and city. The equity is ~30% under. The sign-on is generous but is one-time. You have room to counter without burning the offer.",
+  asks: [
+    { t:"Base: counter $215k", justify:"Right at the P50. Cite Levels.fyi for the same level and same band. Easy yes if they have any room." },
+    { t:"Stock: counter $120k over 4yr", justify:"Equity is where most companies have flexibility. Even a no-on-base often gets a yes-on-stock." },
+    { t:"Sign-on: hold at 10%", justify:"Don't push here. The sign-on is good; pushing makes you look like you're nickel-and-diming." }
+  ],
+  email: `Hi Pat,
+
+Thank you for the offer. I'm excited about the role, the team, and the work on [specific].
+
+I'd like to discuss a few items before signing:
+
+1) Base salary. Based on current market data for senior engineers at similar-stage companies in San Francisco (Levels.fyi median around $210k for this level), I was hoping we could land at $215k base. That's a $30k increase on the offer.
+
+2) Equity. The current grant works out to ~$80k over four years. Could we increase the stock component to a $120k grant value? I'd find that meaningful for committing to a four-year vest.
+
+3) The sign-on of 10% is generous — I'm happy with that.
+
+I'm not in an active competing process, so this isn't a leverage play. I'd rather give you the chance to put the strongest offer on the table, accept, and stop looking. Looking forward to hearing your thoughts.
+
+Best,
+[your name]`,
+  hold_lines: [
+    "\"Is this your best offer?\" — let them counter themselves.",
+    "\"I need to think about it overnight\" — do not accept on the call.",
+    "If they say \"this is fixed\" — that almost never means base AND equity AND sign-on are all fixed. Pick the one you want most."
+  ]
+};
+const delay = (ms) => new Promise(r => setTimeout(r, ms));
+function App(){
+  const [text,setText]=useState(""); const [view,setView]=useState("landing"); const [out,setOut]=useState(null);
+  async function go(){ if(!text.trim())return; setView("analyzing"); await delay(2400); setOut(MOCK); setView("results"); setTimeout(()=>document.getElementById("results")?.scrollIntoView({behavior:"smooth"}),80); }
+  function loadSample(){ setText(SAMPLE); setView("landing"); }
+  const P={bg:"#0E0B14",ink:"#E8EAED",inkSoft:"#B0B8C4",card:"#161221",paper:"#1B1729",rule:"#2A2538",accent:"#C084FC",mute:"#7A8595"};
+  const wrap={maxWidth:820,margin:"0 auto",padding:"64px 24px 96px"};
+  const display="'Fraunces',Georgia,serif",sans="Inter,system-ui,sans-serif",mono="'JetBrains Mono',ui-monospace,monospace";
+  return <div style={{background:P.bg,color:P.ink,fontFamily:sans,minHeight:"100vh"}}>
+    <header style={wrap}>
+      <div data-testid="eyebrow" style={{fontFamily:mono,fontSize:11,color:P.accent,letterSpacing:"0.2em",textTransform:"uppercase",marginBottom:32}}>For anyone holding an offer letter right now</div>
+      <h1 style={{fontFamily:display,fontWeight:400,fontSize:"clamp(46px,7vw,82px)",lineHeight:0.97,letterSpacing:"-0.035em",margin:0}}>You're about to<br/>say yes to <em style={{fontStyle:"italic",color:P.accent}}>$20,000</em><br/>less than market.</h1>
+      <p style={{fontFamily:display,fontSize:22,fontStyle:"italic",lineHeight:1.45,color:P.inkSoft,margin:"32px 0 28px",maxWidth:600}}>The offer feels exciting and you don't want to push. The recruiter knows. Paste the offer and your situation. Get a counter email written for you, talking points for the call, and the comp data that backs each ask.</p>
+      <div style={{display:"flex",flexWrap:"wrap",gap:16,alignItems:"center"}}>
+        <button data-testid="try-sample" onClick={loadSample} style={{fontFamily:sans,fontSize:16,fontWeight:600,background:P.accent,color:"#1F0830",border:"none",padding:"16px 28px",borderRadius:4,cursor:"pointer"}}>Try with a sample offer →</button>
+        <span style={{fontFamily:mono,fontSize:11,color:P.mute,textTransform:"uppercase"}}>· free · comp pulled from Levels.fyi</span>
+      </div>
+    </header>
+    <section style={{...wrap,paddingTop:0}}>
+      <div id="input-panel" style={{background:P.paper,border:`1px solid ${P.rule}`,borderRadius:6,padding:28}}>
+        <div style={{fontFamily:mono,fontSize:11,color:P.accent,letterSpacing:"0.18em",textTransform:"uppercase",marginBottom:14}}>Step 1 of 2 · Your offer</div>
+        <textarea data-testid="offer-input" value={text} onChange={e=>setText(e.target.value)} placeholder="Role, company, location, the offer numbers, any competing offers, your current comp." style={{width:"100%",minHeight:160,fontFamily:mono,fontSize:13,lineHeight:1.55,color:P.ink,border:`1px solid ${P.rule}`,borderRadius:4,padding:"14px 16px",outline:"none",background:P.bg,resize:"vertical"}}/>
+        <div style={{display:"flex",justifyContent:"flex-end",marginTop:14}}>
+          <button data-testid="analyze-btn" onClick={go} disabled={!text.trim()||view==="analyzing"} style={{fontFamily:sans,fontSize:15,fontWeight:600,background:text.trim()&&view!=="analyzing"?P.accent:P.rule,color:text.trim()&&view!=="analyzing"?"#1F0830":P.mute,border:"none",padding:"12px 24px",borderRadius:4,cursor:text.trim()&&view!=="analyzing"?"pointer":"not-allowed"}}>{view==="analyzing"?"Pulling comp data...":"Write my counter →"}</button>
+        </div>
+      </div>
+    </section>
+    {view==="results"&&out&&<section id="results" style={{...wrap,paddingTop:32}}>
+      <div data-testid="summary" style={{background:P.card,border:`2px solid ${P.accent}`,borderRadius:6,padding:28,marginBottom:14}}>
+        <div style={{fontFamily:mono,fontSize:11,color:P.accent,letterSpacing:0.15,textTransform:"uppercase",marginBottom:8}}>Market for your role</div>
+        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:14,marginBottom:14}}>
+          <div><div style={{fontFamily:mono,fontSize:11,color:P.mute,textTransform:"uppercase",letterSpacing:0.1}}>P50</div><div style={{fontFamily:display,fontSize:22,color:P.ink,marginTop:2}}>{out.market.p50}</div></div>
+          <div><div style={{fontFamily:mono,fontSize:11,color:P.mute,textTransform:"uppercase",letterSpacing:0.1}}>P75</div><div style={{fontFamily:display,fontSize:22,color:P.ink,marginTop:2}}>{out.market.p75}</div></div>
+        </div>
+        <div style={{fontFamily:mono,fontSize:11,color:P.mute,marginBottom:8}}>{out.market.source}</div>
+        <div style={{fontFamily:sans,fontSize:14,color:P.inkSoft,lineHeight:1.55}}>{out.verdict}</div>
+      </div>
+      {out.asks.map((a,i)=>(<div key={i} style={{background:P.card,border:`1px solid ${P.rule}`,borderLeft:`3px solid ${P.accent}`,borderRadius:4,padding:"14px 22px",marginBottom:10}}>
+        <div style={{fontFamily:sans,fontSize:15,fontWeight:600,marginBottom:4}}>{a.t}</div>
+        <div style={{fontFamily:sans,fontSize:13,color:P.inkSoft,lineHeight:1.55}}>{a.justify}</div>
+      </div>))}
+      <div style={{marginTop:24,background:P.card,border:`1px solid ${P.rule}`,borderRadius:4,padding:"22px 26px"}}>
+        <div style={{fontFamily:mono,fontSize:11,color:P.accent,letterSpacing:0.15,textTransform:"uppercase",marginBottom:10}}>The email (edit and send)</div>
+        <div style={{fontFamily:sans,fontSize:14,color:P.ink,whiteSpace:"pre-wrap",lineHeight:1.6}}>{out.email}</div>
+      </div>
+      <div style={{marginTop:14,padding:"18px 24px",background:"rgba(192,132,252,0.07)",borderLeft:`3px solid ${P.accent}`,borderRadius:4}}>
+        <div style={{fontFamily:mono,fontSize:11,color:P.accent,letterSpacing:0.15,textTransform:"uppercase",marginBottom:10}}>Hold these lines on the call</div>
+        <ul style={{margin:0,paddingLeft:18,fontFamily:sans,fontSize:14,color:P.ink,lineHeight:1.7}}>{out.hold_lines.map((l,i)=>(<li key={i} style={{marginBottom:4}}>{l}</li>))}</ul>
+      </div>
+    </section>}
+    <footer style={{...wrap,paddingTop:32,paddingBottom:56,borderTop:`1px solid ${P.rule}`}}><div style={{fontFamily:mono,fontSize:11,color:P.mute,textAlign:"center",lineHeight:1.65}}>Comp data updates weekly. Not legal or career advice; review your specific offer with a trusted mentor.</div></footer>
+  </div>;
+}
+const root = ReactDOM.createRoot(document.getElementById("root")); root.render(<App/>);
+</script>
+<script data-name="BMC-Widget" data-cfasync="false" src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js" data-id="gooboolygoo" data-description="Support me on Buy me a coffee!" data-message="Love this project? Donate to keep it going" data-color="#5F7FFF" data-position="Right" data-x_margin="18" data-y_margin="18"></script>
+</body></html>

@@ -1,0 +1,65 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Reply Lift. Cold email A/B that tells you why.</title>
+<meta name="description" content="You A/B test subject lines. Your reply rate moved 2 percent. Was it the subject, the send time, or the wrong person? Reply Lift attributes the cause, not the correlation.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..900&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script crossorigin src="https://unpkg.com/react@18.3.1/umd/react.production.min.js"></script><script crossorigin src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js"></script><script src="https://unpkg.com/@babel/standalone@7.24.7/babel.min.js"></script>
+<style>html,body{margin:0;padding:0;background:#0F1218}.__loading{font-family:Inter,system-ui;color:#888;text-align:center;padding-top:200px}</style></head><body>
+<div id="root"><div class="__loading">Loading...</div></div>
+<script type="text/babel" data-presets="react">
+const { useState } = React;
+const SAMPLE = "Campaign 'Q2-CTOs', 1,400 sends, A/B subject + send time, 2.4% lift in opens but 0.3% drop in replies";
+const MOCK = {
+  verdict: "Your A subject won opens but your B persona was right. Net: you fixed the wrong variable.",
+  variables: [
+    { name:"Subject line", a:"\"Quick Q on your stack\"", b:"\"15 min to compare our deploy times\"", a_open:0.42, b_open:0.38, a_reply:0.038, b_reply:0.062, signal:"B reply rate is 63% higher despite lower open." },
+    { name:"Send time", a:"Tuesday 9am ET", b:"Wednesday 11am ET", lift_reply:"-0.2%", signal:"Inside the noise floor. Stop testing this." },
+    { name:"Persona targeting", a:"CTOs at 50-200", b:"VP Eng at 50-200", lift_reply:"+18%", signal:"VP Eng is the right buyer for your motion. CTOs got upgraded to Director or moved on; VP Eng is the new buyer." }
+  ],
+  reco: "Switch all new sends to: 15-min subject, Wed 11am ET, VP Eng persona. Expect ~2.4x reply rate. Stop A/B testing subject lines this quarter; persona alignment is the only knob still moving the number."
+};
+const delay = (ms) => new Promise(r => setTimeout(r, ms));
+function App(){
+  const [text,setText]=useState(""); const [view,setView]=useState("landing"); const [out,setOut]=useState(null);
+  async function go(){ if(!text.trim())return; setView("analyzing"); await delay(2200); setOut(MOCK); setView("results"); setTimeout(()=>document.getElementById("results")?.scrollIntoView({behavior:"smooth"}),80); }
+  function loadSample(){ setText(SAMPLE); setView("landing"); }
+  const P={bg:"#0F1218",ink:"#E8EAED",inkSoft:"#B0B8C4",card:"#171B22",paper:"#1B2030",rule:"#2A3441",accent:"#06B6D4",up:"#10B981",down:"#EF4444",mute:"#7A8595"};
+  const wrap={maxWidth:820,margin:"0 auto",padding:"64px 24px 96px"};
+  const display="'Fraunces',Georgia,serif",sans="Inter,system-ui,sans-serif",mono="'JetBrains Mono',ui-monospace,monospace";
+  return <div style={{background:P.bg,color:P.ink,fontFamily:sans,minHeight:"100vh"}}>
+    <header style={wrap}>
+      <div data-testid="eyebrow" style={{fontFamily:mono,fontSize:11,color:P.accent,letterSpacing:"0.2em",textTransform:"uppercase",marginBottom:32}}>For SDRs running 5+ campaigns a quarter</div>
+      <h1 style={{fontFamily:display,fontWeight:400,fontSize:"clamp(46px,7vw,82px)",lineHeight:0.97,letterSpacing:"-0.035em",margin:0}}>You A/B test the<br/><em style={{fontStyle:"italic",color:P.accent}}>wrong variable.</em></h1>
+      <p style={{fontFamily:display,fontSize:22,fontStyle:"italic",lineHeight:1.45,color:P.inkSoft,margin:"32px 0 28px",maxWidth:600}}>Your subject line A beat B by 2 percent. Was it the subject, or that you also changed the day, or that B happened to hit a worse persona? Reply Lift attributes the cause, not the correlation. Tells you which variable to keep testing and which to stop.</p>
+      <div style={{display:"flex",flexWrap:"wrap",gap:16,alignItems:"center"}}>
+        <button data-testid="try-sample" onClick={loadSample} style={{fontFamily:sans,fontSize:16,fontWeight:600,background:P.accent,color:"#06281E",border:"none",padding:"16px 28px",borderRadius:4,cursor:"pointer"}}>Try with a sample campaign →</button>
+        <span style={{fontFamily:mono,fontSize:11,color:P.mute,textTransform:"uppercase"}}>· $39/mo · works with Smartlead, Instantly, Apollo</span>
+      </div>
+    </header>
+    <section style={{...wrap,paddingTop:0}}>
+      <div id="input-panel" style={{background:P.paper,border:`1px solid ${P.rule}`,borderRadius:6,padding:28}}>
+        <div style={{fontFamily:mono,fontSize:11,color:P.accent,letterSpacing:"0.18em",textTransform:"uppercase",marginBottom:14}}>Step 1 of 2 · Campaign details</div>
+        <textarea data-testid="camp-input" value={text} onChange={e=>setText(e.target.value)} placeholder="Variables tested, sample size, what shifted." style={{width:"100%",minHeight:120,fontFamily:sans,fontSize:14,lineHeight:1.55,color:P.ink,border:`1px solid ${P.rule}`,borderRadius:4,padding:"14px 16px",outline:"none",background:P.bg,resize:"vertical"}}/>
+        <div style={{display:"flex",justifyContent:"flex-end",marginTop:14}}>
+          <button data-testid="analyze-btn" onClick={go} disabled={!text.trim()||view==="analyzing"} style={{fontFamily:sans,fontSize:15,fontWeight:600,background:text.trim()&&view!=="analyzing"?P.accent:P.rule,color:text.trim()&&view!=="analyzing"?"#06281E":P.mute,border:"none",padding:"12px 24px",borderRadius:4,cursor:text.trim()&&view!=="analyzing"?"pointer":"not-allowed"}}>{view==="analyzing"?"Attributing...":"What actually moved? →"}</button>
+        </div>
+      </div>
+    </section>
+    {view==="results"&&out&&<section id="results" style={{...wrap,paddingTop:32}}>
+      <div data-testid="summary" style={{background:P.card,border:`2px solid ${P.accent}`,borderRadius:6,padding:28,marginBottom:14}}>
+        <div style={{fontFamily:mono,fontSize:11,color:P.accent,letterSpacing:0.15,textTransform:"uppercase",marginBottom:8}}>Verdict</div>
+        <div style={{fontFamily:display,fontSize:24,color:P.ink,lineHeight:1.4}}>{out.verdict}</div>
+      </div>
+      {out.variables.map((v,i)=>(<div key={i} style={{background:P.card,border:`1px solid ${P.rule}`,borderRadius:4,padding:"18px 22px",marginBottom:10}}>
+        <div style={{fontFamily:mono,fontSize:11,color:P.accent,letterSpacing:0.15,textTransform:"uppercase",marginBottom:8}}>{v.name}</div>
+        {v.a_open&&<div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12,marginBottom:8,fontFamily:mono,fontSize:12}}><div><div style={{color:P.mute}}>A: {v.a}</div><div style={{color:P.ink,marginTop:2}}>open {Math.round(v.a_open*100)}% · reply {(v.a_reply*100).toFixed(1)}%</div></div><div><div style={{color:P.mute}}>B: {v.b}</div><div style={{color:P.ink,marginTop:2}}>open {Math.round(v.b_open*100)}% · reply {(v.b_reply*100).toFixed(1)}%</div></div></div>}
+        {v.lift_reply&&<div style={{fontFamily:mono,fontSize:13,color:P.ink,marginBottom:6}}>{v.a} vs {v.b} · lift in reply rate: <strong style={{color:v.lift_reply.startsWith("+")?P.up:P.down}}>{v.lift_reply}</strong></div>}
+        <div style={{fontFamily:sans,fontSize:14,color:P.inkSoft,lineHeight:1.55,fontStyle:"italic"}}>{v.signal}</div>
+      </div>))}
+      <div style={{marginTop:14,padding:"18px 24px",background:"rgba(6,182,212,0.07)",borderLeft:`3px solid ${P.accent}`,borderRadius:4,fontFamily:sans,fontSize:14,color:P.ink,lineHeight:1.6}}><strong style={{fontFamily:mono,fontSize:11,color:P.accent,letterSpacing:0.15,textTransform:"uppercase",display:"block",marginBottom:6}}>Do this next campaign</strong>{out.reco}</div>
+    </section>}
+    <footer style={{...wrap,paddingTop:32,paddingBottom:56,borderTop:`1px solid ${P.rule}`}}><div style={{fontFamily:mono,fontSize:11,color:P.mute,textAlign:"center",lineHeight:1.65}}>Production version pulls directly from your sender via API and re-runs attribution weekly.</div></footer>
+  </div>;
+}
+const root = ReactDOM.createRoot(document.getElementById("root")); root.render(<App/>);
+</script>
+<script data-name="BMC-Widget" data-cfasync="false" src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js" data-id="gooboolygoo" data-description="Support me on Buy me a coffee!" data-message="Love this project? Donate to keep it going" data-color="#5F7FFF" data-position="Right" data-x_margin="18" data-y_margin="18"></script>
+</body></html>

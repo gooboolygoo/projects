@@ -1,0 +1,21 @@
+title: Send Score
+blurb: Your platform shows numbers. It does not say which subject line drove the 312 new subscribers in March. We compare your last 12 sends, find the patterns, tell you what to write more of and what to retire.
+tags:
+  - newsletter
+  - creator
+  - analytics
+  - product
+donate: true
+demo:
+  setup:
+    - { action: scroll_to, selector: "#root" }
+  steps:
+    - { action: wait, duration_s: 3 }
+    - { action: click, selector: '[data-testid="try-sample"]' }
+    - { action: wait, duration_s: 1.5 }
+    - { action: scroll_to, selector: "#input-panel" }
+    - { action: wait, duration_s: 1 }
+    - { action: click, selector: '[data-testid="analyze-btn"]' }
+    - { action: wait, duration_s: 3 }
+    - { action: scroll_to, selector: '[data-testid="summary"]' }
+    - { action: wait, duration_s: 7 }

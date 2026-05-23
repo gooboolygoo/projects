@@ -1,0 +1,21 @@
+title: Shoot Lite
+blurb: Professional product photography is 500 to 2000 dollars a session. You ship 12 SKUs a quarter. Drop your base shot and brand style. Get four variants ready for Shopify, the IG grid, and the lifestyle hero. Consistent across SKUs because the model learned your brand.
+tags:
+  - ecommerce
+  - design
+  - ai
+  - product
+donate: true
+demo:
+  setup:
+    - { action: scroll_to, selector: "#root" }
+  steps:
+    - { action: wait, duration_s: 3 }
+    - { action: click, selector: '[data-testid="try-sample"]' }
+    - { action: wait, duration_s: 1.5 }
+    - { action: scroll_to, selector: "#input-panel" }
+    - { action: wait, duration_s: 1 }
+    - { action: click, selector: '[data-testid="analyze-btn"]' }
+    - { action: wait, duration_s: 3 }
+    - { action: scroll_to, selector: '[data-testid="summary"]' }
+    - { action: wait, duration_s: 7 }

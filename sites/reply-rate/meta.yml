@@ -1,0 +1,21 @@
+title: Reply Lift
+blurb: Your subject line A beat B by 2 percent. Was it the subject, or that you also changed the day, or that B happened to hit a worse persona? Reply Lift attributes the cause, not the correlation. Tells you which variable to keep testing and which to stop.
+tags:
+  - sales
+  - email
+  - analytics
+  - product
+donate: true
+demo:
+  setup:
+    - { action: scroll_to, selector: "#root" }
+  steps:
+    - { action: wait, duration_s: 3 }
+    - { action: click, selector: '[data-testid="try-sample"]' }
+    - { action: wait, duration_s: 1.5 }
+    - { action: scroll_to, selector: "#input-panel" }
+    - { action: wait, duration_s: 1 }
+    - { action: click, selector: '[data-testid="analyze-btn"]' }
+    - { action: wait, duration_s: 3 }
+    - { action: scroll_to, selector: '[data-testid="summary"]' }
+    - { action: wait, duration_s: 7 }

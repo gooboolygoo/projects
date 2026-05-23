@@ -1,0 +1,21 @@
+title: Counter
+blurb: The offer feels exciting and you do not want to push. The recruiter knows. Paste the offer and your situation. Get a counter email written for you, talking points for the call, and the comp data that backs each ask.
+tags:
+  - career
+  - negotiation
+  - product
+  - ai
+donate: true
+demo:
+  setup:
+    - { action: scroll_to, selector: "#root" }
+  steps:
+    - { action: wait, duration_s: 3 }
+    - { action: click, selector: '[data-testid="try-sample"]' }
+    - { action: wait, duration_s: 1.5 }
+    - { action: scroll_to, selector: "#input-panel" }
+    - { action: wait, duration_s: 1 }
+    - { action: click, selector: '[data-testid="analyze-btn"]' }
+    - { action: wait, duration_s: 3.5 }
+    - { action: scroll_to, selector: '[data-testid="summary"]' }
+    - { action: wait, duration_s: 7 }

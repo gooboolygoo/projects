@@ -1,0 +1,21 @@
+title: Snap Carbs
+blurb: MyFitnessPal wants you to enter every ingredient. You have ten minutes and a meeting after. Snap a photo. We estimate carbs, learn your usual portions, recall the last time you ate this and what your glucose did, and suggest a bolus. One tap to your pump.
+tags:
+  - health
+  - diabetes
+  - ai
+  - product
+donate: true
+demo:
+  setup:
+    - { action: scroll_to, selector: "#root" }
+  steps:
+    - { action: wait, duration_s: 3 }
+    - { action: click, selector: '[data-testid="try-sample"]' }
+    - { action: wait, duration_s: 1.5 }
+    - { action: scroll_to, selector: "#input-panel" }
+    - { action: wait, duration_s: 1 }
+    - { action: click, selector: '[data-testid="analyze-btn"]' }
+    - { action: wait, duration_s: 3 }
+    - { action: scroll_to, selector: '[data-testid="summary"]' }
+    - { action: wait, duration_s: 7 }

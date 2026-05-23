@@ -1,0 +1,74 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Send Score. Newsletter analytics that tell you why.</title>
+<meta name="description" content="Ghost and Beehiiv show 'open rate.' They don't say which subject lines drove the new subscribers. Paste your last 12 issues, get the patterns.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..900&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script crossorigin src="https://unpkg.com/react@18.3.1/umd/react.production.min.js"></script><script crossorigin src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js"></script><script src="https://unpkg.com/@babel/standalone@7.24.7/babel.min.js"></script>
+<style>html,body{margin:0;padding:0;background:#F8F4ED}.__loading{font-family:Inter,system-ui;color:#888;text-align:center;padding-top:200px}</style></head><body>
+<div id="root"><div class="__loading">Loading...</div></div>
+<script type="text/babel" data-presets="react">
+const { useState } = React;
+const SAMPLE = "12 most recent issues, CSV from Beehiiv";
+const MOCK = {
+  best:[{ s:"Why Anthropic spent $500M training a model nobody used", growth:+312, open:0.62 },{ s:"The 4-line rewrite that saved the launch", growth:+189, open:0.58 }],
+  worst:[{ s:"May newsletter (week 19)", growth:-22, open:0.21 },{ s:"Sunday letter", growth:+8, open:0.34 }],
+  patterns:[
+    { t:"Specific numbers in subject", lift:"+47% open" },
+    { t:"Named adversary or stakes", lift:"+38% open" },
+    { t:"Generic 'May newsletter' headers", lift:"-31% open" }
+  ],
+  reco: "Stop dating your subject lines. Replace 'May newsletter' with the specific story that made you write it. Sunday letter pattern only works when paired with a single specific subject; standalone they bomb."
+};
+const delay = (ms) => new Promise(r => setTimeout(r, ms));
+function App(){
+  const [text,setText]=useState(""); const [view,setView]=useState("landing"); const [out,setOut]=useState(null);
+  async function go(){ if(!text.trim())return; setView("analyzing"); await delay(2000); setOut(MOCK); setView("results"); setTimeout(()=>document.getElementById("results")?.scrollIntoView({behavior:"smooth"}),80); }
+  function loadSample(){ setText(SAMPLE); setView("landing"); }
+  const P={bg:"#F8F4ED",ink:"#1F1B16",inkSoft:"#5A544A",card:"#FFFFFF",rule:"#D9D2C2",accent:"#1F1B16",up:"#15803D",down:"#B91C1C",mute:"#8A8275"};
+  const wrap={maxWidth:820,margin:"0 auto",padding:"64px 24px 96px"};
+  const display="'Fraunces',Georgia,serif",sans="Inter,system-ui,sans-serif",mono="'JetBrains Mono',ui-monospace,monospace";
+  return <div style={{background:P.bg,color:P.ink,fontFamily:sans,minHeight:"100vh"}}>
+    <header style={wrap}>
+      <div data-testid="eyebrow" style={{fontFamily:mono,fontSize:11,color:P.accent,letterSpacing:"0.2em",textTransform:"uppercase",marginBottom:32}}>For Ghost/Beehiiv writers above 5,000 subscribers</div>
+      <h1 style={{fontFamily:display,fontWeight:400,fontSize:"clamp(46px,7vw,82px)",lineHeight:0.97,letterSpacing:"-0.035em",margin:0}}>Your open rate<br/>doesn't <em style={{fontStyle:"italic",color:P.accent}}>tell you why.</em></h1>
+      <p style={{fontFamily:display,fontSize:22,fontStyle:"italic",lineHeight:1.45,color:P.inkSoft,margin:"32px 0 28px",maxWidth:600}}>Your platform shows numbers. It doesn't say which subject line drove the 312 new subscribers in March. We compare your last 12 sends, find the patterns, tell you what to write more of and what to retire.</p>
+      <div style={{display:"flex",flexWrap:"wrap",gap:16,alignItems:"center"}}>
+        <button data-testid="try-sample" onClick={loadSample} style={{fontFamily:sans,fontSize:16,fontWeight:600,background:P.accent,color:"#FFF",border:"none",padding:"16px 28px",borderRadius:4,cursor:"pointer"}}>Try with sample data →</button>
+        <span style={{fontFamily:mono,fontSize:11,color:P.mute,textTransform:"uppercase"}}>· free · works with Ghost, Beehiiv, Substack export</span>
+      </div>
+    </header>
+    <section style={{...wrap,paddingTop:0}}>
+      <div id="input-panel" style={{background:P.card,border:`1px solid ${P.rule}`,borderRadius:6,padding:28}}>
+        <div style={{fontFamily:mono,fontSize:11,color:P.accent,letterSpacing:"0.18em",textTransform:"uppercase",marginBottom:14}}>Step 1 of 2 · Paste send history</div>
+        <textarea data-testid="data-input" value={text} onChange={e=>setText(e.target.value)} placeholder="CSV with subject, sent, opens, clicks, subscribed-after. Or just describe your last few issues." style={{width:"100%",minHeight:140,fontFamily:mono,fontSize:13,lineHeight:1.55,color:P.ink,border:`1px solid ${P.rule}`,borderRadius:4,padding:"14px 16px",outline:"none",background:P.bg,resize:"vertical"}}/>
+        <div style={{display:"flex",justifyContent:"flex-end",marginTop:14}}>
+          <button data-testid="analyze-btn" onClick={go} disabled={!text.trim()||view==="analyzing"} style={{fontFamily:sans,fontSize:15,fontWeight:600,background:text.trim()&&view!=="analyzing"?P.accent:P.rule,color:text.trim()&&view!=="analyzing"?"#FFF":P.mute,border:"none",padding:"12px 24px",borderRadius:4,cursor:text.trim()&&view!=="analyzing"?"pointer":"not-allowed"}}>{view==="analyzing"?"Reading 12 issues...":"Tell me what worked →"}</button>
+        </div>
+      </div>
+    </section>
+    {view==="results"&&out&&<section id="results" style={{...wrap,paddingTop:32}}>
+      <div data-testid="summary" style={{background:P.card,border:`1px solid ${P.rule}`,borderLeft:`4px solid ${P.up}`,borderRadius:4,padding:"22px 26px",marginBottom:14}}>
+        <div style={{fontFamily:mono,fontSize:11,color:P.up,letterSpacing:0.15,textTransform:"uppercase",marginBottom:10}}>Your top 2 sends</div>
+        {out.best.map((b,i)=>(<div key={i} style={{padding:"8px 0",borderTop:i>0?`1px solid ${P.rule}`:"none"}}>
+          <div style={{fontFamily:sans,fontSize:14,fontWeight:600}}>{b.s}</div>
+          <div style={{fontFamily:mono,fontSize:11,color:P.mute,marginTop:2}}>{Math.round(b.open*100)}% open · {b.growth>0?"+":""}{b.growth} new subs</div>
+        </div>))}
+      </div>
+      <div style={{background:P.card,border:`1px solid ${P.rule}`,borderLeft:`4px solid ${P.down}`,borderRadius:4,padding:"22px 26px",marginBottom:14}}>
+        <div style={{fontFamily:mono,fontSize:11,color:P.down,letterSpacing:0.15,textTransform:"uppercase",marginBottom:10}}>Your bottom 2</div>
+        {out.worst.map((b,i)=>(<div key={i} style={{padding:"8px 0",borderTop:i>0?`1px solid ${P.rule}`:"none"}}>
+          <div style={{fontFamily:sans,fontSize:14,fontWeight:600}}>{b.s}</div>
+          <div style={{fontFamily:mono,fontSize:11,color:P.mute,marginTop:2}}>{Math.round(b.open*100)}% open · {b.growth>0?"+":""}{b.growth} new subs</div>
+        </div>))}
+      </div>
+      <div style={{background:P.card,border:`1px solid ${P.rule}`,borderRadius:4,padding:"22px 26px",marginBottom:14}}>
+        <div style={{fontFamily:mono,fontSize:11,color:P.accent,letterSpacing:0.15,textTransform:"uppercase",marginBottom:14}}>Patterns</div>
+        {out.patterns.map((p,i)=>(<div key={i} style={{padding:"8px 0",borderTop:i>0?`1px solid ${P.rule}`:"none",display:"flex",justifyContent:"space-between",fontFamily:sans,fontSize:14}}><span>{p.t}</span><span style={{fontFamily:mono,color:p.lift.startsWith("+")?P.up:P.down,fontWeight:600}}>{p.lift}</span></div>))}
+      </div>
+      <div style={{padding:"18px 24px",background:"rgba(31,27,22,0.04)",borderLeft:`3px solid ${P.accent}`,borderRadius:4,fontFamily:sans,fontSize:14,color:P.ink,lineHeight:1.6}}><strong style={{fontFamily:mono,fontSize:11,color:P.accent,letterSpacing:0.15,textTransform:"uppercase",marginRight:8,display:"block",marginBottom:6}}>Do this next issue</strong>{out.reco}</div>
+    </section>}
+    <footer style={{...wrap,paddingTop:32,paddingBottom:56,borderTop:`1px solid ${P.rule}`}}><div style={{fontFamily:mono,fontSize:11,color:P.mute,textAlign:"center",lineHeight:1.65}}>Production version connects directly to your ESP via API.</div></footer>
+  </div>;
+}
+const root = ReactDOM.createRoot(document.getElementById("root")); root.render(<App/>);
+</script>
+<script data-name="BMC-Widget" data-cfasync="false" src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js" data-id="gooboolygoo" data-description="Support me on Buy me a coffee!" data-message="Love this project? Donate to keep it going" data-color="#5F7FFF" data-position="Right" data-x_margin="18" data-y_margin="18"></script>
+</body></html>

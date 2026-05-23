@@ -1,0 +1,72 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Snap Carbs. T1D meal logging that doesn't take five minutes.</title>
+<meta name="description" content="MyFitnessPal asks you to enter every ingredient. You have ten minutes to eat between meetings. Snap a photo, get a carb estimate that learns your meals, syncs to your pump.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..900&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script crossorigin src="https://unpkg.com/react@18.3.1/umd/react.production.min.js"></script><script crossorigin src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js"></script><script src="https://unpkg.com/@babel/standalone@7.24.7/babel.min.js"></script>
+<style>html,body{margin:0;padding:0;background:#0E1318}.__loading{font-family:Inter,system-ui;color:#888;text-align:center;padding-top:200px}</style></head><body>
+<div id="root"><div class="__loading">Loading...</div></div>
+<script type="text/babel" data-presets="react">
+const { useState } = React;
+const SAMPLE = "Photo: chicken bowl with brown rice, black beans, salsa, cheese, sour cream, 4-inch tortilla";
+const MOCK = {
+  total_carbs: 78,
+  total_protein: 42,
+  total_fat: 22,
+  total_cal: 720,
+  items: [
+    { name:"Brown rice (~1 cup cooked)", carbs:45, conf:0.92, learned:"You usually order ~1 cup. Adjusted from 'medium portion'." },
+    { name:"Black beans (1/2 cup)", carbs:20, conf:0.94, learned:"" },
+    { name:"4-inch flour tortilla", carbs:12, conf:0.91, learned:"" },
+    { name:"Grilled chicken (4oz)", carbs:0, conf:0.96, learned:"Net 0 carbs." },
+    { name:"Cheese + sour cream", carbs:1, conf:0.88, learned:"" }
+  ],
+  suggested_bolus: "5.2 units (at your 1:15 ratio + 0.5u for fat correction)",
+  past_match: "Pattern recognized: you ate this exact bowl on Apr 14. Post-meal glucose peaked at 168 mg/dL ~70 minutes later. Bolus held you in range."
+};
+const delay = (ms) => new Promise(r => setTimeout(r, ms));
+function App(){
+  const [text,setText]=useState(""); const [view,setView]=useState("landing"); const [out,setOut]=useState(null);
+  async function go(){ if(!text.trim())return; setView("analyzing"); await delay(1800); setOut(MOCK); setView("results"); setTimeout(()=>document.getElementById("results")?.scrollIntoView({behavior:"smooth"}),80); }
+  function loadSample(){ setText(SAMPLE); setView("landing"); }
+  const P={bg:"#0E1318",ink:"#E8EAED",inkSoft:"#B0B8C4",card:"#161C26",paper:"#1B232F",rule:"#2A3441",accent:"#22D3EE",mute:"#7A8595"};
+  const wrap={maxWidth:820,margin:"0 auto",padding:"64px 24px 96px"};
+  const display="'Fraunces',Georgia,serif",sans="Inter,system-ui,sans-serif",mono="'JetBrains Mono',ui-monospace,monospace";
+  return <div style={{background:P.bg,color:P.ink,fontFamily:sans,minHeight:"100vh"}}>
+    <header style={wrap}>
+      <div data-testid="eyebrow" style={{fontFamily:mono,fontSize:11,color:P.accent,letterSpacing:"0.2em",textTransform:"uppercase",marginBottom:32}}>For Type 1 diabetics on a pump or pen</div>
+      <h1 style={{fontFamily:display,fontWeight:400,fontSize:"clamp(46px,7vw,82px)",lineHeight:0.97,letterSpacing:"-0.035em",margin:0}}>You don't have<br/>five minutes to log<br/><em style={{fontStyle:"italic",color:P.accent}}>every meal.</em></h1>
+      <p style={{fontFamily:display,fontSize:22,fontStyle:"italic",lineHeight:1.45,color:P.inkSoft,margin:"32px 0 28px",maxWidth:600}}>MyFitnessPal wants you to enter every ingredient. You have ten minutes and a meeting after. Snap a photo. We estimate carbs, learn your usual portions, recall the last time you ate this and what your glucose did, and suggest a bolus. One tap to your pump.</p>
+      <div style={{display:"flex",flexWrap:"wrap",gap:16,alignItems:"center"}}>
+        <button data-testid="try-sample" onClick={loadSample} style={{fontFamily:sans,fontSize:16,fontWeight:600,background:P.accent,color:"#062028",border:"none",padding:"16px 28px",borderRadius:4,cursor:"pointer"}}>Try with a sample bowl →</button>
+        <span style={{fontFamily:mono,fontSize:11,color:P.mute,textTransform:"uppercase"}}>· free trial · syncs to Tandem and Omnipod 5</span>
+      </div>
+    </header>
+    <section style={{...wrap,paddingTop:0}}>
+      <div id="input-panel" style={{background:P.paper,border:`1px solid ${P.rule}`,borderRadius:6,padding:28}}>
+        <div style={{fontFamily:mono,fontSize:11,color:P.accent,letterSpacing:"0.18em",textTransform:"uppercase",marginBottom:14}}>Step 1 of 2 · What did you eat</div>
+        <textarea data-testid="meal-input" value={text} onChange={e=>setText(e.target.value)} placeholder="Photo description or quick text. The more specific, the better the estimate." style={{width:"100%",minHeight:120,fontFamily:sans,fontSize:14,lineHeight:1.55,color:P.ink,border:`1px solid ${P.rule}`,borderRadius:4,padding:"14px 16px",outline:"none",background:P.bg,resize:"vertical"}}/>
+        <div style={{display:"flex",justifyContent:"flex-end",marginTop:14}}>
+          <button data-testid="analyze-btn" onClick={go} disabled={!text.trim()||view==="analyzing"} style={{fontFamily:sans,fontSize:15,fontWeight:600,background:text.trim()&&view!=="analyzing"?P.accent:P.rule,color:text.trim()&&view!=="analyzing"?"#062028":P.mute,border:"none",padding:"12px 24px",borderRadius:4,cursor:text.trim()&&view!=="analyzing"?"pointer":"not-allowed"}}>{view==="analyzing"?"Estimating...":"Bolus this →"}</button>
+        </div>
+      </div>
+    </section>
+    {view==="results"&&out&&<section id="results" style={{...wrap,paddingTop:32}}>
+      <div data-testid="summary" style={{background:P.card,border:`2px solid ${P.accent}`,borderRadius:6,padding:28,marginBottom:14}}>
+        <div style={{fontFamily:mono,fontSize:11,color:P.accent,letterSpacing:0.15,textTransform:"uppercase",marginBottom:8}}>Estimate</div>
+        <div style={{fontFamily:display,fontSize:"clamp(40px,5vw,56px)",fontWeight:500,color:P.ink}}>{out.total_carbs}g carbs</div>
+        <div style={{fontFamily:mono,fontSize:13,color:P.inkSoft,marginTop:6}}>{out.total_protein}g protein · {out.total_fat}g fat · {out.total_cal} cal</div>
+        <div style={{marginTop:14,padding:"14px 18px",background:"rgba(34,211,238,0.08)",borderRadius:4,borderLeft:`2px solid ${P.accent}`}}><div style={{fontFamily:mono,fontSize:11,color:P.accent,letterSpacing:0.15,textTransform:"uppercase",marginBottom:4}}>Suggested bolus</div><div style={{fontFamily:display,fontSize:22,color:P.ink}}>{out.suggested_bolus}</div></div>
+      </div>
+      {out.items.map((i,k)=>(<div key={k} style={{background:P.card,border:`1px solid ${P.rule}`,borderRadius:4,padding:"12px 22px",marginBottom:6,display:"grid",gridTemplateColumns:"1fr 80px 80px",gap:12,alignItems:"baseline"}}>
+        <div><div style={{fontFamily:sans,fontSize:14}}>{i.name}</div>{i.learned&&<div style={{fontFamily:mono,fontSize:10,color:P.accent,marginTop:2,fontStyle:"italic"}}>learned: {i.learned}</div>}</div>
+        <div style={{fontFamily:mono,fontSize:13,color:P.ink,textAlign:"right"}}>{i.carbs}g</div>
+        <div style={{fontFamily:mono,fontSize:11,color:P.mute,textAlign:"right"}}>{Math.round(i.conf*100)}%</div>
+      </div>))}
+      <div style={{marginTop:16,padding:"14px 20px",background:P.paper,border:`1px solid ${P.rule}`,borderRadius:4,fontFamily:sans,fontSize:13,color:P.inkSoft,fontStyle:"italic"}}>{out.past_match}</div>
+    </section>}
+    <footer style={{...wrap,paddingTop:32,paddingBottom:56,borderTop:`1px solid ${P.rule}`}}><div style={{fontFamily:mono,fontSize:11,color:P.mute,textAlign:"center",lineHeight:1.65}}>Not medical advice. Always cross-check the carb estimate; learn-from-glucose loop tightens over weeks.</div></footer>
+  </div>;
+}
+const root = ReactDOM.createRoot(document.getElementById("root")); root.render(<App/>);
+</script>
+<script data-name="BMC-Widget" data-cfasync="false" src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js" data-id="gooboolygoo" data-description="Support me on Buy me a coffee!" data-message="Love this project? Donate to keep it going" data-color="#5F7FFF" data-position="Right" data-x_margin="18" data-y_margin="18"></script>
+</body></html>

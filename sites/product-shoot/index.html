@@ -1,0 +1,62 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Shoot Lite. Product photos for small brands without a $2k day rate.</title>
+<meta name="description" content="Photographers charge $500-2k a shoot. You ship 12 SKUs a quarter. Paste the brand style guide, drop a base shot, get the four marketing variants ready for Shopify and IG.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..900&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script crossorigin src="https://unpkg.com/react@18.3.1/umd/react.production.min.js"></script><script crossorigin src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js"></script><script src="https://unpkg.com/@babel/standalone@7.24.7/babel.min.js"></script>
+<style>html,body{margin:0;padding:0;background:#F8F4ED}.__loading{font-family:Inter,system-ui;color:#888;text-align:center;padding-top:200px}</style></head><body>
+<div id="root"><div class="__loading">Loading...</div></div>
+<script type="text/babel" data-presets="react">
+const { useState } = React;
+const SAMPLE = "Base shot: walnut ring dish on white paper. Brand: minimalist, warm wood tones, no people.";
+const SHOTS = [
+  { name:"Hero · clean overhead", desc:"Top-down on the existing paper background, gentle shadow, square crop, centered.", use:"PDP hero image, Shopify primary." },
+  { name:"Lifestyle · on linen", desc:"Placed on rumpled cream linen, soft morning light from the upper left, 3/4 angle.", use:"Instagram square + landing page above the fold." },
+  { name:"Detail · close-up grain", desc:"Macro shot of the walnut grain at 2x zoom, fill the frame, shallow depth of field.", use:"PDP secondary slide, focus on craftsmanship." },
+  { name:"Scale · in hand", desc:"Hand holding the dish, neutral skin tone, blurred background.", use:"Helps buyers understand the size; reduces return rate." }
+];
+function App(){
+  const [text,setText]=useState(""); const [view,setView]=useState("landing"); const [done,setDone]=useState(false);
+  function go(){ if(!text.trim())return; setView("analyzing"); setTimeout(()=>{setDone(true); setView("results"); setTimeout(()=>document.getElementById("results")?.scrollIntoView({behavior:"smooth"}),80);},2200); }
+  function loadSample(){ setText(SAMPLE); setView("landing"); }
+  const P={bg:"#F8F4ED",ink:"#1F1B16",inkSoft:"#5A544A",card:"#FFFFFF",rule:"#D9D2C2",accent:"#7C5E3A",mute:"#8A8275"};
+  const wrap={maxWidth:820,margin:"0 auto",padding:"64px 24px 96px"};
+  const display="'Fraunces',Georgia,serif",sans="Inter,system-ui,sans-serif",mono="'JetBrains Mono',ui-monospace,monospace";
+  return <div style={{background:P.bg,color:P.ink,fontFamily:sans,minHeight:"100vh"}}>
+    <header style={wrap}>
+      <div data-testid="eyebrow" style={{fontFamily:mono,fontSize:11,color:P.accent,letterSpacing:"0.2em",textTransform:"uppercase",marginBottom:32}}>For small ecommerce brands shipping 5-30 SKUs/quarter</div>
+      <h1 style={{fontFamily:display,fontWeight:400,fontSize:"clamp(46px,7vw,82px)",lineHeight:0.97,letterSpacing:"-0.035em",margin:0}}>You don't have<br/>$2k for a<br/><em style={{fontStyle:"italic",color:P.accent}}>photo shoot.</em></h1>
+      <p style={{fontFamily:display,fontSize:22,fontStyle:"italic",lineHeight:1.45,color:P.inkSoft,margin:"32px 0 28px",maxWidth:600}}>Professional product photography is $500-2k a session. You ship 12 SKUs a quarter. Drop your base shot and brand style. Get four variants ready for Shopify, the IG grid, and the lifestyle hero. Consistent across SKUs because the model learned your brand.</p>
+      <div style={{display:"flex",flexWrap:"wrap",gap:16,alignItems:"center"}}>
+        <button data-testid="try-sample" onClick={loadSample} style={{fontFamily:sans,fontSize:16,fontWeight:600,background:P.accent,color:"#FFF",border:"none",padding:"16px 28px",borderRadius:4,cursor:"pointer"}}>Try with a sample (walnut ring dish) →</button>
+        <span style={{fontFamily:mono,fontSize:11,color:P.mute,textTransform:"uppercase"}}>· $0.40 per shot · trains on your brand</span>
+      </div>
+    </header>
+    <section style={{...wrap,paddingTop:0}}>
+      <div id="input-panel" style={{background:P.card,border:`1px solid ${P.rule}`,borderRadius:6,padding:28}}>
+        <div style={{fontFamily:mono,fontSize:11,color:P.accent,letterSpacing:"0.18em",textTransform:"uppercase",marginBottom:14}}>Step 1 of 2 · Base shot + brand style</div>
+        <textarea data-testid="brief-input" value={text} onChange={e=>setText(e.target.value)} placeholder="Describe the base photo and your brand. The more specific, the more consistent your output across SKUs." style={{width:"100%",minHeight:120,fontFamily:sans,fontSize:14,lineHeight:1.55,color:P.ink,border:`1px solid ${P.rule}`,borderRadius:4,padding:"14px 16px",outline:"none",background:P.bg,resize:"vertical"}}/>
+        <div style={{display:"flex",justifyContent:"flex-end",marginTop:14}}>
+          <button data-testid="analyze-btn" onClick={go} disabled={!text.trim()||view==="analyzing"} style={{fontFamily:sans,fontSize:15,fontWeight:600,background:text.trim()&&view!=="analyzing"?P.accent:P.rule,color:text.trim()&&view!=="analyzing"?"#FFF":P.mute,border:"none",padding:"12px 24px",borderRadius:4,cursor:text.trim()&&view!=="analyzing"?"pointer":"not-allowed"}}>{view==="analyzing"?"Generating 4 variants...":"Make my shoot →"}</button>
+        </div>
+      </div>
+    </section>
+    {view==="results"&&done&&<section id="results" style={{...wrap,paddingTop:32}}>
+      <div data-testid="summary" style={{fontFamily:mono,fontSize:11,color:P.accent,letterSpacing:0.15,textTransform:"uppercase",marginBottom:14}}>4 shots ready · download all (zip) or open individually</div>
+      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:14}}>
+        {SHOTS.map((s,i)=>(<div key={i} style={{background:P.card,border:`1px solid ${P.rule}`,borderRadius:4,padding:0,overflow:"hidden"}}>
+          <div style={{aspectRatio:"1",background:`linear-gradient(135deg, hsl(${30+i*15}, 30%, 85%), hsl(${30+i*15}, 25%, 70%))`,display:"flex",alignItems:"center",justifyContent:"center",color:"rgba(0,0,0,0.4)",fontFamily:mono,fontSize:11,letterSpacing:0.15,textTransform:"uppercase"}}>preview placeholder</div>
+          <div style={{padding:"14px 18px"}}>
+            <div style={{fontFamily:sans,fontSize:14,fontWeight:600,marginBottom:6}}>{s.name}</div>
+            <div style={{fontFamily:sans,fontSize:12,color:P.inkSoft,marginBottom:6,lineHeight:1.5}}>{s.desc}</div>
+            <div style={{fontFamily:mono,fontSize:10,color:P.mute,letterSpacing:0.1,textTransform:"uppercase"}}>use: {s.use}</div>
+          </div>
+        </div>))}
+      </div>
+      <div style={{marginTop:24,padding:"18px 24px",background:"rgba(124,94,58,0.07)",borderLeft:`3px solid ${P.accent}`,borderRadius:4,fontFamily:sans,fontSize:13,color:P.ink,lineHeight:1.6}}><strong style={{fontFamily:mono,fontSize:11,color:P.accent,letterSpacing:0.15,textTransform:"uppercase",marginRight:8}}>Cost</strong>$1.60 for this set (4 × $0.40). For comparison, a one-hour studio session in San Francisco runs $400-700 plus retoucher.</div>
+    </section>}
+    <footer style={{...wrap,paddingTop:32,paddingBottom:56,borderTop:`1px solid ${P.rule}`}}><div style={{fontFamily:mono,fontSize:11,color:P.mute,textAlign:"center",lineHeight:1.65}}>Always check generated images for accuracy before publishing. AI gets fabric textures and metal reflections wrong sometimes.</div></footer>
+  </div>;
+}
+const root = ReactDOM.createRoot(document.getElementById("root")); root.render(<App/>);
+</script>
+<script data-name="BMC-Widget" data-cfasync="false" src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js" data-id="gooboolygoo" data-description="Support me on Buy me a coffee!" data-message="Love this project? Donate to keep it going" data-color="#5F7FFF" data-position="Right" data-x_margin="18" data-y_margin="18"></script>
+</body></html>

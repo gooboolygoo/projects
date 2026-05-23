@@ -1,0 +1,23 @@
+{
+  "generated_at": "2026-05-23T03:29:49.440Z",
+  "model": "claude-haiku-4-5",
+  "url": "https://gooboolygoo.github.io/projects/reply-rate/",
+  "hashtags": [
+    "emailmarketing",
+    "abtest",
+    "salestools",
+    "buildinpublic",
+    "webdev"
+  ],
+  "x": {
+    "tweet": "Your A beat B by 2 percent. But was it the subject line, or the sending day, or just better timing? Reply Lift points to the actual variable that moved the needle.",
+    "reply_lead": "test it here →"
+  },
+  "vertical_caption": "Your subject line A won by 2%, but which variable actually caused it? Day? Copy? Timing? Reply Lift isolates the real reason so you stop guessing and start testing smarter.",
+  "shorts_description_lead": "A/B tested your cold email but unsure what actually moved the reply rate? Reply Lift attributes causation, not correlation, so you know exactly which variable to keep pushing.",
+  "video": {
+    "title": "Why Your A Beat B",
+    "script": "You ran an A/B test. Variant A crushed variant B. But here's the problem: you don't actually know why. Was it the subject line? The day you sent it? The specific people who got each version? Reply Lift cuts through the noise. It shows you which variable caused the lift, not just that it happened. Test smarter, iterate faster. Link in the description.",
+    "word_count": 63
+  }
+}
