@@ -1,0 +1,23 @@
+{
+  "generated_at": "2026-05-22T04:39:19.022Z",
+  "model": "claude-haiku-4-5",
+  "url": "https://gooboolygoo.github.io/projects/sms-schedule/",
+  "hashtags": [
+    "scheduling",
+    "smallbusiness",
+    "sms",
+    "buildinpublic",
+    "indiedev"
+  ],
+  "x": {
+    "tweet": "Your team schedules shifts in group chats at 6am because When I Work costs money and apps are friction. What if shifts just lived in SMS?",
+    "reply_lead": "check it out →"
+  },
+  "vertical_caption": "Your staff texts YES to confirm a shift, SWAP to request a trade, you approve on your phone. No app. No login. No friction. 📱",
+  "shorts_description_lead": "Built for small teams who already live in their phone. Staff confirms shifts by text, requests swaps by text. You manage it all without leaving your messages.",
+  "video": {
+    "title": "Scheduling Via Text Message",
+    "script": "Your 8-person cafe team needs coverage tomorrow. Right now they negotiate in a group chat you can't find at 6am. What if scheduling was just SMS. Someone's available. They text YES. Shift confirms them. Somebody else wants to swap. They text SWAP. You get a notification, tap approve or deny, done. No app, no login, no friction. It's how small teams actually communicate. Try it out in the link below.",
+    "word_count": 70
+  }
+}

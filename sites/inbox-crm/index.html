@@ -1,0 +1,60 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Inbox CRM. The pipeline lives in Gmail. Stop bouncing to HubSpot.</title>
+<meta name="description" content="HubSpot wants you to live in a dashboard. You live in Gmail. Inbox CRM tells you who to call today, what you promised them, and which lead has gone cold — without leaving the inbox.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..900&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script crossorigin src="https://unpkg.com/react@18.3.1/umd/react.production.min.js"></script><script crossorigin src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js"></script><script src="https://unpkg.com/@babel/standalone@7.24.7/babel.min.js"></script>
+<style>html,body{margin:0;padding:0;background:#F8F6F2}.__loading{font-family:Inter,system-ui;color:#888;text-align:center;padding-top:200px}</style></head><body>
+<div id="root"><div class="__loading">Loading...</div></div>
+<script type="text/babel" data-presets="react">
+const { useState } = React;
+const TODAY = [
+  { sev:"hot", who:"Maria Chen · Acme", action:"Reply to her question about pricing tiers. She asked Friday, you marked unread, that's 3 days.", last:"Apr 28", deal:"$24k ARR" },
+  { sev:"hot", who:"David Park · Stripe", action:"You promised the security review doc 'by end of week.' Today is Friday.", last:"May 14", deal:"$80k ARR" },
+  { sev:"warm", who:"Lina Aboud · Reform", action:"Follow up. 7 days since last touch. She was 'going to loop in legal' which is the classic stall.", last:"May 14", deal:"$40k ARR" },
+  { sev:"cold", who:"Marcus T. · Foundry", action:"Last reply 23 days ago. Send the 'should I close this' email or move to nurture.", last:"Apr 28", deal:"$15k ARR" }
+];
+const ALL = [
+  { stage:"new", count:6 },
+  { stage:"engaged", count:11 },
+  { stage:"proposal", count:4 },
+  { stage:"closing", count:2 },
+  { stage:"cold", count:8 }
+];
+function App(){
+  const [view,setView]=useState("landing");
+  function open(){ setView("dash"); setTimeout(()=>document.getElementById("d")?.scrollIntoView({behavior:"smooth"}),80); }
+  const P={bg:"#F8F6F2",ink:"#1F1B16",inkSoft:"#5A544A",card:"#FFFFFF",rule:"#D9D2C2",accent:"#1F1B16",hot:"#B91C1C",warm:"#D97706",cold:"#6B7280",mute:"#8A8275"};
+  const wrap={maxWidth:820,margin:"0 auto",padding:"64px 24px 96px"};
+  const display="'Fraunces',Georgia,serif",sans="Inter,system-ui,sans-serif",mono="'JetBrains Mono',ui-monospace,monospace";
+  function sc(s){return P[s]||P.mute;}
+  return <div style={{background:P.bg,color:P.ink,fontFamily:sans,minHeight:"100vh"}}>
+    <header style={wrap}>
+      <div data-testid="eyebrow" style={{fontFamily:mono,fontSize:11,color:P.accent,letterSpacing:"0.2em",textTransform:"uppercase",marginBottom:32}}>For 2-person sales teams stuck in Gmail</div>
+      <h1 style={{fontFamily:display,fontWeight:400,fontSize:"clamp(46px,7vw,82px)",lineHeight:0.97,letterSpacing:"-0.035em",margin:0}}>HubSpot wants you<br/>to live in a dashboard.<br/>You <em style={{fontStyle:"italic",color:P.hot}}>live in Gmail.</em></h1>
+      <p style={{fontFamily:display,fontSize:22,fontStyle:"italic",lineHeight:1.45,color:P.inkSoft,margin:"32px 0 28px",maxWidth:600}}>You pay $50 a seat for a CRM you barely open. The real pipeline is in your inbox: who emailed you, who you owe, who went quiet. Inbox CRM is one daily list: who to email today, what you promised them, and which lead just went cold.</p>
+      <div style={{display:"flex",flexWrap:"wrap",gap:16,alignItems:"center"}}>
+        <button data-testid="try-sample" onClick={open} style={{fontFamily:sans,fontSize:16,fontWeight:600,background:P.accent,color:"#FFF",border:"none",padding:"16px 28px",borderRadius:4,cursor:"pointer"}}>Show me today →</button>
+        <span style={{fontFamily:mono,fontSize:11,color:P.mute,textTransform:"uppercase"}}>· $18/seat/month</span>
+      </div>
+    </header>
+    {view==="dash"&&<section id="d" style={{...wrap,paddingTop:0}}>
+      <div data-testid="summary" style={{background:P.card,border:`1px solid ${P.rule}`,borderRadius:6,padding:24,marginBottom:14}}>
+        <div style={{fontFamily:mono,fontSize:11,color:P.accent,letterSpacing:0.15,textTransform:"uppercase",marginBottom:10}}>Today · {TODAY.length} people to reach</div>
+        <div style={{display:"flex",gap:14,flexWrap:"wrap"}}>
+          {ALL.map((s,i)=>(<div key={i} style={{padding:"6px 12px",background:P.bg,borderRadius:4,fontFamily:mono,fontSize:12,color:P.inkSoft}}>{s.stage}: <strong style={{color:P.ink}}>{s.count}</strong></div>))}
+        </div>
+      </div>
+      {TODAY.map((t,i)=>(<div key={i} style={{background:P.card,border:`1px solid ${P.rule}`,borderLeft:`4px solid ${sc(t.sev)}`,borderRadius:4,padding:"18px 22px",marginBottom:10}}>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"baseline",flexWrap:"wrap",gap:8,marginBottom:6}}>
+          <div style={{fontFamily:sans,fontSize:15,fontWeight:600}}>{t.who}</div>
+          <div style={{fontFamily:mono,fontSize:11,color:sc(t.sev),textTransform:"uppercase",letterSpacing:0.1}}>{t.sev} · {t.deal} · last touch {t.last}</div>
+        </div>
+        <div style={{fontFamily:sans,fontSize:14,color:P.inkSoft,lineHeight:1.55}}>{t.action}</div>
+      </div>))}
+    </section>}
+    <footer style={{...wrap,paddingTop:32,paddingBottom:56,borderTop:`1px solid ${P.rule}`}}><div style={{fontFamily:mono,fontSize:11,color:P.mute,textAlign:"center",lineHeight:1.65}}>Reads your Gmail (Google Workspace OAuth). Never sends, never overwrites. Drafts only.</div></footer>
+  </div>;
+}
+const root = ReactDOM.createRoot(document.getElementById("root")); root.render(<App/>);
+</script>
+<script data-name="BMC-Widget" data-cfasync="false" src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js" data-id="gooboolygoo" data-description="Support me on Buy me a coffee!" data-message="Love this project? Donate to keep it going" data-color="#5F7FFF" data-position="Right" data-x_margin="18" data-y_margin="18"></script>
+</body></html>

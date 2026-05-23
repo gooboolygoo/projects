@@ -1,0 +1,23 @@
+{
+  "generated_at": "2026-05-22T04:39:22.911Z",
+  "model": "claude-haiku-4-5",
+  "url": "https://gooboolygoo.github.io/projects/tiny-ats/",
+  "hashtags": [
+    "ats",
+    "hiring",
+    "startup",
+    "buildinpublic",
+    "webdev"
+  ],
+  "x": {
+    "tweet": "Most startups hire twice a year. You don't need a thousand-dollar ATS. You need a kanban board, a calendar, and rejection emails that actually send.",
+    "reply_lead": "try it yourself"
+  },
+  "vertical_caption": "Tired of ghosting candidates because your hiring spreadsheet is a mess? Kanban, calendar sync, auto-reject emails. One-page tool for teams who hire occasionally 📋",
+  "shorts_description_lead": "Most teams don't need complex ATS software. Drag resumes through stages, schedule interviews, send polite rejections that actually go out.",
+  "video": {
+    "title": "Stop Ghosting Your Candidates",
+    "script": "You drag resumes into a spreadsheet. Weeks pass. You forget to reject half of them. Inbox Hire flips the script. Drop resumes in, drag them between stages like a kanban board. Click once to schedule an interview. Rejections actually send automatically. No vendor lock-in, no monthly fee, just the four things hiring actually needs. Tap the link to try it.",
+    "word_count": 60
+  }
+}

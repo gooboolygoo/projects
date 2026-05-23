@@ -1,0 +1,23 @@
+{
+  "generated_at": "2026-05-22T04:39:58.811Z",
+  "model": "claude-haiku-4-5",
+  "url": "https://gooboolygoo.github.io/projects/creator-income/",
+  "hashtags": [
+    "creatoreconomy",
+    "finance",
+    "dashboard",
+    "indiedev",
+    "buildinpublic"
+  ],
+  "x": {
+    "tweet": "AdSense lags 60 days. Twitch 15. Patreon monthly. Brand deals net 30. You earned 18k this month but your Friday bank balance is a mystery. Creator P&L connects the dots and tells you what's actually coming.",
+    "reply_lead": "see your real cash flow ↓"
+  },
+  "vertical_caption": "You earned 18k this month but have no idea what hits your account Friday. Creator P&L stitches together your AdSense, Twitch, Patreon, brand deals, and merch into one forecast 💰",
+  "shorts_description_lead": "Every platform pays on its own schedule. Creator P&L forecasts your real cash flow by connecting AdSense, Twitch, Patreon, brand deals, Amazon, and merch into one dashboard.",
+  "video": {
+    "title": "When Will Your Money Actually Hit",
+    "script": "You earned 18 thousand this month. But AdSense takes 60 days. Twitch 15. Patreon monthly. Brand deals net 30. Amazon another 60. Merch lands daily. Most creators have no idea what's in the bank Friday. Creator P&L stitches all those payment schedules together and forecasts exactly what lands next. Link in the description to see your real cash flow.",
+    "word_count": 59
+  }
+}

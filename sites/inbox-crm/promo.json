@@ -1,0 +1,23 @@
+{
+  "generated_at": "2026-05-22T04:39:47.802Z",
+  "model": "claude-haiku-4-5",
+  "url": "https://gooboolygoo.github.io/projects/inbox-crm/",
+  "hashtags": [
+    "salestools",
+    "indiehacker",
+    "buildinpublic",
+    "smbbusiness",
+    "nocode"
+  ],
+  "x": {
+    "tweet": "You're already doing sales in your inbox. Why pretend it's happening in HubSpot? Inbox CRM pulls today's outreach, promises, and cold leads into one list.",
+    "reply_lead": "See the list here"
+  },
+  "vertical_caption": "Your real sales pipeline is already in Gmail. Inbox CRM stops you from context-switching to HubSpot and just shows you: who to email today, what you promised them, and which lead went cold.",
+  "shorts_description_lead": "Your sales pipeline lives in your inbox. Inbox CRM pulls it all into one daily list: who to contact, what you promised, which deals are stalling.",
+  "video": {
+    "title": "Your Pipeline Is Already In Gmail",
+    "script": "You're paying fifty bucks a month for a CRM you open twice a week. Meanwhile, your real pipeline is scattered across email threads and half-remembered promises. Inbox CRM pulls it all into one list. Who to email today. What you promised them. Which leads went cold. No switching tabs. No logging into another tool. Just one daily list in the interface you already live in. Check it out with the link below.",
+    "word_count": 72
+  }
+}

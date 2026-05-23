@@ -1,0 +1,17 @@
+title: Shift
+blurb: When I Work is built for Walmart. Your 8-person staff trades shifts in a group chat that nobody can find at 6am. Shift is SMS. They text YES to confirm, SWAP to ask the team, and you approve on your phone. No app, no logins.
+tags:
+  - smb
+  - scheduling
+  - hospitality
+  - product
+donate: true
+demo:
+  setup:
+    - { action: scroll_to, selector: "#root" }
+  steps:
+    - { action: wait, duration_s: 3 }
+    - { action: click, selector: '[data-testid="try-sample"]' }
+    - { action: wait, duration_s: 2 }
+    - { action: scroll_to, selector: '[data-testid="summary"]' }
+    - { action: wait, duration_s: 8 }

@@ -1,0 +1,17 @@
+title: Intake
+blurb: Clio costs 300 dollars a month and intake is still a Google Form plus PDF plus DocuSign plus payment link. Intake is mobile-first, runs a conflict check on submit, presents the engagement letter and collects the retainer in one flow. Drops the lead straight into Clio when they sign.
+tags:
+  - legal
+  - smb
+  - intake
+  - product
+donate: true
+demo:
+  setup:
+    - { action: scroll_to, selector: "#root" }
+  steps:
+    - { action: wait, duration_s: 3 }
+    - { action: click, selector: '[data-testid="try-sample"]' }
+    - { action: wait, duration_s: 2 }
+    - { action: scroll_to, selector: '[data-testid="summary"]' }
+    - { action: wait, duration_s: 8 }

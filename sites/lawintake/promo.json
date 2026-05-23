@@ -1,0 +1,23 @@
+{
+  "generated_at": "2026-05-22T04:39:13.496Z",
+  "model": "claude-haiku-4-5",
+  "url": "https://gooboolygoo.github.io/projects/lawintake/",
+  "hashtags": [
+    "lawtech",
+    "sololicensed",
+    "smb",
+    "legaltech",
+    "buildinpublic"
+  ],
+  "x": {
+    "tweet": "Solo lawyer here. Your intake flow is: Google Form, email back to client, DocuSign, Stripe link, manual entry into Clio. That's four tools. Intake does all of it in one mobile-first form.",
+    "reply_lead": "mobile-first intake, live"
+  },
+  "vertical_caption": "Your intake is four tools: a form, DocuSign, a payment link, and manual Clio entry. This runs the whole flow in one screen, conflict check included 🔗",
+  "shorts_description_lead": "Stop stitching together four different tools for client intake. One mobile-first form handles the conflict check, engagement letter, payment, and drops straight into Clio.",
+  "video": {
+    "title": "One Form, Not Four Tools",
+    "script": "Your intake right now. Google Form. Email DocuSign link. Wait for signature. Send payment request. Manually enter it into Clio. That's four context switches. Intake runs all of it in one mobile-first form. Conflict check on submit, engagement letter in-flow, retainer collected, straight into Clio when they sign. No more piecing together Zapier workarounds. The whole thing is free and runs in your browser. Link below to try it.",
+    "word_count": 69
+  }
+}

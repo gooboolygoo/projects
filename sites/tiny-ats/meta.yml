@@ -1,0 +1,17 @@
+title: Inbox Hire
+blurb: You don't need an ATS. You need a kanban, a calendar integration, and a polite rejection email that actually goes out. Drop resumes in, drag them between stages, schedule with one click, never ghost a candidate again.
+tags:
+  - hiring
+  - startup
+  - ats
+  - product
+donate: true
+demo:
+  setup:
+    - { action: scroll_to, selector: "#root" }
+  steps:
+    - { action: wait, duration_s: 3 }
+    - { action: click, selector: '[data-testid="try-sample"]' }
+    - { action: wait, duration_s: 2 }
+    - { action: scroll_to, selector: '[data-testid="summary"]' }
+    - { action: wait, duration_s: 8 }

@@ -1,0 +1,17 @@
+title: Inbox CRM
+blurb: "You pay $50 a seat for a CRM you barely open. The real pipeline is in your inbox. Inbox CRM is one daily list of who to email today, what you promised them, and which lead just went cold."
+tags:
+  - sales
+  - crm
+  - smb
+  - product
+donate: true
+demo:
+  setup:
+    - { action: scroll_to, selector: "#root" }
+  steps:
+    - { action: wait, duration_s: 3 }
+    - { action: click, selector: '[data-testid="try-sample"]' }
+    - { action: wait, duration_s: 2 }
+    - { action: scroll_to, selector: '[data-testid="summary"]' }
+    - { action: wait, duration_s: 7 }

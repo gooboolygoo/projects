@@ -1,0 +1,63 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Creator P&L. Where every dollar came from this month.</title>
+<meta name="description" content="AdSense, Patreon, Twitch bits, brand deal, affiliate, Shopify drop. Six platforms, six payout schedules, zero clarity. One screen that reconciles, tracks YoY, and exports to your CPA at year-end.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..900&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script crossorigin src="https://unpkg.com/react@18.3.1/umd/react.production.min.js"></script><script crossorigin src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js"></script><script src="https://unpkg.com/@babel/standalone@7.24.7/babel.min.js"></script>
+<style>html,body{margin:0;padding:0;background:#0E0E15}.__loading{font-family:Inter,system-ui;color:#888;text-align:center;padding-top:200px}</style></head><body>
+<div id="root"><div class="__loading">Loading...</div></div>
+<script type="text/babel" data-presets="react">
+const { useState } = React;
+const SOURCES = [
+  { name:"YouTube AdSense", amt:4220, lag:"60-day lag", yoy:+18 },
+  { name:"Twitch (subs + bits)", amt:1180, lag:"15-day lag", yoy:-12 },
+  { name:"Patreon", amt:2840, lag:"monthly", yoy:+34 },
+  { name:"Brand: Squarespace", amt:8500, lag:"net 30", yoy:0, note:"first deal" },
+  { name:"Amazon affiliate", amt:312, lag:"60-day lag", yoy:-22 },
+  { name:"Merch (Shopify)", amt:894, lag:"daily", yoy:+8 }
+];
+const FLAGS = [
+  { t:"YouTube payout 90 days out, not 60", b:"YT shipped a payout schedule change in March. Your March income hits your account in June, not May. Don't be surprised by the 'missing' May payment." },
+  { t:"Brand deal needs 1099 by Jan 31", b:"Squarespace will issue. Add their accounting email to your tax docs folder now so you don't chase it in April." },
+  { t:"Sales tax registered in 0 of 4 nexus states", b:"Your Shopify merch shipped to CA, NY, TX, FL. CA threshold ($500k) safe. TX threshold ($500k) safe. Watch for state sales tax notices." }
+];
+function App(){
+  const [view,setView]=useState("landing");
+  function open(){ setView("dash"); setTimeout(()=>document.getElementById("d")?.scrollIntoView({behavior:"smooth"}),80); }
+  const P={bg:"#0E0E15",ink:"#E8EAED",inkSoft:"#B0B8C4",card:"#15151E",paper:"#1A1A26",rule:"#2A2A38",accent:"#F472B6",up:"#10B981",down:"#EF4444",mute:"#7A8595"};
+  const wrap={maxWidth:820,margin:"0 auto",padding:"64px 24px 96px"};
+  const display="'Fraunces',Georgia,serif",sans="Inter,system-ui,sans-serif",mono="'JetBrains Mono',ui-monospace,monospace";
+  const total = SOURCES.reduce((a,s)=>a+s.amt,0);
+  return <div style={{background:P.bg,color:P.ink,fontFamily:sans,minHeight:"100vh"}}>
+    <header style={wrap}>
+      <div data-testid="eyebrow" style={{fontFamily:mono,fontSize:11,color:P.accent,letterSpacing:"0.2em",textTransform:"uppercase",marginBottom:32}}>For mid-size creators with 4+ payout sources</div>
+      <h1 style={{fontFamily:display,fontWeight:400,fontSize:"clamp(46px,7vw,82px)",lineHeight:0.97,letterSpacing:"-0.035em",margin:0}}>Six platforms.<br/>Six payout schedules.<br/><em style={{fontStyle:"italic",color:P.accent}}>One screen.</em></h1>
+      <p style={{fontFamily:display,fontSize:22,fontStyle:"italic",lineHeight:1.45,color:P.inkSoft,margin:"32px 0 28px",maxWidth:600}}>AdSense lags 60 days. Twitch lags 15. Patreon is monthly. The brand deal is net 30. Amazon is 60. Merch is daily. You earn $18k but you have no idea what's in the bank Friday. Creator P&L stitches it together and forecasts what hits next.</p>
+      <div style={{display:"flex",flexWrap:"wrap",gap:16,alignItems:"center"}}>
+        <button data-testid="try-sample" onClick={open} style={{fontFamily:sans,fontSize:16,fontWeight:600,background:P.accent,color:"#1F0814",border:"none",padding:"16px 28px",borderRadius:4,cursor:"pointer"}}>Show me a sample month →</button>
+        <span style={{fontFamily:mono,fontSize:11,color:P.mute,textTransform:"uppercase"}}>· $19/mo · exports to your CPA</span>
+      </div>
+    </header>
+    {view==="dash"&&<section id="d" style={{...wrap,paddingTop:0}}>
+      <div data-testid="summary" style={{background:P.card,border:`2px solid ${P.accent}`,borderRadius:6,padding:28,marginBottom:14}}>
+        <div style={{fontFamily:mono,fontSize:11,color:P.accent,letterSpacing:0.15,textTransform:"uppercase",marginBottom:8}}>May 2026 · gross earned</div>
+        <div style={{fontFamily:display,fontSize:"clamp(40px,5vw,56px)",fontWeight:500,color:P.ink}}>${total.toLocaleString()}</div>
+        <div style={{fontFamily:sans,fontSize:14,color:P.inkSoft,marginTop:8}}>Across 6 sources. About $3,840 of this hits your bank in May. The rest lands between June and August.</div>
+      </div>
+      {SOURCES.map((s,i)=>(<div key={i} style={{background:P.card,border:`1px solid ${P.rule}`,borderRadius:4,padding:"16px 22px",marginBottom:8}}>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"baseline",flexWrap:"wrap",gap:8}}>
+          <div><div style={{fontFamily:sans,fontSize:14,fontWeight:600}}>{s.name}</div><div style={{fontFamily:mono,fontSize:11,color:P.mute,marginTop:2}}>{s.lag}{s.note?" · "+s.note:""}</div></div>
+          <div style={{textAlign:"right"}}><div style={{fontFamily:display,fontSize:20,color:P.ink}}>${s.amt.toLocaleString()}</div>{s.yoy!==0&&<div style={{fontFamily:mono,fontSize:11,color:s.yoy>0?P.up:P.down,marginTop:2}}>{s.yoy>0?"+":""}{s.yoy}% YoY</div>}</div>
+        </div>
+      </div>))}
+      <div style={{fontFamily:mono,fontSize:11,color:P.accent,letterSpacing:0.15,textTransform:"uppercase",marginTop:24,marginBottom:12}}>What to watch this month</div>
+      {FLAGS.map((f,i)=>(<div key={i} style={{background:P.card,border:`1px solid ${P.rule}`,borderLeft:`3px solid ${P.accent}`,borderRadius:4,padding:"14px 22px",marginBottom:8}}>
+        <div style={{fontFamily:sans,fontSize:14,fontWeight:600,marginBottom:4}}>{f.t}</div>
+        <div style={{fontFamily:sans,fontSize:13,color:P.inkSoft,lineHeight:1.55}}>{f.b}</div>
+      </div>))}
+    </section>}
+    <footer style={{...wrap,paddingTop:32,paddingBottom:56,borderTop:`1px solid ${P.rule}`}}><div style={{fontFamily:mono,fontSize:11,color:P.mute,textAlign:"center",lineHeight:1.65}}>Plaid + creator APIs. Read-only. Year-end export is Schedule C-ready.</div></footer>
+  </div>;
+}
+const root = ReactDOM.createRoot(document.getElementById("root")); root.render(<App/>);
+</script>
+<script data-name="BMC-Widget" data-cfasync="false" src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js" data-id="gooboolygoo" data-description="Support me on Buy me a coffee!" data-message="Love this project? Donate to keep it going" data-color="#5F7FFF" data-position="Right" data-x_margin="18" data-y_margin="18"></script>
+</body></html>

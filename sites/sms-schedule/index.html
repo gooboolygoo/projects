@@ -1,0 +1,65 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Shift. SMS scheduling for cafes and salons.</title>
+<meta name="description" content="When I Work is $30/mo and your barista won't install another app. Shift sends a text. Reply YES to confirm. Reply SWAP to ask the team. The owner approves on their phone.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..900&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script crossorigin src="https://unpkg.com/react@18.3.1/umd/react.production.min.js"></script><script crossorigin src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js"></script><script src="https://unpkg.com/@babel/standalone@7.24.7/babel.min.js"></script>
+<style>html,body{margin:0;padding:0;background:#F8F4ED}.__loading{font-family:Inter,system-ui;color:#888;text-align:center;padding-top:200px}</style></head><body>
+<div id="root"><div class="__loading">Loading...</div></div>
+<script type="text/babel" data-presets="react">
+const { useState } = React;
+const SHIFTS = [
+  { d:"Mon May 25", who:"Maya (barista)", t:"6am – 1pm", conf:"yes" },
+  { d:"Mon May 25", who:"Sam (cashier)", t:"7am – 3pm", conf:"yes" },
+  { d:"Tue May 26", who:"Maya (barista)", t:"6am – 1pm", conf:"swap_requested", swap:"asked the team at 8:32pm" },
+  { d:"Tue May 26", who:"Dev (closer)", t:"2pm – 9pm", conf:"yes" },
+  { d:"Wed May 27", who:"Priya (barista)", t:"6am – 1pm", conf:"no_reply", reminder:"reminder sent 6h ago" },
+  { d:"Wed May 27", who:"Sam (closer)", t:"2pm – 9pm", conf:"yes" }
+];
+const MSGS = [
+  { time:"8:32pm", from:"Maya", body:"Hey I can't do Tue 6am, dentist. Anyone trade?" },
+  { time:"8:36pm", from:"Priya", body:"I can take it! What do I get in return?" },
+  { time:"8:38pm", from:"Maya", body:"Wed 2-9?" },
+  { time:"8:41pm", from:"Priya", body:"Done. Owner sign off?" },
+  { time:"8:44pm", from:"Owner (you)", body:"Approved. Maya you owe Priya a coffee 😅" }
+];
+function App(){
+  const [view,setView]=useState("landing");
+  function open(){ setView("dash"); setTimeout(()=>document.getElementById("d")?.scrollIntoView({behavior:"smooth"}),80); }
+  const P={bg:"#F8F4ED",ink:"#1F1B16",inkSoft:"#5A544A",card:"#FFFFFF",rule:"#D9D2C2",accent:"#0EA5E9",yes:"#15803D",no:"#9CA3AF",swap:"#D97706",mute:"#8A8275"};
+  const wrap={maxWidth:820,margin:"0 auto",padding:"64px 24px 96px"};
+  const display="'Fraunces',Georgia,serif",sans="Inter,system-ui,sans-serif",mono="'JetBrains Mono',ui-monospace,monospace";
+  function cc(s){return s==="yes"?P.yes:s==="no_reply"?P.no:P.swap;}
+  function cl(s){return s==="yes"?"CONFIRMED":s==="no_reply"?"NO REPLY":"SWAP";}
+  return <div style={{background:P.bg,color:P.ink,fontFamily:sans,minHeight:"100vh"}}>
+    <header style={wrap}>
+      <div data-testid="eyebrow" style={{fontFamily:mono,fontSize:11,color:P.accent,letterSpacing:"0.2em",textTransform:"uppercase",marginBottom:32}}>For cafes, salons, restaurants with 4-12 staff</div>
+      <h1 style={{fontFamily:display,fontWeight:400,fontSize:"clamp(46px,7vw,82px)",lineHeight:0.97,letterSpacing:"-0.035em",margin:0}}>Your barista won't<br/>install another app.<br/><em style={{fontStyle:"italic",color:P.accent}}>So we don't ask.</em></h1>
+      <p style={{fontFamily:display,fontSize:22,fontStyle:"italic",lineHeight:1.45,color:P.inkSoft,margin:"32px 0 28px",maxWidth:600}}>When I Work is built for Walmart. Your 8-person staff trades shifts in a group chat that nobody can find at 6am. Shift is SMS. They text YES to confirm, SWAP to ask the team, and you approve on your phone. No app, no logins.</p>
+      <div style={{display:"flex",flexWrap:"wrap",gap:16,alignItems:"center"}}>
+        <button data-testid="try-sample" onClick={open} style={{fontFamily:sans,fontSize:16,fontWeight:600,background:P.accent,color:"#FFF",border:"none",padding:"16px 28px",borderRadius:4,cursor:"pointer"}}>Show me a sample week →</button>
+        <span style={{fontFamily:mono,fontSize:11,color:P.mute,textTransform:"uppercase"}}>· $19/month flat · unlimited staff</span>
+      </div>
+    </header>
+    {view==="dash"&&<section id="d" style={{...wrap,paddingTop:0}}>
+      <div data-testid="summary" style={{background:P.card,border:`1px solid ${P.rule}`,borderRadius:6,padding:24,marginBottom:14}}>
+        <div style={{fontFamily:mono,fontSize:11,color:P.accent,letterSpacing:0.15,textTransform:"uppercase",marginBottom:8}}>This week · 1 swap in progress · 1 not yet confirmed</div>
+      </div>
+      {SHIFTS.map((s,i)=>(<div key={i} style={{background:P.card,border:`1px solid ${P.rule}`,borderLeft:`4px solid ${cc(s.conf)}`,borderRadius:4,padding:"14px 22px",marginBottom:8}}>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"baseline",flexWrap:"wrap",gap:8}}>
+          <div><div style={{fontFamily:sans,fontSize:14,fontWeight:600}}>{s.d} · {s.who}</div><div style={{fontFamily:mono,fontSize:11,color:P.mute,marginTop:2}}>{s.t}</div></div>
+          <div style={{textAlign:"right"}}><div style={{fontFamily:mono,fontSize:11,color:cc(s.conf),letterSpacing:0.1}}>{cl(s.conf)}</div>{s.swap&&<div style={{fontFamily:mono,fontSize:10,color:P.mute,marginTop:2}}>{s.swap}</div>}{s.reminder&&<div style={{fontFamily:mono,fontSize:10,color:P.mute,marginTop:2}}>{s.reminder}</div>}</div>
+        </div>
+      </div>))}
+      <div style={{marginTop:24,padding:24,background:P.card,border:`1px solid ${P.rule}`,borderRadius:6}}>
+        <div style={{fontFamily:mono,fontSize:11,color:P.accent,letterSpacing:0.15,textTransform:"uppercase",marginBottom:14}}>Swap thread (Tue 6am barista)</div>
+        {MSGS.map((m,i)=>(<div key={i} style={{padding:"6px 0",borderTop:i>0?`1px solid ${P.rule}`:"none"}}>
+          <div style={{display:"flex",gap:8,fontFamily:mono,fontSize:11}}><span style={{color:P.mute,width:55}}>{m.time}</span><span style={{color:P.ink,fontWeight:600,width:90}}>{m.from}</span><span style={{color:P.inkSoft,flex:1}}>{m.body}</span></div>
+        </div>))}
+      </div>
+    </section>}
+    <footer style={{...wrap,paddingTop:32,paddingBottom:56,borderTop:`1px solid ${P.rule}`}}><div style={{fontFamily:mono,fontSize:11,color:P.mute,textAlign:"center",lineHeight:1.65}}>SMS via Twilio. Staff text from any phone, no app, no Wi-Fi.</div></footer>
+  </div>;
+}
+const root = ReactDOM.createRoot(document.getElementById("root")); root.render(<App/>);
+</script>
+<script data-name="BMC-Widget" data-cfasync="false" src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js" data-id="gooboolygoo" data-description="Support me on Buy me a coffee!" data-message="Love this project? Donate to keep it going" data-color="#5F7FFF" data-position="Right" data-x_margin="18" data-y_margin="18"></script>
+</body></html>

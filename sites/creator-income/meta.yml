@@ -1,0 +1,17 @@
+title: Creator P&L
+blurb: AdSense lags 60 days. Twitch lags 15. Patreon is monthly. The brand deal is net 30. Amazon is 60. Merch is daily. You earn 18 thousand but you have no idea what is in the bank Friday. Creator P&L stitches it together and forecasts what hits next.
+tags:
+  - creator
+  - finance
+  - product
+  - dashboard
+donate: true
+demo:
+  setup:
+    - { action: scroll_to, selector: "#root" }
+  steps:
+    - { action: wait, duration_s: 3 }
+    - { action: click, selector: '[data-testid="try-sample"]' }
+    - { action: wait, duration_s: 2 }
+    - { action: scroll_to, selector: '[data-testid="summary"]' }
+    - { action: wait, duration_s: 8 }
