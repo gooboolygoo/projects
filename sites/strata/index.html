@@ -1,0 +1,1639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>STRATA — where you would have stood in every age</title>
+<style>
+  :root{
+    --stone:#e7e2d6; --stone-2:#f2efe7; --stone-3:#d9d3c3;
+    --ink:#1a1712; --ink-2:#403a30; --muted:#6f685a; --faint:#a59c89;
+    --line:#cbc5b4; --line-2:#bdb6a2;
+    --blue:#163a86; --blue-d:#0f285e; --blue-l:#b9c6e4;
+    --flame:#d8451f; --flame-d:#b8360f;
+    --sans:"Helvetica Neue", Helvetica, Arial, system-ui, sans-serif;
+    --mono:ui-monospace,"SF Mono","JetBrains Mono",Menlo,Consolas,monospace;
+    --wrapw:1000px;
+  }
+  *{ box-sizing:border-box; }
+  html{ -webkit-text-size-adjust:100%; }
+  body{ margin:0; background:var(--stone); color:var(--ink); font-family:var(--sans); line-height:1.5; -webkit-font-smoothing:antialiased; }
+  a{ color:var(--blue); text-decoration:none; }
+  ::selection{ background:var(--flame); color:#fff; }
+  .wrap{ max-width:var(--wrapw); margin:0 auto; padding:0 26px; }
+  .mono{ font-family:var(--mono); }
+
+  /* MASTHEAD */
+  .mast{ padding:30px 0 8px; }
+  .mast-rule{ height:7px; background:var(--ink); margin-bottom:18px; }
+  .kicker{ font-family:var(--mono); font-size:11px; letter-spacing:.2em; text-transform:uppercase; color:var(--ink-2); margin:0 0 6px; }
+  .kicker b{ color:var(--flame-d); }
+  .title{ font-weight:800; font-size:clamp(64px,17vw,168px); line-height:.84; letter-spacing:-.045em; margin:0; color:var(--ink); }
+  .lede{ font-weight:700; font-size:clamp(17px,2.5vw,23px); line-height:1.28; max-width:34ch; margin:16px 0 0; color:var(--ink); }
+  .byline{ font-family:var(--mono); font-size:11.5px; color:var(--muted); margin:16px 0 0; border-top:1.5px solid var(--line-2); padding-top:11px; min-height:2.2em; }
+  .byline .pre{ color:var(--flame-d); }
+  .cur{ display:inline-block; width:.55ch; height:1em; background:var(--flame); transform:translateY(.14em); margin-left:1px; }
+
+  /* HERO */
+  .hero{ padding:26px 0 6px; }
+  .hero-k{ font-size:11px; letter-spacing:.18em; text-transform:uppercase; color:var(--blue); margin:0 0 10px; }
+  .core{ display:flex; height:74px; border:2px solid var(--ink); }
+  .core-void{ flex:983; background:repeating-linear-gradient(135deg, transparent 0 8px, rgba(26,23,18,.05) 8px 9px), var(--stone-3); border-right:2px solid var(--ink); }
+  .core-rec{ flex:17; background:var(--flame); }
+  .core-axis{ display:flex; justify-content:space-between; gap:10px; margin-top:8px; font-size:10px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); }
+  .core-axis span:last-child{ color:var(--flame-d); text-align:right; }
+  .hero-cap{ font-size:15px; line-height:1.5; max-width:66ch; margin:16px 0 0; color:var(--ink-2); }
+  .hero-cap b{ color:var(--ink); }
+
+  /* READ FIRST */
+  .read{ margin:26px 0 4px; border:2px solid var(--ink); background:var(--stone-2); }
+  .read > summary{ list-style:none; cursor:pointer; padding:13px 16px; display:flex; align-items:center; gap:11px; font-family:var(--mono); font-size:12px; letter-spacing:.13em; text-transform:uppercase; color:var(--ink); }
+  .read > summary::-webkit-details-marker{ display:none; }
+  .read .mk{ width:14px; height:14px; background:var(--flame); flex:0 0 auto; transition:transform .2s; }
+  .read[open] .mk{ transform:rotate(45deg); }
+  .read-body{ padding:2px 16px 16px; border-top:1.5px solid var(--line-2); }
+  .cav{ display:flex; gap:12px; padding:11px 0; border-bottom:1px solid var(--line); }
+  .cav:last-child{ border-bottom:0; }
+  .cav .b{ width:9px; height:9px; flex:0 0 auto; margin-top:6px; background:var(--blue); }
+  .cav p{ margin:0; font-size:13.5px; line-height:1.5; color:var(--ink-2); }
+  .cav p b{ color:var(--ink); }
+
+  /* NAV */
+  .nav{ position:sticky; top:0; z-index:40; background:var(--ink); margin-top:26px; }
+  .nav-inner{ display:flex; align-items:center; gap:14px; flex-wrap:wrap; padding:9px 26px; max-width:var(--wrapw); margin:0 auto; }
+  .nav-label{ font-family:var(--mono); font-size:10px; letter-spacing:.16em; color:var(--faint); text-transform:uppercase; }
+  .eras{ display:flex; gap:4px; flex-wrap:wrap; flex:1; }
+  .chip{ font-family:var(--mono); font-size:11px; letter-spacing:.04em; text-transform:uppercase; color:#cfc8b8; background:transparent; border:0; padding:5px 8px; cursor:pointer; border-bottom:2px solid transparent; }
+  .chip:hover{ color:#fff; }
+  .chip.on{ color:#fff; border-bottom-color:var(--flame); }
+  .filters{ display:flex; align-items:center; gap:5px; flex-wrap:wrap; }
+  .flt{ display:inline-flex; align-items:center; gap:6px; cursor:pointer; font-family:var(--mono); font-size:10px; letter-spacing:.05em; text-transform:uppercase; color:#cfc8b8; background:transparent; border:1px solid #4a443a; padding:4px 7px; }
+  .flt .sw{ width:8px; height:8px; flex:0 0 auto; }
+  .flt:hover{ color:#fff; }
+  .flt.on{ color:#fff; border-color:#fff; }
+  .flt.off{ opacity:.42; }
+  .flt-x{ font-family:var(--mono); font-size:10px; color:#cfc8b8; background:transparent; border:0; cursor:pointer; padding:4px 6px; opacity:0; pointer-events:none; transition:opacity .2s; text-transform:uppercase; letter-spacing:.08em; }
+  .flt-x.show{ opacity:1; pointer-events:auto; }
+
+  /* ERA */
+  main{ padding-top:8px; }
+  .era{ padding:40px 0 30px; border-bottom:6px solid var(--ink); }
+  .era-head{ display:grid; grid-template-columns:auto 1fr; gap:6px 18px; align-items:end; }
+  .era-no{ font-weight:800; font-size:clamp(40px,7vw,72px); line-height:.8; letter-spacing:-.04em; color:var(--flame); font-variant-numeric:tabular-nums; }
+  .era-name{ font-weight:800; font-size:clamp(30px,5.5vw,52px); line-height:.92; letter-spacing:-.03em; margin:0; color:var(--ink); }
+  .era-range{ grid-column:2; font-size:12px; letter-spacing:.06em; color:var(--muted); margin:3px 0 0; }
+  .era-intro{ grid-column:1 / -1; font-size:15px; line-height:1.5; max-width:76ch; margin:15px 0 0; color:var(--ink-2); }
+  .era-intro b{ color:var(--ink); }
+
+  /* CIVILIZATION BLOCK */
+  .civ{ margin-top:30px; padding-top:24px; border-top:2px solid var(--ink); }
+  .civ-head{ display:flex; align-items:baseline; gap:12px; flex-wrap:wrap; }
+  .civ-name{ font-weight:800; font-size:clamp(20px,3.3vw,29px); line-height:1.02; letter-spacing:-.02em; margin:0; color:var(--ink); }
+  .civ-meta{ font-family:var(--mono); font-size:10.5px; letter-spacing:.05em; text-transform:uppercase; color:var(--muted); margin-left:auto; text-align:right; }
+  .mini{ font-family:var(--mono); font-size:10.5px; font-weight:700; letter-spacing:.15em; text-transform:uppercase; color:var(--blue); margin:20px 0 9px; padding-bottom:6px; border-bottom:1.5px solid var(--line-2); }
+
+  /* TIER LIST (hierarchy) */
+  .tiers{ display:flex; flex-direction:column; }
+  .tier{ display:flex; gap:14px; align-items:stretch; padding:6px 0; }
+  .tier + .tier{ border-top:1px solid var(--line); }
+  .gutter{ flex:0 0 150px; display:flex; justify-content:center; align-items:center; }
+  .bar{ height:20px; min-width:9px; --c:var(--blue); background-color:var(--c);
+    background-image:repeating-linear-gradient(135deg, rgba(255,255,255,.16) 0 5px, transparent 5px 10px); border:1.5px solid rgba(0,0,0,.32); }
+  .tier.cap .bar{ --c:var(--flame); }
+  .tier-info{ flex:1 1 auto; min-width:0; align-self:center; }
+  .tier-top{ display:flex; align-items:baseline; gap:10px; }
+  .tier-name{ font-weight:700; font-size:14px; color:var(--ink); line-height:1.2; }
+  .tier.cap .tier-name::after{ content:"◂ the named"; font-family:var(--mono); font-size:9px; font-weight:400; letter-spacing:.1em; text-transform:uppercase; color:var(--flame-d); margin-left:8px; }
+  .tier-share{ margin-left:auto; font-size:11.5px; color:var(--blue); white-space:nowrap; font-variant-numeric:tabular-nums; }
+  .tier.cap .tier-share{ color:var(--flame-d); }
+  .tier-note{ font-size:12.5px; line-height:1.45; color:var(--muted); margin:2px 0 0; max-width:64ch; }
+
+  /* TRAITS */
+  .traits{ display:flex; flex-wrap:wrap; gap:8px; }
+  .chip-t{ font-size:12.5px; line-height:1.3; color:var(--ink); background:var(--stone-2); border:1.5px solid var(--line-2); padding:6px 11px; }
+  .chip-t .n{ font-family:var(--mono); font-size:9px; color:var(--flame-d); margin-right:7px; letter-spacing:.05em; }
+
+  /* FIGURES */
+  .civ-figs{ display:flex; flex-direction:column; }
+  .fig{ display:flex; gap:16px; padding:14px 0; transition:opacity .25s; }
+  .fig + .fig{ border-top:1px solid var(--line); }
+  .portrait{ flex:0 0 auto; position:relative; width:64px; height:80px; overflow:hidden; border:1.5px solid var(--ink); background:var(--stone-3); }
+  .portrait .pmono{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-family:var(--mono); font-weight:700; font-size:19px; color:var(--ink-2); background:repeating-linear-gradient(135deg, rgba(26,23,18,.05) 0 6px, transparent 6px 12px); }
+  .portrait img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:50% 22%; opacity:0; transition:opacity .4s ease, filter .2s; filter:grayscale(.5) contrast(1.02); }
+  .portrait.has-img img{ opacity:1; }
+  .fig:hover .portrait img{ filter:grayscale(0) contrast(1); }
+  .fig-body{ flex:1 1 auto; min-width:0; }
+  .fig-top{ display:flex; align-items:baseline; gap:11px; flex-wrap:wrap; margin-bottom:2px; }
+  .fig-yr{ font-family:var(--mono); font-size:11.5px; color:var(--flame-d); font-variant-numeric:tabular-nums; }
+  .doms{ display:flex; gap:4px; }
+  .doms .d{ width:8px; height:8px; }
+  .fig-name{ font-weight:800; font-size:clamp(19px,3.3vw,25px); line-height:1.04; letter-spacing:-.02em; margin:0 0 4px; color:var(--ink); }
+  .fig-why{ font-size:13.5px; line-height:1.48; color:var(--ink-2); margin:0 0 9px; max-width:66ch; }
+  .glink{ display:inline-flex; align-items:center; gap:7px; font-family:var(--mono); font-size:10.5px; letter-spacing:.08em; text-transform:uppercase; color:var(--blue); border:1.5px solid var(--blue); padding:4px 9px; }
+  .glink:hover{ background:var(--blue); color:#fff; }
+  .glink .ar{ transition:transform .15s; }
+  .glink:hover .ar{ transform:translateX(2px); }
+  .fig.dim{ opacity:.22; }
+
+  .civ-src{ font-family:var(--mono); font-size:10.5px; letter-spacing:.04em; color:var(--muted); margin:16px 0 0; text-transform:uppercase; }
+  .civ-src a{ color:var(--blue); border-bottom:1px solid var(--blue-l); }
+  .civ-src a:hover{ border-bottom-color:var(--blue); }
+
+  /* VOID */
+  .void .era-no{ color:var(--ink); }
+  .void-note{ font-size:15px; line-height:1.55; color:var(--ink-2); margin:18px 0 0; max-width:74ch; }
+  .void-note b{ color:var(--ink); }
+  .more{ display:inline-flex; align-items:center; gap:7px; font-family:var(--mono); font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--blue); border-bottom:1.5px solid var(--blue); margin-top:16px; padding-bottom:2px; }
+
+  /* FOOTER */
+  .foot{ padding:34px 26px 60px; max-width:var(--wrapw); margin:0 auto; }
+  .foot p{ font-size:13.5px; line-height:1.6; color:var(--ink-2); max-width:80ch; margin:0 0 14px; }
+  .foot p b{ color:var(--ink); }
+  .foot .meta{ font-family:var(--mono); font-size:11px; letter-spacing:.05em; text-transform:uppercase; color:var(--muted); border-top:1.5px solid var(--line-2); padding-top:14px; }
+
+  /* ROUTE TAG */
+  .route{ font-family:var(--mono); font-size:9px; font-weight:700; letter-spacing:.11em; text-transform:uppercase; padding:3px 7px 2px; border:1.5px solid var(--line-2); color:var(--muted); white-space:nowrap; align-self:center; }
+  .route[data-r="merit"]{ color:var(--flame-d); border-color:var(--flame); }
+  .route[data-r="wealth"]{ color:#1f7a34; border-color:#2f9e44; background:rgba(47,158,68,.08); }
+  .route-key{ font-size:13px; line-height:1.5; color:var(--ink-2); margin:13px 0 0; max-width:68ch; }
+  .route-key b{ font-weight:700; }
+  .rk-b{ color:var(--muted); } .rk-m{ color:var(--flame-d); } .rk-w{ color:#1f7a34; }
+
+  /* CIV INDEX (jump) */
+  .jump{ margin-top:14px; }
+  .jump .read-body{ display:flex; flex-direction:column; gap:13px; }
+  .idx-era{ font-family:var(--mono); font-size:10px; letter-spacing:.14em; text-transform:uppercase; color:var(--flame-d); margin:0 0 7px; }
+  .idx-civs{ display:flex; flex-wrap:wrap; gap:6px; }
+  .idx-civ{ font-size:12.5px; color:var(--ink); border:1.5px solid var(--line-2); padding:4px 9px; background:var(--stone-2); }
+  .idx-civ:hover{ border-color:var(--blue); color:var(--blue); }
+  .idx-civ:focus-visible{ outline:2.5px solid var(--flame); outline-offset:2px; }
+
+  /* scroll offset under sticky nav */
+  .era, .civ{ scroll-margin-top:64px; }
+
+  /* book / non-link references */
+  .civ-src .ref{ color:var(--muted); font-style:italic; border:0; }
+
+  /* ===== interactive: cast yourself into history ===== */
+  .sim{ border-top:1px solid var(--line); border-bottom:1px solid var(--line); background:var(--stone-2); padding:34px 0 38px; }
+  .sim-h{ font-family:var(--sans); font-weight:800; font-size:clamp(23px,4.2vw,36px); line-height:1.04; letter-spacing:-.02em; margin:6px 0 9px; color:var(--ink); }
+  .sim-sub{ max-width:68ch; color:var(--ink-2); font-size:14.5px; line-height:1.6; margin:0 0 22px; }
+  .sim-grid{ display:flex; flex-direction:column; gap:15px; max-width:760px; }
+  .q{ display:flex; flex-direction:column; gap:7px; }
+  .q-l{ font-family:var(--mono); font-size:10px; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); }
+  .opts{ display:flex; flex-wrap:wrap; gap:7px; }
+  .opt{ font-family:var(--sans); font-size:13px; font-weight:700; padding:8px 13px; border:1.5px solid var(--line-2); background:var(--stone); color:var(--ink-2); cursor:pointer; border-radius:2px; transition:background .12s,border-color .12s,color .12s; }
+  .opt:hover{ border-color:var(--ink-2); color:var(--ink); }
+  .opt.on{ background:var(--ink); color:var(--stone-2); border-color:var(--ink); }
+  .sel-row{ display:flex; flex-wrap:wrap; align-items:center; gap:8px; }
+  .sel{ font-family:var(--sans); font-weight:700; font-size:14px; padding:9px 12px; border:1.5px solid var(--ink); background:var(--stone); color:var(--ink); border-radius:2px; max-width:420px; cursor:pointer; }
+  .rnd{ font-family:var(--mono); font-size:11px; letter-spacing:.05em; padding:9px 12px; border:1.5px solid var(--line-2); background:transparent; color:var(--muted); cursor:pointer; border-radius:2px; transition:border-color .12s,color .12s; }
+  .rnd:hover{ border-color:var(--flame); color:var(--flame); }
+  .sim-foot{ margin-top:28px; }
+
+  .sim-out{ margin-top:26px; border:1.5px solid var(--ink); background:var(--stone); padding:20px 20px 22px; border-radius:3px; box-shadow:5px 5px 0 var(--line); }
+  .so-k,.so-tag,.so-stand-l,.so-ages-l{ font-family:var(--mono); font-size:9.5px; letter-spacing:.13em; text-transform:uppercase; color:var(--muted); }
+  .so-civ{ font-family:var(--sans); font-weight:800; font-size:clamp(19px,3.4vw,26px); margin:3px 0 14px; letter-spacing:-.01em; line-height:1.1; }
+  .so-yr{ font-family:var(--mono); font-size:12px; font-weight:400; letter-spacing:.03em; color:var(--faint); margin-left:7px; }
+  .so-line{ font-size:16px; line-height:1.5; margin:0 0 8px; color:var(--ink); }
+  .so-tier{ color:var(--flame-d); }
+  .so-d{ font-size:13.5px; line-height:1.55; color:var(--ink-2); margin:0 0 15px; max-width:74ch; }
+  .spyr{ display:flex; flex-direction:column; gap:3px; margin:6px 0 16px; }
+  .spyr-r{ display:flex; align-items:center; gap:10px; padding:1px 0; min-width:0; }
+  .spyr-bar{ height:11px; min-width:2px; background:var(--c); border-radius:1px; flex:0 0 auto; }
+  .spyr-n{ font-size:11.5px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; min-width:0; }
+  .spyr-n i{ font-style:normal; font-family:var(--mono); font-size:9.5px; color:var(--faint); margin-left:3px; }
+  .spyr-n b{ color:var(--flame-d); font-family:var(--mono); font-size:9.5px; letter-spacing:.07em; }
+  .spyr-r.you .spyr-bar{ outline:2px solid var(--flame); outline-offset:1px; }
+  .spyr-r.you .spyr-n{ color:var(--ink); font-weight:700; }
+  .so-stand{ margin:0 0 16px; }
+  .so-stand-top{ display:flex; justify-content:space-between; align-items:baseline; gap:12px; margin-bottom:5px; }
+  .so-stand-v{ font-family:var(--sans); font-weight:800; font-size:15px; color:var(--flame-d); white-space:nowrap; }
+  .sbar{ height:7px; background:var(--line); border-radius:4px; overflow:hidden; }
+  .sbar-f{ display:block; height:100%; background:var(--blue); border-radius:4px; }
+  .sbar-f.flame{ background:var(--flame); }
+  .so-day{ font-size:13px; line-height:1.6; color:var(--ink-2); margin:0 0 15px; border-left:2.5px solid var(--line-2); padding-left:12px; }
+  .so-day .so-tag{ display:block; margin-bottom:3px; }
+  .so-cav{ list-style:none; margin:0 0 16px; padding:0; display:flex; flex-direction:column; gap:7px; }
+  .so-cav li{ font-size:12.5px; line-height:1.5; color:var(--muted); padding-left:15px; position:relative; }
+  .so-cav li:before{ content:""; position:absolute; left:0; top:7px; width:6px; height:6px; background:var(--flame); }
+  .so-ages{ border-top:1px solid var(--line); padding-top:14px; }
+  .so-ages-l{ display:block; margin-bottom:8px; }
+  .age-row{ display:grid; grid-template-columns:120px 1fr 44px; align-items:center; gap:10px; width:100%; text-align:left; background:transparent; border:0; border-bottom:1px solid var(--stone-3); padding:7px 2px; cursor:pointer; font:inherit; }
+  .age-row:hover{ background:var(--stone-2); }
+  .age-row.cur .age-era{ color:var(--flame-d); }
+  .age-era{ font-size:11px; color:var(--ink-2); font-weight:700; }
+  .age-v{ font-family:var(--mono); font-size:11px; color:var(--muted); text-align:right; }
+  .age-tier{ grid-column:2 / 4; font-size:10.5px; color:var(--faint); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; padding-top:1px; }
+
+  @media (max-width:680px){
+    .sim-out{ box-shadow:3px 3px 0 var(--line); padding:16px 14px 18px; }
+    .so-line{ font-size:15px; }
+    .age-row{ grid-template-columns:88px 1fr 40px; gap:7px; }
+    .age-era{ font-size:10px; }
+    .sel{ max-width:100%; }
+  }
+
+  /* rise/fall arc · day-in-life · figure traits */
+  .arc{ display:grid; grid-template-columns:1fr 1fr; gap:10px 18px; margin:13px 0 4px; }
+  .arc-i{ border-left:2.5px solid var(--line-2); padding-left:12px; }
+  .arc-i.rise{ border-left-color:var(--blue); }
+  .arc-i.fall{ border-left-color:var(--flame); }
+  .arc-l{ font-family:var(--mono); font-size:9.5px; letter-spacing:.13em; text-transform:uppercase; color:var(--muted); display:block; margin-bottom:3px; }
+  .arc-i p{ font-size:13.5px; line-height:1.55; color:var(--ink-2); margin:0; }
+  .dl{ font-size:13.5px; line-height:1.6; color:var(--ink-2); max-width:82ch; margin:4px 0 2px; }
+  .dl.fam{ color:var(--muted); }
+  .fig-trait{ font-size:11.5px; line-height:1.5; color:var(--muted); margin:5px 0 0; }
+  .fig-trait .lbl{ font-family:var(--mono); font-size:8px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--blue-d); margin-right:5px; }
+  @media (max-width:680px){ .arc{ grid-template-columns:1fr; gap:11px; } }
+
+  /* focus + motion */
+  .chip:focus-visible, .flt:focus-visible, .flt-x:focus-visible, .glink:focus-visible, .more:focus-visible, summary:focus-visible, .civ-src a:focus-visible{ outline:2.5px solid var(--flame); outline-offset:2px; }
+  @media (prefers-reduced-motion: no-preference){
+    .reveal{ opacity:0; transform:translateY(12px); transition:opacity .5s ease, transform .5s ease; }
+    .reveal.in{ opacity:1; transform:none; }
+  }
+
+  @media (max-width:680px){
+    .wrap{ padding:0 16px; }
+    .nav-inner{ padding:8px 16px; }
+    .foot{ padding:28px 16px 50px; }
+    .gutter{ flex-basis:96px; }
+    .bar{ height:17px; }
+    .tier{ gap:10px; }
+    .core{ height:60px; }
+    .fig{ gap:12px; }
+    .portrait{ width:54px; height:68px; }
+    .era-head{ grid-template-columns:1fr; }
+    .era-no{ font-size:46px; }
+    .era-range{ grid-column:1; }
+    .civ-meta{ margin-left:0; text-align:left; width:100%; }
+  }
+</style>
+</head>
+<body>
+
+<header class="mast">
+  <div class="wrap">
+    <div class="mast-rule"></div>
+    <p class="kicker">A status atlas of civilizations &middot; sourced from <b>Grokipedia</b> &amp; standard references</p>
+    <h1 class="title">STRATA</h1>
+    <p class="lede">The status hierarchy of every civilization in recorded history &mdash; who ranked where, where you would have stood, and the traits that raised your odds of rising.</p>
+    <p class="byline" id="boot"><span class="pre">&gt;&nbsp;</span><span id="bootText"></span><span class="cur" id="cursor" style="display:none"></span></p>
+  </div>
+</header>
+
+<section class="sim" id="sim">
+  <div class="wrap">
+    <p class="hero-k">Cast yourself into history</p>
+    <h2 class="sim-h">You didn&rsquo;t choose when you were born.</h2>
+    <p class="sim-sub">For almost all of history, almost everywhere, who you became was fixed at birth. Tell the machine who you are, pick an age, and see where its hierarchy would most likely have placed you &mdash; and how you&rsquo;d rank against everyone else alive then.</p>
+
+    <div class="sim-grid">
+      <div class="q"><span class="q-l">You are</span><div class="opts" id="qSex">
+        <button class="opt" data-v="m">Male</button><button class="opt" data-v="f">Female</button>
+      </div></div>
+
+      <div class="q"><span class="q-l">Born into a family that is</span><div class="opts" id="qBirth">
+        <button class="opt" data-v="noble">Ruling / noble</button>
+        <button class="opt" data-v="wealthy">Wealthy (merchant, landowner)</button>
+        <button class="opt" data-v="common">Common &amp; free</button>
+        <button class="opt" data-v="poor">Poor / landless</button>
+        <button class="opt" data-v="enslaved">Enslaved</button>
+      </div></div>
+
+      <div class="q"><span class="q-l">Within that society you are</span><div class="opts" id="qGroup">
+        <button class="opt" data-v="in">Of the dominant people &amp; faith</button>
+        <button class="opt" data-v="out">A subject / outsider</button>
+      </div></div>
+
+      <div class="q"><span class="q-l">You can read &amp; write</span><div class="opts" id="qLit">
+        <button class="opt" data-v="1">Yes</button><button class="opt" data-v="0">No</button>
+      </div></div>
+
+      <div class="q"><span class="q-l">Born into the civilization</span>
+        <div class="sel-row"><select id="qCiv" class="sel" aria-label="choose a civilization"></select><button class="rnd" id="qRnd" type="button">&#x21bb; roll a random age</button></div>
+      </div>
+    </div>
+
+    <div class="sim-out" id="simOut" hidden></div>
+
+    <p class="route-key sim-foot">Below: every civilization in full. Each is tagged by its most reliable route to the top &mdash; <b class="rk-b">&uarr; birth</b>, <b class="rk-m">&uarr; merit</b>, or <b class="rk-w">&uarr; wealth</b>. For almost all of history, almost everywhere, it was birth.</p>
+  </div>
+</section>
+
+<div class="wrap">
+  <details class="read" open>
+    <summary><span class="mk"></span>Read first &mdash; five honest caveats</summary>
+    <div class="read-body">
+      <div class="cav"><span class="b"></span><p><b>Civilizations ran in parallel.</b> Until about 1500 they rose side by side with no shared yardstick. Each one&rsquo;s own ladder is shown here; comparing a rank in Rome to one in Tang China is rough.</p></div>
+      <div class="cav"><span class="b"></span><p><b>The unwritten 98%.</b> Before farming, people lived in small, largely equal bands. Standing was real but personal, and left almost no record.</p></div>
+      <div class="cav"><span class="b"></span><p><b>Rank is not admirable.</b> This ranks reach and sway, not virtue. Several of the most powerful people here caused immense suffering.</p></div>
+      <div class="cav"><span class="b"></span><p><b>Sourced from Grokipedia,</b> supplemented where it is thin by standard historical references (e.g. J. M. Roberts, <i>A History of the World</i>). Each civilization&rsquo;s hierarchy and success-traits are cited under it; every figure links to its Grokipedia article. Grokipedia is AI-generated &mdash; a starting point to check, not a settled record.</p></div>
+      <div class="cav"><span class="b"></span><p><b>The percentages are estimates.</b> Each tier shows an approximate share of that society&rsquo;s population &mdash; sourced where Grokipedia or a standard reference gives a figure, reasoned where they don&rsquo;t. Exact demographics of dead societies are unknowable and the strata overlap, so they may not sum to exactly 100. The <b>bar length is drawn in proportion to that share</b> &mdash; which is why the named apex is a hairline and the base fills the field; the <b>color and the order</b>, top to base, mark the rank. The shape &mdash; a sliver of elite over a vast base &mdash; is what is firmly attested.</p></div>
+    </div>
+  </details>
+</div>
+
+<div class="wrap">
+  <details class="read jump">
+    <summary><span class="mk"></span>Jump to a civilization</summary>
+    <div class="read-body" id="civIndex"></div>
+  </details>
+</div>
+
+<nav class="nav" id="navBar">
+  <div class="nav-inner">
+    <span class="nav-label">Jump</span>
+    <div class="eras" id="eraNav"></div>
+    <div class="filters" id="filters"><span class="nav-label">Filter</span></div>
+  </div>
+</nav>
+
+<main id="timeline"></main>
+
+<footer class="foot">
+  <p><b>On sources.</b> The status hierarchy and the traits that improved one&rsquo;s odds of rising are drawn for each civilization from <b>Grokipedia</b>, supplemented by standard historical references (e.g. J. M. Roberts, <i>A History of the World</i>) where Grokipedia is thin; the works used are linked or cited beneath each. Each named figure links to its Grokipedia article. Exact demographics of vanished societies are unknowable; the tiers and any shares are informed estimates, and the shape &mdash; a sliver of elite over a vast base &mdash; is what is firmly attested.</p>
+  <p>Two things to notice. First, brightness in the record runs <b>opposite</b> to numbers: the layer we can name is the thinnest capstone, while the base that grew the food and built the walls is nameless. Second, read the tag on each civilization &mdash; across almost every one, the single most reliable route to the top was simply <b>being born to the right parents</b>. The exceptions stand out: a few <b class="rk-m">merit</b> ladders (China&rsquo;s exams, the Mongols, the Ottoman devshirme, the Napoleonic career), and, only at the present end, <b class="rk-w">wealth</b>.</p>
+  <p class="meta" id="footMeta"></p>
+</footer>
+
+<script>
+const DOMAINS = {
+  power:  { label:"Power & rule",     color:"#163a86" },
+  sacred: { label:"Sacred & faith",   color:"#7a4fd0" },
+  mind:   { label:"Mind & culture",   color:"#1d8f8f" },
+  wealth: { label:"Wealth & capital", color:"#2f9e44" },
+};
+
+const ERAS = [
+  {
+    key:"void", label:"The Void", range:"c. 300,000 – 3100 BCE", isVoid:true,
+    blurb:"No names survive. For roughly 98% of the human story there were no emperors and no archives — only small, mostly egalitarian bands where standing was earned in person and forgotten within a few lifetimes. Hierarchy as we picture it arrives with farming, surplus, cities, and writing. Only then do individuals start casting shadows long enough that we can still see them.",
+    link:{ url:"https://grokipedia.com/page/Hunter-gatherer", text:"How most humans actually lived" }
+  },
+  {
+    key:"bronze", label:"Bronze Age", range:"3100 – 1200 BCE", entries:[
+      { yr:"c. 3100 BCE", name:"Narmer", dom:["power"], region:"Egypt",
+        why:"Unified Upper and Lower Egypt into the first great territorial state; remembered as the first pharaoh.",
+        url:"https://grokipedia.com/page/Narmer" },
+      { yr:"c. 2580 BCE", name:"Khufu", dom:["power"], region:"Egypt",
+        why:"Bent an entire kingdom to a single task and raised the Great Pyramid of Giza.",
+        url:"https://grokipedia.com/page/Khufu" },
+      { yr:"c. 2300 BCE", name:"Sargon of Akkad", dom:["power"], region:"Mesopotamia",
+        why:"Stitched the cities of Sumer and Akkad into what is often called the world’s first empire.",
+        url:"https://grokipedia.com/page/Sargon_of_Akkad" },
+      { yr:"c. 1770 BCE", name:"Hammurabi", dom:["power","sacred"], region:"Babylon",
+        why:"The dominant king of Mesopotamia, remembered for one of the earliest written codes of law.",
+        url:"https://grokipedia.com/page/Hammurabi" },
+      { yr:"c. 1450 BCE", name:"Thutmose III", dom:["power"], region:"Egypt",
+        why:"A relentless field commander who pushed Egypt to its widest reach — the “Napoleon of Egypt.”",
+        url:"https://grokipedia.com/page/Thutmose_III" },
+      { yr:"c. 1250 BCE", name:"Ramesses II", dom:["power"], region:"Egypt",
+        why:"New Kingdom Egypt at peak wealth and prestige, across a reign of some 66 years.",
+        url:"https://grokipedia.com/page/Ramesses_II" },
+    ]
+  },
+  {
+    key:"classical", label:"Classical Antiquity", range:"1200 BCE – 500 CE", entries:[
+      { yr:"c. 650 BCE", name:"Ashurbanipal", dom:["power","mind"], region:"Assyria",
+        why:"Ruled the largest empire of its day and assembled the great library at Nineveh.",
+        url:"https://grokipedia.com/page/Ashurbanipal" },
+      { yr:"c. 580 BCE", name:"Nebuchadnezzar II", dom:["power"], region:"Babylon",
+        why:"The Neo-Babylonian peak — the fabled Hanging Gardens and the conquest of Jerusalem.",
+        url:"https://grokipedia.com/page/Nebuchadnezzar_II" },
+      { yr:"c. 540 BCE", name:"Cyrus the Great", dom:["power"], region:"Persia",
+        why:"Founded the Achaemenid Empire — the largest the world had yet seen — and ruled it with rare tolerance.",
+        url:"https://grokipedia.com/page/Cyrus_the_Great" },
+      { yr:"c. 500 BCE", name:"Darius I", dom:["power"], region:"Persia",
+        why:"Persia at its height: by some estimates nearly half of all living humans under a single crown.",
+        url:"https://grokipedia.com/page/Darius_the_Great" },
+      { yr:"c. 445 BCE", name:"Pericles", dom:["power","mind"], region:"Athens",
+        why:"Led Athens through its democratic and cultural golden age — a small state at the apex of ideas, beside a far larger Persia.",
+        url:"https://grokipedia.com/page/Pericles" },
+      { yr:"c. 330 BCE", name:"Alexander the Great", dom:["power"], region:"Macedon",
+        why:"Conquered the Persian Empire before his early thirties; the apex of the known world at his death.",
+        url:"https://grokipedia.com/page/Alexander_the_Great" },
+      { yr:"c. 250 BCE", name:"Ashoka", dom:["power","sacred"], region:"India",
+        why:"The Mauryan Empire near its greatest extent; he renounced conquest mid-reign and spread Buddhism.",
+        url:"https://grokipedia.com/page/Ashoka" },
+      { yr:"c. 220 BCE", name:"Qin Shi Huang", dom:["power"], region:"China",
+        why:"First to unify China under one emperor; standardized its script, coinage, and roads.",
+        url:"https://grokipedia.com/page/Qin_Shi_Huang" },
+      { yr:"c. 120 BCE", name:"Emperor Wu of Han", dom:["power"], region:"China",
+        why:"Expanded Han China into a continental power on a scale that rivaled Rome.",
+        url:"https://grokipedia.com/page/Emperor_Wu_of_Han" },
+      { yr:"c. 10 CE", name:"Augustus", dom:["power"], region:"Rome",
+        why:"The first Roman emperor; built a Mediterranean order that outlived him by centuries.",
+        url:"https://grokipedia.com/page/Augustus" },
+      { yr:"c. 110 CE", name:"Trajan", dom:["power"], region:"Rome",
+        why:"Rome at its greatest territorial extent — with Han China the other pole of the era.",
+        url:"https://grokipedia.com/page/Trajan" },
+      { yr:"c. 170 CE", name:"Marcus Aurelius", dom:["power","mind"], region:"Rome",
+        why:"The philosopher-emperor, ruling at the height Gibbon called the happiest age of mankind.",
+        url:"https://grokipedia.com/page/Marcus_Aurelius" },
+      { yr:"c. 260 CE", name:"Shapur I", dom:["power"], region:"Persia",
+        why:"The Sasanian king who captured a Roman emperor alive — the East’s formidable rival.",
+        url:"https://grokipedia.com/page/Shapur_I" },
+      { yr:"c. 325 CE", name:"Constantine the Great", dom:["power","sacred"], region:"Rome",
+        why:"Reunified the empire, founded Constantinople, and set Christianity on its path to dominance.",
+        url:"https://grokipedia.com/page/Constantine_the_Great" },
+      { yr:"c. 340 CE", name:"Ezana of Axum", dom:["power","sacred"], region:"Aksum",
+        why:"Ruled Aksum at its peak, conquered Kush and Meroe, struck the kingdom's own gold coinage, and made his realm one of the first on earth to adopt Christianity.",
+        url:"https://grokipedia.com/page/Ezana_of_Axum" },
+      { yr:"c. 400 CE", name:"Chandragupta II", dom:["power"], region:"India",
+        why:"Presided over the Gupta golden age of Indian mathematics, astronomy, and art.",
+        url:"https://grokipedia.com/page/Chandragupta_II" },
+      { yr:"c. 450 CE", name:"Attila", dom:["power"], region:"Hunnic Empire",
+        why:"The “Scourge of God,” who made both halves of the Roman world pay him tribute.",
+        url:"https://grokipedia.com/page/Attila" },
+    ]
+  },
+  {
+    key:"postclassical", label:"Post-Classical & Medieval", range:"500 – 1500 CE", entries:[
+      { yr:"c. 540 CE", name:"Justinian I", dom:["power","sacred"], region:"Byzantium",
+        why:"Reconquered much of the West, codified Roman law, and built the Hagia Sophia.",
+        url:"https://grokipedia.com/page/Justinian_I" },
+      { yr:"c. 625 CE", name:"Muhammad", dom:["sacred","power"], region:"Arabia",
+        why:"Founded Islam and the community that would reshape three continents within a century.",
+        url:"https://grokipedia.com/page/Muhammad" },
+      { yr:"c. 645 CE", name:"Emperor Taizong of Tang", dom:["power"], region:"China",
+        why:"Tang China at its most powerful and cosmopolitan — a magnet for the whole of Asia.",
+        url:"https://grokipedia.com/page/Emperor_Taizong_of_Tang" },
+      { yr:"c. 795 CE", name:"Harun al-Rashid", dom:["power","mind"], region:"Abbasid Caliphate",
+        why:"Baghdad at the dawn of the Islamic Golden Age and its House of Wisdom.",
+        url:"https://grokipedia.com/page/Harun_al-Rashid" },
+      { yr:"c. 805 CE", name:"Charlemagne", dom:["power"], region:"Frankish Empire",
+        why:"Crowned the first Western emperor since Rome; refounded Europe’s political core.",
+        url:"https://grokipedia.com/page/Charlemagne" },
+      { yr:"c. 1000 CE", name:"Basil II", dom:["power"], region:"Byzantium",
+        why:"Byzantium at its medieval height — while Song China ran the era’s richest economy.",
+        url:"https://grokipedia.com/page/Basil_II" },
+      { yr:"c. 1095 CE", name:"Pope Urban II", dom:["sacred"], region:"Latin Church",
+        why:"Called the First Crusade — the medieval papacy wielding genuinely continental power.",
+        url:"https://grokipedia.com/page/Pope_Urban_II" },
+      { yr:"c. 1130 CE", name:"Suryavarman II", dom:["power","sacred"], region:"Khmer Empire",
+        why:"God-king of the Khmer Empire at its height; built Angkor Wat, the largest religious monument on Earth, as a temple-mountain to Vishnu.",
+        url:"https://grokipedia.com/page/Suryavarman_II" },
+      { yr:"c. 1185 CE", name:"Saladin", dom:["power"], region:"Egypt & Syria",
+        why:"Retook Jerusalem and held the line against the Crusader states.",
+        url:"https://grokipedia.com/page/Saladin" },
+      { yr:"c. 1220 CE", name:"Genghis Khan", dom:["power"], region:"Mongol Empire",
+        why:"Forged the largest contiguous land empire in human history.",
+        url:"https://grokipedia.com/page/Genghis_Khan" },
+      { yr:"c. 1280 CE", name:"Kublai Khan", dom:["power"], region:"Mongol & Yuan China",
+        why:"Ruled the largest realm on Earth, from the China Sea to the steppe.",
+        url:"https://grokipedia.com/page/Kublai_Khan" },
+      { yr:"c. 1325 CE", name:"Mansa Musa", dom:["wealth","power"], region:"Mali",
+        why:"Possibly the richest person in recorded history; his pilgrimage rattled whole economies.",
+        url:"https://grokipedia.com/page/Mansa_Musa" },
+      { yr:"c. 1400 CE", name:"Timur", dom:["power"], region:"Timurid Empire",
+        why:"Central Asia’s conqueror, who shattered armies from Delhi to Ankara.",
+        url:"https://grokipedia.com/page/Timur" },
+      { yr:"c. 1410 CE", name:"Yongle Emperor", dom:["power"], region:"Ming China",
+        why:"Built the Forbidden City and sent Zheng He’s treasure fleets across the Indian Ocean.",
+        url:"https://grokipedia.com/page/Yongle_Emperor" },
+      { yr:"c. 1450 CE", name:"Pachacuti", dom:["power"], region:"Inca Empire",
+        why:"Transformed a small kingdom into Tawantinsuyu, the largest empire in the pre-Columbian Americas; rebuilt Cusco and is traditionally credited with raising Machu Picchu.",
+        url:"https://grokipedia.com/page/Pachacuti" },
+      { yr:"c. 1460 CE", name:"Mehmed II", dom:["power"], region:"Ottoman Empire",
+        why:"Took Constantinople in 1453, ending the last remnant of the Roman Empire.",
+        url:"https://grokipedia.com/page/Mehmed_the_Conqueror" },
+    ]
+  },
+  {
+    key:"earlymodern", label:"Early Modern", range:"1500 – 1800 CE", entries:[
+      { yr:"c. 1510 CE", name:"Moctezuma II", dom:["power","sacred"], region:"Aztec Empire",
+        why:"Ruled the Aztec Triple Alliance at its zenith from Tenochtitlan, the largest city in the Americas, until the Spanish conquest began during his reign.",
+        url:"https://grokipedia.com/page/Moctezuma_II" },
+      { yr:"c. 1540 CE", name:"Suleiman the Magnificent", dom:["power"], region:"Ottoman Empire",
+        why:"The Ottoman zenith — commanding the Mediterranean and reaching the gates of Vienna.",
+        url:"https://grokipedia.com/page/Suleiman_the_Magnificent" },
+      { yr:"c. 1545 CE", name:"Charles V", dom:["power"], region:"Habsburg Empire",
+        why:"Ruled Spain, the Low Countries, Central Europe, and the New World at once.",
+        url:"https://grokipedia.com/page/Charles_V,_Holy_Roman_Emperor" },
+      { yr:"c. 1580 CE", name:"Akbar", dom:["power"], region:"Mughal India",
+        why:"The Mughal Empire’s height: one of the world’s richest and most populous states.",
+        url:"https://grokipedia.com/page/Akbar" },
+      { yr:"c. 1680 CE", name:"Louis XIV", dom:["power"], region:"France",
+        why:"The Sun King — the template of absolute monarchy and Europe’s dominant ruler.",
+        url:"https://grokipedia.com/page/Louis_XIV" },
+      { yr:"c. 1695 CE", name:"Aurangzeb", dom:["power","wealth"], region:"Mughal India",
+        why:"The Mughal Empire at its greatest extent, commanding roughly a quarter of world output.",
+        url:"https://grokipedia.com/page/Aurangzeb" },
+      { yr:"c. 1710 CE", name:"Kangxi Emperor", dom:["power"], region:"Qing China",
+        why:"One of history’s longest reigns, over what was then the world’s largest economy.",
+        url:"https://grokipedia.com/page/Kangxi_Emperor" },
+      { yr:"c. 1760 CE", name:"Qianlong Emperor", dom:["power","wealth"], region:"Qing China",
+        why:"Qing China at its peak — the largest population and economy on the planet.",
+        url:"https://grokipedia.com/page/Qianlong_Emperor" },
+    ]
+  },
+  {
+    key:"modern", label:"The Modern World", range:"1800 – 2000 CE",
+    aside:"For most of the 20th century the apex was openly two-headed: a Cold War world split between Washington and Moscow, with no single person on top.",
+    entries:[
+      { yr:"c. 1810 CE", name:"Napoleon Bonaparte", dom:["power"], region:"France",
+        why:"Dominated Europe and exported the Revolution at bayonet-point.",
+        url:"https://grokipedia.com/page/Napoleon" },
+      { yr:"c. 1875 CE", name:"Otto von Bismarck", dom:["power"], region:"Germany",
+        why:"Unified Germany and managed the European balance through sheer statecraft.",
+        url:"https://grokipedia.com/page/Otto_von_Bismarck" },
+      { yr:"c. 1880 CE", name:"Queen Victoria", dom:["power"], region:"British Empire",
+        why:"Figurehead of the largest empire in history — about a quarter of the globe.",
+        url:"https://grokipedia.com/page/Queen_Victoria" },
+      { yr:"c. 1944 CE", name:"Franklin D. Roosevelt", dom:["power"], region:"United States",
+        why:"Steered the US through Depression and world war as it became the preeminent superpower.",
+        url:"https://grokipedia.com/page/Franklin_D._Roosevelt" },
+      { yr:"c. 1945 CE", name:"Joseph Stalin", dom:["power"], region:"Soviet Union",
+        why:"Led the USSR to victory and superpower rank — at a human cost counted in the tens of millions.",
+        url:"https://grokipedia.com/page/Joseph_Stalin" },
+      { yr:"c. 1960 CE", name:"Mao Zedong", dom:["power"], region:"China",
+        why:"Ruled roughly a quarter of humanity; his campaigns remade — and at times devastated — China.",
+        url:"https://grokipedia.com/page/Mao_Zedong" },
+    ]
+  },
+  {
+    key:"now", label:"The Present", range:"2000 CE – now", contested:true,
+    aside:"Here the premise frays most of all. The single global ladder is back to being a fiction: power has split between rival capitals and, increasingly, between political office and private capital. Three parallel claimants:",
+    entries:[
+      { yr:"2026", name:"Donald Trump", dom:["power"], region:"United States",
+        why:"47th US president — the single most powerful political office, in a world that is no longer unipolar.",
+        url:"https://grokipedia.com/page/Donald_Trump" },
+      { yr:"2026", name:"Xi Jinping", dom:["power"], region:"China",
+        why:"Leads the rising power that has turned the 21st century into a two-pole contest; China’s most dominant ruler since Mao.",
+        url:"https://grokipedia.com/page/Xi_Jinping" },
+      { yr:"2026", name:"Elon Musk", dom:["wealth"], region:"United States / global",
+        why:"The richest person ever recorded (~$840B and climbing); status that flows from capital and technology rather than any crown.",
+        url:"https://grokipedia.com/page/Elon_Musk" },
+    ]
+  },
+];
+
+
+/* ===================== ERA INTROS ===================== */
+const ERA_INTRO = {
+  void:"For about 96% of the human story there were no civilizations and no fixed rank &mdash; only small, roughly equal foraging bands.",
+  bronze:"The first cities and god-kings. Writing began as palace accounting &mdash; and with it, recorded hierarchy.",
+  classical:"Empires and city-states across Eurasia, each with its own order of citizens, priests, warriors and slaves.",
+  postclassical:"Faith-empires and feudal orders &mdash; caliphs, emperors and the Church &mdash; plus the meritocratic shock of the Mongols.",
+  earlymodern:"Gunpowder empires at their height: Ottoman, Mughal, Habsburg, Qing and Bourbon &mdash; still ruled by blood, with slavery financing a new merchant capital.",
+  modern:"Birth loosens and capital takes over; revolutions and industry rebuild the ladder around class, party and nation.",
+  now:"No legal estates anywhere &mdash; but steep economic strata, and a ladder split into separate currencies of wealth, power, credentials and fame."
+};
+
+/* ===================== CIVILIZATIONS (Grokipedia-grounded) ===================== */
+/* each: name, note, tiers[apex..base]{n,d,s?}, traits[levers], src[[label,slug]] */
+const CIVS = {
+
+forage:{ name:"Foraging bands", note:"Grokipedia: broadly egalitarian bands of 20&ndash;50 kin who leveled dominance through sharing &mdash; though it flags that the &ldquo;egalitarian paradise&rdquo; image is contested.",
+ tiers:[
+  {n:"Respected individuals",d:"Skilled hunters, healers and elders given influence freely &mdash; prestige, not power.",s:"fluid"},
+  {n:"The band &mdash; roughly equal",d:"Food-sharing curbed hierarchy; the top and the base were the same people.",s:"&asymp; everyone"}],
+ traits:["skill &mdash; especially in the hunt","generosity and sharing (hoarding lowered status)","age and experience","skill at mediating conflict"],
+ src:[["Hunter-gatherer","Hunter-gatherer"],["Origins of society","Origins_of_society"],["Agrarian society","Agrarian_society"]] },
+
+egypt:{ name:"Ancient Egypt", note:"A theocratic monarchy: the pharaoh as a living god atop a rigid order &mdash; pharaoh, priests, nobles, scribes, artisans, farmers, laborers.",
+ tiers:[
+  {n:"Pharaoh (god-king)",d:"Living Horus, owner of the land, the people&rsquo;s intermediary to the gods.",s:"&lt;0.01%"},
+  {n:"Priesthood &amp; royal kin",d:"Ran the great temple-cults and high offices; the vizier at their head.",s:"~1&ndash;2%"},
+  {n:"Nobles &amp; officials",d:"Nomarchs and bureaucrats governing the provinces (nomes)."},
+  {n:"Scribes",d:"The literate elite &mdash; only around 1% could write.",s:"~1%"},
+  {n:"Artisans &amp; merchants",d:"Skilled craftspeople and traders of palace and temple."},
+  {n:"Farmers",d:"The rural majority, taxed in grain, owing labor on the Nile flood.",s:"~80%"},
+  {n:"Laborers &amp; slaves",d:"War captives and bonded labor at the base."}],
+ traits:["birth into an elite or priestly family","literacy &mdash; scribal training","a temple or palace post","proximity to the pharaoh","military command (New Kingdom)"],
+ src:[["Outline of ancient Egypt","Outline_of_ancient_Egypt"],["Pharaoh","Pharaoh"],["Scribe","Scribe"]] },
+
+mesopo:{ name:"Mesopotamia (Sumer, Akkad &amp; Babylon)", note:"City-states and empires under a king who ruled for the gods. Free persons (awilu), dependents (mushkenu) and slaves (wardu) were even punished differently &mdash; Hammurabi&rsquo;s 282 laws scaled penalties by class.",
+ tiers:[
+  {n:"King (lugal) &amp; royal house",d:"War-leader and the gods&rsquo; steward; in Babylon, law itself came from Shamash.",s:"&lt;0.01%"},
+  {n:"Priesthood &amp; temple elite",d:"Ranked beside the king; the ziggurat temples were economic powers."},
+  {n:"Awilu &mdash; free landholders",d:"Full legal standing: officials, warriors and merchants."},
+  {n:"Scribes (dub-sar)",d:"Trained in the edubba; writing began here c. 3200 BCE as accounting."},
+  {n:"Mushkenu &mdash; dependents",d:"Free but tied to palace or temple; craftsmen and tenant farmers."},
+  {n:"Wardu &mdash; slaves",d:"Owned by state, temple or household; war captives and debtors."}],
+ traits:["free birth (awilu standing)","literacy &mdash; the scribal track","temple or palace office","military success","mercantile wealth"],
+ src:[["Scribe","Scribe"],["History of political thought","History_of_political_thought"],["Agrarian society","Agrarian_society"]] },
+
+assyria:{ name:"The Assyrian &amp; Neo-Babylonian Empires", note:"Conquest-states run by a king as the chief god&rsquo;s deputy, with a salaried military-administrative elite &mdash; and the mass deportation of subject peoples.",
+ tiers:[
+  {n:"King",d:"Absolute ruler and high priest of Ashur (or Marduk); commander of the army.",s:"&lt;0.01%"},
+  {n:"Royal officials &amp; eunuchs",d:"Provincial governors and palace administrators answering only to the king."},
+  {n:"Priesthood &amp; nobility",d:"Temple hierarchies and the landed aristocracy."},
+  {n:"Soldiers &amp; scribes",d:"A standing professional army and the literate bureaucracy."},
+  {n:"Free commoners",d:"Farmers, herders and artisans across the empire."},
+  {n:"Deportees &amp; slaves",d:"Whole populations resettled as labor; captives at the base."}],
+ traits:["royal favor and loyalty","military command","administrative office (often eunuchs, with no dynasty to build)","priestly or scribal training","noble landholding"],
+ src:[["History of political thought","History_of_political_thought"],["Universal monarchy","Universal_monarchy"]] },
+
+persia_a:{ name:"Achaemenid Persia", note:"Grokipedia: the King of Kings at the summit, a narrow Persian-Median nobility holding the satrapies, and a free-commoner majority &mdash; bound together by kinship and loyalty to the crown.",
+ tiers:[
+  {n:"King of Kings (shahanshah)",d:"Cyrus and Darius &mdash; ruler over kings, from the Indus to the Aegean.",s:"&lt;0.01%"},
+  {n:"Persian-Median nobility",d:"Royal kin and the great houses, holding satrapies and high command."},
+  {n:"Satraps &amp; officials",d:"Provincial governors watched by the King&rsquo;s &ldquo;Eyes and Ears.&rdquo;"},
+  {n:"Free commoners",d:"The majority &mdash; farmers, artisans and merchants paying tax in kind or labor.",s:"majority"},
+  {n:"Bonded labor &amp; slaves",d:"Workers in royal labor groups; captives below."}],
+ traits:["high Persian or Median birth","kinship and loyalty to the king","a satrapy or court appointment","military command","royal reward of land and estates"],
+ src:[["Achaemenid dynasty","Achaemenid_dynasty"],["Satrap","Satrap"],["Persianate society","Persianate_society"]] },
+
+athens:{ name:"Classical Athens", note:"A democracy for a minority. Grokipedia stresses the exclusions: roughly 30,000 citizens governed, while metics had no vote and slaves &mdash; up to 40% of residents &mdash; had no rights at all.",
+ tiers:[
+  {n:"Leading citizens",d:"The wealthy who funded liturgies and led the assembly &mdash; Pericles&rsquo; base."},
+  {n:"Citizen body (the demos)",d:"Adult males of Athenian parentage; voting, office, military duty.",s:"~10&ndash;20%"},
+  {n:"Metics (resident foreigners)",d:"Free traders and craftsmen; taxed, but no land and no vote."},
+  {n:"Freedmen",d:"Former slaves, ranked between metic and slave."},
+  {n:"Slaves",d:"War captives doing the labor &mdash; thousands toiled in the Laurion silver mines.",s:"~30&ndash;40%"}],
+ traits:["citizen birth (both parents Athenian)","wealth &mdash; the leisure to take part and fund liturgies","skill in oratory and persuasion","military command (strategos)","property ownership"],
+ src:[["Classical Athens","Classical_Athens"],["Athenian democracy","Athenian_democracy"],["Politeia","Politeia"]] },
+
+macedon:{ name:"Macedon &amp; the Hellenistic world", note:"A warrior monarchy that conquered Persia and seeded Greek-ruled kingdoms; status flowed from the king, the companion nobility and the army.",
+ tiers:[
+  {n:"King",d:"Alexander and the Successor dynasts &mdash; military autocrats, later god-kings.",s:"&lt;0.01%"},
+  {n:"Companions (hetairoi)",d:"The noble cavalry and the king&rsquo;s inner circle of officers."},
+  {n:"Greco-Macedonian settlers",d:"A privileged colonial elite of soldiers and administrators abroad."},
+  {n:"Native subject peoples",d:"Egyptians, Persians and others &mdash; taxed, mostly outside the ruling class.",s:"majority"},
+  {n:"Slaves",d:"Captives and bonded labor at the base."}],
+ traits:["companion (hetairoi) standing","military prowess and royal favor","Greek descent and paideia (education)","loyalty to the king"],
+ src:[["Universal monarchy","Universal_monarchy"],["Satrap","Satrap"]] },
+
+india:{ name:"Ancient India (Maurya &amp; Gupta)", note:"The varna order &mdash; Grokipedia: Brahmins, Kshatriyas, Vaishyas, Shudras, with Dalits excluded &mdash; though it notes real political power sat with the Kshatriya kings, and texts allowed mobility by qualities and conduct.",
+ tiers:[
+  {n:"Brahmins (priests, scholars)",d:"Ritual and intellectual specialists; the highest ritual purity."},
+  {n:"Kshatriyas (kings, warriors)",d:"Where actual power lay &mdash; rulers like Ashoka and Chandragupta II."},
+  {n:"Vaishyas (merchants, farmers)",d:"Trade, agriculture and the generation of wealth."},
+  {n:"Shudras (laborers, servants)",d:"Manual labor and service to the upper varnas.",s:"majority"},
+  {n:"Dalits (&ldquo;untouchables&rdquo;)",d:"Excluded from the varna framework; the most stigmatized work."}],
+ traits:["birth varna &mdash; Brahmin purity or Kshatriya warrior lineage","ritual learning (Brahmins)","martial and royal service (Kshatriyas)","in theory, guna and karma &mdash; qualities and conduct"],
+ src:[["Caste system in India","Caste_system_in_India"],["Brahmin","Brahmin"]] },
+
+china_e:{ name:"Early Imperial China (Qin &amp; Han)", note:"Grokipedia&rsquo;s &ldquo;four occupations&rdquo;: scholars over farmers over artisans over merchants. Qin rewarded military merit by Legalist rank; Han began selecting officials by Confucian learning &mdash; the seed of the exam system.",
+ tiers:[
+  {n:"Emperor (Son of Heaven)",d:"Holder of the Mandate of Heaven; an absolute ruler.",s:"&lt;0.01%"},
+  {n:"Scholar-officials &amp; nobility",d:"The sh&igrave; &mdash; chosen for learning (Han) or for war-rank (Qin)."},
+  {n:"Farmers (n&oacute;ng)",d:"Honored as the productive base of the realm; the great majority.",s:"~80%"},
+  {n:"Artisans (g&omacr;ng)",d:"Skilled makers, ranked below farmers in the Confucian order."},
+  {n:"Merchants (sh&omacr;ng)",d:"Rich, but ranked lowest &mdash; seen as moving value, not creating it."},
+  {n:"Slaves &amp; convict labor",d:"Bonded labor at the base."}],
+ traits:["Qin: military merit (the Legalist rank ladder)","Han: literacy and Confucian learning","recommendation to office","landholding","official rank itself"],
+ src:[["Four occupations","Four_occupations"],["Scholar-official","Scholar-official"],["Social structure of China","Social_structure_of_China"]] },
+
+rome:{ name:"Rome", note:"Grokipedia: a hierarchy of free inhabitants resting on a slave underclass with no personhood under law &mdash; senators (census of 1,000,000 sesterces), equestrians, citizens, freedmen, and slaves at 20&ndash;30% of Italy.",
+ tiers:[
+  {n:"Emperor (princeps)",d:"From Augustus on, a single apex with near-absolute reach.",s:"&lt;0.01%"},
+  {n:"Senatorial order",d:"~600 senators; each needed 1,000,000 sesterces and the oldest names.",s:"~0.1%"},
+  {n:"Equestrian order",d:"&ge;400,000 sesterces; banking, tax-farming and administration.",s:"~1%"},
+  {n:"Citizens (plebeians)",d:"~90&ndash;95% of free citizens &mdash; farmers, craftsmen, traders.",s:"~25%"},
+  {n:"Freedmen",d:"Manumitted slaves; partial citizenship, lasting stigma."},
+  {n:"Slaves",d:"Property without rights &mdash; perhaps 20&ndash;30% of Italy.",s:"~20&ndash;30%"}],
+ traits:["birth into a senatorial or equestrian family","wealth (the census thresholds)","military success up the cursus honorum","patronage &mdash; the clientela network","rhetoric and law","imperial favor"],
+ src:[["Social class in ancient Rome","Social_class_in_ancient_Rome"],["Plebeians","Plebeians"],["Culture of ancient Rome","Culture_of_ancient_Rome"]] },
+
+persia_s:{ name:"Sasanian Persia", note:"A Zoroastrian order Grokipedia&rsquo;s sources describe as four rigid estates &mdash; priests, warriors, scribes, commoners &mdash; beneath the King of Kings.",
+ tiers:[
+  {n:"King of Kings (shahanshah)",d:"Shapur I and his line &mdash; sacred monarchs of &Emacr;r&amacr;nshahr.",s:"&lt;0.01%"},
+  {n:"Asronan &mdash; priests",d:"Zoroastrian magi (mobeds); the top estate, guardians of the sacred fire."},
+  {n:"Arteshtaran &mdash; warriors",d:"The great houses and the armored cavalry aristocracy."},
+  {n:"Dabiran &mdash; scribes",d:"The literate administrative class running the bureaucracy."},
+  {n:"Commoners",d:"Farmers (vastryoshan) and artisans (hutukhshan) &mdash; the taxed majority.",s:"majority"}],
+ traits:["Zoroastrian priestly status","noble warrior lineage (the great houses)","scribal literacy","royal favor at court"],
+ src:[["List of Iranian titles and ranks","List_of_Iranian_titles_and_ranks"],["Persianate society","Persianate_society"]] },
+
+huns:{ name:"The Hunnic confederation", note:"A mobile steppe empire held together by a war-leader; rank came from success in war and personal loyalty, not fixed office.",
+ tiers:[
+  {n:"Supreme khan",d:"Attila &mdash; overlord binding the tribes by force and tribute.",s:"tiny"},
+  {n:"Tribal chiefs &amp; elite cavalry",d:"Allied lords and the mounted warrior aristocracy."},
+  {n:"Free warriors &amp; herders",d:"The mass of mounted fighters and pastoralists."},
+  {n:"Subject &amp; tributary peoples",d:"Conquered farmers and Germanic vassals paying tribute."},
+  {n:"Captives &amp; slaves",d:"War captives taken for labor and ransom."}],
+ traits:["military prowess","personal loyalty to the khan","success in raiding and tribute","command of a war-band"],
+ src:[["Universal monarchy","Universal_monarchy"]] },
+
+byz:{ name:"The Byzantine Empire", note:"The Christian Roman continuation: an emperor over the dynatoi &mdash; Grokipedia&rsquo;s &ldquo;powerful,&rdquo; the landed civil-military-church aristocracy &mdash; atop a salaried bureaucracy and a peasant base.",
+ tiers:[
+  {n:"Emperor (basileus)",d:"God&rsquo;s vicegerent; Justinian and Basil II ruled as autocrats.",s:"&lt;0.01%"},
+  {n:"Dynatoi (the powerful)",d:"Great families and high civil, military and church officials with vast estates."},
+  {n:"Salaried officials &amp; officers",d:"Logothetes, and the strategoi commanding the provincial themes."},
+  {n:"Clergy &amp; monastics",d:"The Orthodox hierarchy &mdash; a parallel ladder of status."},
+  {n:"Free peasants &amp; soldier-farmers",d:"Stratiotai and villagers &mdash; the fiscal and military base.",s:"majority"},
+  {n:"Paroikoi &amp; slaves",d:"Dependent peasants tied to estates; slaves below."}],
+ traits:["an imperial title or office (the dignity system)","proximity to the emperor","landed wealth","military command (strategos)","Church office","Greek education (paideia) &mdash; and eunuchs filled key court roles"],
+ src:[["Dynatoi","Dynatoi"],["Byzantine bureaucracy and aristocracy","Byzantine_bureaucracy_and_aristocracy"]] },
+
+caliph:{ name:"The Early Islamic Caliphate", note:"Grokipedia: a multi-ethnic order under the Commander of the Faithful &mdash; an Arab Muslim elite and the ulama, then non-Arab converts (mawali), protected non-Muslims (dhimmi) paying the jizya, and slaves.",
+ tiers:[
+  {n:"Caliph",d:"Successor to the Prophet and Commander of the Faithful &mdash; Muhammad&rsquo;s community, then the Abbasids.",s:"&lt;0.01%"},
+  {n:"Arab Muslim elite &amp; ulama",d:"Early-convert families, the religious scholars, and viziers (often Persian secretaries)."},
+  {n:"Mawali &mdash; non-Arab converts",d:"Persians and others; a rising administrative and commercial class. Merchants were honored."},
+  {n:"Dhimmi &mdash; protected non-Muslims",d:"Christians, Jews, Zoroastrians; autonomous but paying the jizya poll-tax."},
+  {n:"Slaves",d:"Household servants, concubines, and (later) Turkic slave-soldiers (mamluks)."}],
+ traits:["early conversion and piety (sabiqa)","descent from the Prophet / Quraysh (for the caliphate itself)","Arabic and religious learning (the ulama)","administrative or scribal skill","commercial wealth &mdash; trade was honored; the Prophet was a merchant"],
+ src:[["Abbasid Caliphate","Abbasid_Caliphate"],["Abbasid dynasty","Abbasid_dynasty"]] },
+
+tang:{ name:"Tang China", note:"The cosmopolitan height of medieval China, where an old aristocracy increasingly gave way to officials chosen by examination &mdash; Grokipedia&rsquo;s mechanism of merit over birth.",
+ tiers:[
+  {n:"Emperor",d:"Taizong &mdash; Son of Heaven over a centralized, expansive empire.",s:"&lt;0.01%"},
+  {n:"Aristocracy &amp; scholar-officials",d:"Great clans, plus a rising class of exam-selected mandarins."},
+  {n:"Farmers",d:"Land allotted under the equal-field system; the productive majority.",s:"majority"},
+  {n:"Artisans &amp; merchants",d:"Makers and traders, ranked below farmers in the Confucian order."},
+  {n:"Eunuchs &amp; clergy",d:"Palace eunuchs (often powerful) and Buddhist/Daoist clergy."},
+  {n:"Slaves &amp; bondservants",d:"Bonded labor at the base."}],
+ traits:["aristocratic birth (early Tang)","success in the imperial examinations","mastery of the Confucian classics","military command","favor at court"],
+ src:[["Scholar-official","Scholar-official"],["Four occupations","Four_occupations"],["Mandarin (bureaucrat)","Mandarin_(bureaucrat)"]] },
+
+latin:{ name:"Medieval Latin Christendom", note:"Grokipedia: the three estates &mdash; those who pray (oratores), those who fight (bellatores), those who work (laboratores) &mdash; a pyramidal feudal order with the Church as a parallel power.",
+ tiers:[
+  {n:"King &amp; great nobility",d:"Charlemagne and the crowned heads atop the feudal pyramid.",s:"&lt;0.1%"},
+  {n:"Clergy &mdash; oratores",d:"The one literate institution; the Pope (Urban II) could command kings. Held ~10% of land."},
+  {n:"Nobility &amp; knights &mdash; bellatores",d:"Held fiefs for military service; honor by hereditary blood."},
+  {n:"Burghers &amp; merchants",d:"Free townsmen &mdash; a rising money power outside the manor."},
+  {n:"Free peasants",d:"Worked their own or rented land with some liberty."},
+  {n:"Serfs &mdash; laboratores",d:"The great majority, bound to the land, bearing the levies.",s:"~90%"}],
+ traits:["noble birth","martial prowess (the path to knighthood)","clerical literacy and a Church career","royal or papal favor","a grant of land (a fief)"],
+ src:[["Estates of the realm","Estates_of_the_realm"],["Feudalism","Feudalism"],["Social status","Social_status"]] },
+
+ayyubid:{ name:"Saladin&rsquo;s Islamic world (Ayyubid)", note:"A Sunni military state of the Crusades era where power rested on holy war, dynastic ties, and a corps of elite slave-soldiers (mamluks) who could rise to command.",
+ tiers:[
+  {n:"Sultan",d:"Saladin &mdash; military sovereign ruling in the caliph&rsquo;s name.",s:"&lt;0.01%"},
+  {n:"Emirs &amp; military aristocracy",d:"Kurdish and Turkish commanders and the dynasty&rsquo;s kin, holding land-revenue (iqta)."},
+  {n:"Ulama &amp; administrators",d:"Religious scholars, judges and the bureaucratic class."},
+  {n:"Mamluks &mdash; slave-soldiers",d:"Elite military slaves who could rise to emir, and even to ruler."},
+  {n:"Free commoners &amp; dhimmi",d:"Muslim peasants and artisans; protected non-Muslims paying jizya."},
+  {n:"Slaves",d:"Household and labor slavery at the base."}],
+ traits:["military prowess (including as a mamluk slave-soldier)","faith and the prestige of jihad","dynastic or tribal ties","a grant of land-revenue (iqta)","religious or administrative learning"],
+ src:[["Abbasid Caliphate","Abbasid_Caliphate"],["List of Muslim states and dynasties","List_of_Muslim_states_and_dynasties"]] },
+
+mongol:{ name:"The Mongol Empire", note:"Grokipedia&rsquo;s standout meritocracy: Genghis broke the clans into a decimal army that promoted by loyalty and skill, not birth &mdash; a common archer (Jebe) and a smith&rsquo;s son (Subutai) rose to command tumens.",
+ tiers:[
+  {n:"Great Khan",d:"Genghis and his line &mdash; supreme rule reserved for his descendants.",s:"&lt;0.01%"},
+  {n:"Genghisid princes",d:"Sons and kin holding the uluses (appanages) of the empire."},
+  {n:"Keshig &amp; commanders (noyan)",d:"The elite guard and generals &mdash; chosen for loyalty and prowess; a cadre that trained rulers."},
+  {n:"Mongol warriors &amp; herders",d:"The free nomad nation, organized in tens, hundreds and thousands."},
+  {n:"Subject sedentary peoples",d:"Conquered Chinese, Persians and others &mdash; taxed and administered.",s:"majority"},
+  {n:"Captives &amp; slaves",d:"Skilled artisans relocated; captives at the base."}],
+ traits:["military skill and battlefield results","absolute personal loyalty to the khan","merit &mdash; the low-born could and did rise","for supreme rule, descent from Genghis Khan"],
+ src:[["Society of the Mongol Empire","Society_of_the_Mongol_Empire"],["Mongol Empire","Mongol_Empire"],["Kheshig","Kheshig"]] },
+
+mali:{ name:"The Mali Empire", note:"A West African gold empire under the Mansa, whose Kouroukan Fouga charter set free noble clans (horon) above hereditary artisan-and-bard castes (nyamakala, including the griots) and the enslaved.",
+ tiers:[
+  {n:"Mansa (emperor)",d:"Mansa Musa &mdash; sovereign of the Keita line, fabulously rich on gold and trade.",s:"&lt;0.01%"},
+  {n:"Royal lineage &amp; nobility (horon)",d:"The Keita clan and free warrior-noble families; the Gbara assembly."},
+  {n:"Clerics &amp; Muslim scholars",d:"The learned class &mdash; Timbuktu&rsquo;s jurists; Islam layered atop the old order."},
+  {n:"Free commoners",d:"Farmers, herders and traders along the Niger.",s:"majority"},
+  {n:"Nyamakala (caste artisans &amp; griots)",d:"Hereditary smiths, leatherworkers and jeli (griots) &mdash; bards keeping the Sunjata epic."},
+  {n:"Slaves (jonw)",d:"War captives and bonded labor at the base."}],
+ traits:["royal/noble lineage (the Keita clan)","Islam and the prestige of the pilgrimage (Mansa Musa&rsquo;s hajj)","control of gold and trans-Saharan trade","hereditary caste (the nyamakala monopolies)","military command"],
+ src:[["Nyamakala","Nyamakala"],["Mansa Musa","Mansa_Musa"]] },
+
+timurid:{ name:"The Timurid Empire", note:"Timur ruled as a Turco-Mongol conqueror who borrowed Genghisid legitimacy and Persian high culture; status came from the war-band, the dynasty and Islam.",
+ tiers:[
+  {n:"Amir / Sultan",d:"Timur &mdash; a world-conqueror who ruled through Genghisid puppet khans for legitimacy.",s:"&lt;0.01%"},
+  {n:"Turco-Mongol military elite",d:"The tribal cavalry aristocracy and the conqueror&rsquo;s kin."},
+  {n:"Persian bureaucrats &amp; ulama",d:"Scholars, scribes and clerics running a Persianate administration."},
+  {n:"Artisans, merchants &amp; scholars",d:"Samarkand&rsquo;s craftsmen and traders &mdash; patronized for splendor."},
+  {n:"Peasants",d:"The taxed agrarian majority.",s:"majority"},
+  {n:"Slaves &amp; deportees",d:"Skilled captives moved to the capital; labor at the base."}],
+ traits:["military prowess and a loyal war-band","Genghisid descent or marriage (the source of legitimacy)","Islam and patronage of learning","Persianate administrative skill"],
+ src:[["Persianate society","Persianate_society"],["Universal monarchy","Universal_monarchy"]] },
+
+ming:{ name:"Ming China", note:"Native rule restored, with the examination system at full power &mdash; Grokipedia notes about half of degree-holders came from non-elite families &mdash; and palace eunuchs as a rival force.",
+ tiers:[
+  {n:"Emperor",d:"The Yongle Emperor &mdash; an absolute Son of Heaven who built Beijing.",s:"&lt;0.01%"},
+  {n:"Scholar-gentry (shenshi)",d:"Exam-qualified officials and degree-holders; the dominant elite."},
+  {n:"Eunuchs",d:"A parallel palace power, sometimes eclipsing the bureaucracy."},
+  {n:"Farmers (n&oacute;ng)",d:"The honored productive base &mdash; the great majority.",s:"majority"},
+  {n:"Artisans &amp; merchants",d:"Makers and (increasingly rich) traders, ranked low in theory."},
+  {n:"Hereditary military &amp; slaves",d:"Military households and bondservants at the base."}],
+ traits:["success in the imperial examinations (the central ladder &mdash; ~half of jinshi came from non-degree families)","Confucian learning and the wealth for tutors","landholding gentry status","favor at court (including with eunuchs)"],
+ src:[["Jinshi","Jinshi"],["Scholar-official","Scholar-official"],["Zhuangyuan","Zhuangyuan"]] },
+
+ottoman:{ name:"The Ottoman Empire", note:"Grokipedia: society split into the tax-exempt askeri (the sultan&rsquo;s military-administrative-religious servants) and the tax-paying reaya &mdash; with the devshirme levying Christian boys who could rise, as slaves of the sultan, to grand vizier.",
+ tiers:[
+  {n:"Sultan (and caliph)",d:"Mehmed II, Suleiman &mdash; absolute ruler and, later, caliph of Islam.",s:"&lt;0.01%"},
+  {n:"Grand vizier &amp; high askeri",d:"The ruling elite &mdash; many were devshirme-raised slaves of the sultan."},
+  {n:"Janissaries, kapikulu, ulema, sipahi",d:"Slave-soldiers, palace men, religious scholars and timar cavalry &mdash; the askeri."},
+  {n:"Muslim reaya",d:"Tax-paying peasants, artisans and merchants &mdash; the productive base.",s:"majority"},
+  {n:"Non-Muslim reaya (dhimmi)",d:"Christians and Jews in self-governing millets, paying the jizya."},
+  {n:"Slaves",d:"Household slaves, and the recruits before their training."}],
+ traits:["state service and loyalty to the sultan (over birth)","conversion to Islam","the devshirme channel &mdash; a Christian peasant boy could rise to grand vizier","military prowess (janissary or sipahi)","madrasa learning (the ulema)"],
+ src:[["Social class in the Ottoman Empire","social_class_in_the_ottoman_empire"],["Devshirme","Devshirme"],["Rayah","Rayah"]] },
+
+habsburg:{ name:"Habsburg Europe", note:"The Holy Roman Empire and Spain under one dynasty: a Catholic order of estates where status came from noble blood, Church office and dynastic marriage.",
+ tiers:[
+  {n:"Emperor / King",d:"Charles V &mdash; ruler of an empire on which the sun never set.",s:"&lt;0.01%"},
+  {n:"High nobility &amp; princes",d:"The great landed magnates and the imperial electors."},
+  {n:"Clergy (First Estate)",d:"The Catholic hierarchy; vast lands and tax exemption."},
+  {n:"Lesser nobility &amp; knights",d:"Local lords and the service aristocracy."},
+  {n:"Burghers &amp; guildsmen",d:"Free-city merchants and master artisans &mdash; rising on trade and silver."},
+  {n:"Peasantry &amp; serfs",d:"The rural majority bearing the taxes and labor.",s:"majority"}],
+ traits:["noble birth and dynastic marriage","high Church office","military service to the crown","favor at court","wealth &mdash; increasingly, from trade and New-World silver"],
+ src:[["Estates of the realm","Estates_of_the_realm"],["Feudalism","Feudalism"]] },
+
+mughal:{ name:"Mughal India", note:"Grokipedia: Akbar&rsquo;s mansabdari system ranked the whole nobility by an imperial number (zat and sawar) &mdash; non-hereditary and transferable, binding a multi-ethnic elite directly to the emperor rather than to blood or land.",
+ tiers:[
+  {n:"Emperor (Padishah)",d:"Akbar, Aurangzeb &mdash; absolute sovereigns over most of India.",s:"&lt;0.01%"},
+  {n:"Mansabdars / amirs (rank 1,000+)",d:"The ranked nobility &mdash; Persians, Turanis, Afghans, Rajputs &mdash; graded by the emperor."},
+  {n:"Lesser mansabdars &amp; officials",d:"The administrative and military service class on imperial rank."},
+  {n:"Zamindars",d:"Hereditary local landholders who collected the revenue."},
+  {n:"Peasants &amp; artisans",d:"The taxed producing majority (about a third of produce in tax).",s:"majority"},
+  {n:"Slaves &amp; bonded labor",d:"Household and labor slavery at the base."}],
+ traits:["the emperor&rsquo;s grant of a mansab rank (by service, not birth)","military capacity (the sawar / cavalry obligation)","administrative skill","noble or foreign (Persian/Turani) lineage &mdash; but Rajputs and Hindus were integrated too","imperial favor"],
+ src:[["Mansabdar","Mansabdar"],["Mughal Empire","Mughal_Empire"]] },
+
+bourbon:{ name:"Bourbon France", note:"Grokipedia&rsquo;s exemplar of the ancien r&eacute;gime: clergy, nobility, and a Third Estate of everyone else &mdash; with absolute kings at Versailles and a new path to rank by buying office (the noblesse de robe).",
+ tiers:[
+  {n:"Absolute monarch &amp; court",d:"Louis XIV &mdash; the Sun King; the state embodied in one person at Versailles.",s:"&lt;0.01%"},
+  {n:"First Estate &mdash; clergy",d:"~130,000 clergy (&lt;1%), owning ~10% of land, exempt from the taille.",s:"&lt;1%"},
+  {n:"Second Estate &mdash; nobility",d:"~400,000 nobles (~20% of land): the sword nobility and the office-buying robe nobility.",s:"~1.5%"},
+  {n:"Bourgeoisie",d:"Bankers, merchants and professionals of the Third Estate &mdash; money rivaling birth."},
+  {n:"Artisans &amp; urban workers",d:"Guildsmen and the labor of the towns."},
+  {n:"Peasantry",d:"Over 80% of France, bearing most of the taxes and labor.",s:"~80%"}],
+ traits:["noble birth (the sword nobility)","buying a venal office (the route of the robe nobility &mdash; wealth into rank)","high Church office","favor at the royal court","military service"],
+ src:[["Estates of the realm","Estates_of_the_realm"],["The Estates","The_Estates"]] },
+
+qing:{ name:"Qing China", note:"Manchu conquerors atop the Chinese order: the examination ladder continued for the Han scholar-gentry, but a layer of ethnic Manchu Banner privilege sat above it.",
+ tiers:[
+  {n:"Emperor",d:"Kangxi, Qianlong &mdash; Manchu Sons of Heaven over the largest Chinese empire.",s:"&lt;0.01%"},
+  {n:"Manchu nobility &amp; Bannermen",d:"The conquering ethnic elite with hereditary military-caste privilege."},
+  {n:"Scholar-gentry (shenshi)",d:"Han officials and degree-holders raised by the exams (~40&ndash;50% from non-elite families)."},
+  {n:"Farmers",d:"The honored productive base &mdash; the vast majority.",s:"majority"},
+  {n:"Artisans &amp; merchants",d:"Makers and traders, low in the Confucian order despite wealth."},
+  {n:"Bondservants &amp; slaves",d:"Bonded labor at the base."}],
+ traits:["Manchu Banner status (ethnic privilege)","success in the imperial examinations","Confucian learning and the means to study","landholding gentry standing","official rank"],
+ src:[["Social structure of China","Social_structure_of_China"],["Jinshi","Jinshi"]] },
+
+france_m:{ name:"Napoleonic &amp; 19th-century France", note:"The Revolution abolished the estates; Napoleon replaced birth with a hierarchy of merit, office and capital &mdash; careers &ldquo;open to talent,&rdquo; crowned by a new service nobility.",
+ tiers:[
+  {n:"Emperor / head of state",d:"Napoleon &mdash; a self-made ruler who crowned himself.",s:"tiny"},
+  {n:"Notables &mdash; new elite",d:"Napoleon&rsquo;s service nobility, marshals, officials and the wealthy bourgeoisie."},
+  {n:"Bourgeoisie &amp; professionals",d:"Industrialists, bankers, lawyers &mdash; status increasingly by capital and credential."},
+  {n:"Shopkeepers &amp; artisans",d:"The petite bourgeoisie of the towns."},
+  {n:"Workers",d:"The growing urban working class.",s:"large"},
+  {n:"Peasantry",d:"Still the largest group &mdash; now owning their land.",s:"majority"}],
+ traits:["talent and achievement (&ldquo;la carri&egrave;re ouverte aux talents&rdquo;)","military distinction","education and professional credentials","capital and property","state office"],
+ src:[["Marxian class theory","Marxian_class_theory"],["Estates of the realm","Estates_of_the_realm"]] },
+
+germany:{ name:"The German Empire", note:"An industrial powerhouse fused to an old order: a Prussian landed aristocracy (Junkers) and the army on top, a booming bourgeoisie and proletariat below.",
+ tiers:[
+  {n:"Kaiser &amp; ruling house",d:"The emperor; Bismarck governed as his chancellor.",s:"tiny"},
+  {n:"Junkers &amp; military elite",d:"The Prussian landed nobility and the officer corps &mdash; the dominant caste."},
+  {n:"Industrial &amp; financial bourgeoisie",d:"The owners of the Ruhr&rsquo;s steel and the great banks."},
+  {n:"Professional &amp; middle class",d:"Bureaucrats, engineers and the educated B&iuml;ldungsb&uuml;rgertum."},
+  {n:"Industrial proletariat",d:"Factory workers &mdash; organizing into the largest socialist movement in Europe.",s:"large"},
+  {n:"Peasants &amp; rural labor",d:"The countryside, still substantial."}],
+ traits:["noble (Junker) birth and landed estates","a military officer&rsquo;s commission","industrial or banking capital","university education and state credentials","party and union organization (for workers)"],
+ src:[["Marxian class theory","Marxian_class_theory"],["Proletarian revolution","Proletarian_revolution"]] },
+
+britain:{ name:"The British Empire", note:"A class society ruling a quarter of the world: status from land and title at home (the peerage), increasingly from industrial wealth &mdash; and, across the empire, a racial hierarchy placing Britons above colonized subjects.",
+ tiers:[
+  {n:"Monarch",d:"Queen Victoria &mdash; sovereign and, from 1876, Empress of India.",s:"tiny"},
+  {n:"Aristocracy &amp; landed gentry",d:"The peerage and great landowners &mdash; old status by blood and acres."},
+  {n:"Industrial &amp; financial elite",d:"The new money of factories, the City and empire &mdash; buying its way up."},
+  {n:"Middle class",d:"Professionals, merchants and clerks &mdash; defined by &ldquo;respectability.&rdquo;"},
+  {n:"Working class",d:"Factory and farm labor &mdash; the majority at home.",s:"majority"},
+  {n:"Colonized subjects",d:"Hundreds of millions across the empire, ranked below Britons by law and race.",s:"empire majority"}],
+ traits:["aristocratic birth and land (the peerage)","industrial or commercial wealth","education &mdash; the public schools and Oxbridge","&ldquo;respectability&rdquo; and the right accent","at home, being British &mdash; and, in the empire, being white"],
+ src:[["Marxian class theory","Marxian_class_theory"],["Theories of imperialism","Theories_of_imperialism"]] },
+
+usa_m:{ name:"The United States (modern)", note:"A republic with no titles, where status ran on wealth, profession and education &mdash; but, into the 20th century, was sharply bounded by race under segregation.",
+ tiers:[
+  {n:"President &amp; political elite",d:"FDR &mdash; leading a federal state grown vast in the New Deal and WWII.",s:"tiny"},
+  {n:"Capitalist &amp; corporate elite",d:"Industrialists, financiers and executives &mdash; the top of a wealth hierarchy."},
+  {n:"Professional &amp; managerial middle",d:"Doctors, managers, engineers &mdash; the expanding white-collar class."},
+  {n:"Working &amp; farming class",d:"Industrial labor and farmers &mdash; organized into powerful unions.",s:"large"},
+  {n:"The poor &amp; marginalized",d:"The bottom of the income ladder &mdash; sharply shaped by race under segregation."}],
+ traits:["wealth and capital","higher education and professional credentials","entrepreneurial success (&ldquo;self-made&rdquo; mobility)","but bounded by race &mdash; Jim Crow law capped Black Americans regardless of merit"],
+ src:[["Distribution of wealth","Distribution_of_wealth"],["Social inequality","Social_inequality"]] },
+
+ussr:{ name:"The Soviet Union", note:"A state that abolished class on paper but recreated a steep one in fact &mdash; Grokipedia&rsquo;s nomenklatura, a party-appointed elite of ~1.5% with dachas and closed stores, ruling in the name of workers who could not own anything.",
+ tiers:[
+  {n:"General Secretary &amp; Politburo",d:"Stalin &mdash; absolute power at the summit of the Party.",s:"tiny"},
+  {n:"Nomenklatura",d:"The party-vetted elite (~1.5%) holding every key post; &ldquo;loyalty over competence.&rdquo;",s:"~1.5%"},
+  {n:"Specialists &amp; managers",d:"Engineers, scientists and factory directors who benefited from industrialization."},
+  {n:"Industrial workers",d:"The proletariat &mdash; the official &ldquo;ruling class,&rdquo; in fact directed by the state.",s:"large"},
+  {n:"Collective-farm peasants",d:"Kolkhozniks at the base &mdash; low wages, the fewest rights.",s:"majority"}],
+ traits:["Communist Party membership (the prerequisite to any privileged post)","political loyalty and ideological reliability","patronage ties inside the Party","technical or managerial expertise (for the specialist layer)"],
+ src:[["Nomenklatura","Nomenklatura"],["Classless society","Classless_society"],["New class","New_class"]] },
+
+prc:{ name:"The People&rsquo;s Republic of China (Mao era)", note:"Mao&rsquo;s revolution inverted the old order &mdash; landlords and &ldquo;bourgeois&rdquo; classes were dispossessed and stigmatized, while poor-peasant and worker &ldquo;class background&rdquo; (and Party standing) became the new passport to status.",
+ tiers:[
+  {n:"Party Chairman &amp; leadership",d:"Mao &mdash; supreme leader of party and state.",s:"tiny"},
+  {n:"Party cadres &amp; officials",d:"The Communist Party hierarchy &mdash; the real holders of power and access."},
+  {n:"Workers &amp; poor peasants",d:"The favored &ldquo;red&rdquo; classes &mdash; celebrated, and the source of legitimacy.",s:"majority"},
+  {n:"Intellectuals &amp; professionals",d:"Useful but politically suspect &mdash; purged in the Cultural Revolution."},
+  {n:"&ldquo;Bad&rdquo; class backgrounds",d:"Former landlords, capitalists and &ldquo;rightists&rdquo; &mdash; stigmatized and persecuted."}],
+ traits:["Communist Party membership and cadre rank","a &ldquo;good&rdquo; class background (worker / poor-peasant origin)","political and ideological loyalty (especially under Mao)","the hukou system fixed rural vs urban status by birthplace"],
+ src:[["Social structure of China","Social_structure_of_China"],["Marxian class theory","Marxian_class_theory"]] },
+
+usa_now:{ name:"The United States (today)", note:"Grokipedia: no legal estates, but steep economic strata &mdash; the top 1% holds ~47.5% of wealth &mdash; and a ladder that has split apart, where wealth, fame, credentials and political power no longer move together.",
+ tiers:[
+  {n:"Billionaire &amp; donor class",d:"A few thousand at the top of wealth and political influence &mdash; Trump among them.",s:"~0.0002%"},
+  {n:"Top decile &mdash; capital &amp; elite professions",d:"Owners, executives and credentialed professionals capturing most income gains.",s:"~10%"},
+  {n:"The middle class",d:"Stable income and some assets &mdash; under pressure for decades."},
+  {n:"Working &amp; service class",d:"Wage, gig and service labor with thin security.",s:"large"},
+  {n:"The poor",d:"The bottom of the income ladder, with little wealth."}],
+ traits:["capital and asset ownership","elite education and credentials","building or owning a company","fame and audience &mdash; a newer currency of its own"],
+ src:[["Distribution of wealth","Distribution_of_wealth"],["Social inequality","Social_inequality"],["Income distribution","Income_distribution"]] },
+
+china_now:{ name:"Contemporary China", note:"Grokipedia: status layered by Communist Party affiliation, the hukou registration that divides urban from rural, occupation, and a new private wealth &mdash; the Party still at the apex.",
+ tiers:[
+  {n:"Party leadership",d:"Xi Jinping &mdash; General Secretary atop party, state and military.",s:"tiny"},
+  {n:"Party-state cadres",d:"The Communist Party hierarchy controlling political power and advancement."},
+  {n:"Private wealth &amp; professional elite",d:"Tech founders, executives and the credentialed urban class."},
+  {n:"Urban middle &amp; working class",d:"City residents with hukou access to services and opportunity.",s:"large"},
+  {n:"Rural &amp; migrant population",d:"Held below by rural hukou status &mdash; the great structural divide.",s:"majority"}],
+ traits:["Communist Party membership and rank","an urban hukou (household registration) by birth or attainment","elite education and professional success","private business wealth"],
+ src:[["Social structure of China","Social_structure_of_China"],["International inequality","International_inequality"]] },
+
+aksum:{ name:"The Kingdom of Aksum", note:"A Red Sea trading power in the Ethiopian highlands &mdash; one of antiquity&rsquo;s great commercial kingdoms, ruled by a &ldquo;king of kings&rdquo; and, from the 4th century, Christian.",
+ tiers:[
+  {n:"King of kings (negusa nagast)",d:"Divine-right monarch over a web of subject kingdoms; minted Aksum&rsquo;s own gold coinage."},
+  {n:"Royal family &amp; nobility",d:"The ruling clan and the great landed lords of the highlands."},
+  {n:"Clergy &amp; officials",d:"After c.340, the Christian church; scribes and provincial governors."},
+  {n:"Merchants &amp; traders",d:"The engine of Aksum&rsquo;s wealth &mdash; ivory, gold and incense through the port of Adulis."},
+  {n:"Free farmers &amp; herders",d:"The highland peasantry working terraced fields; the majority."},
+  {n:"Slaves",d:"War captives and traded labor at the base."}],
+ traits:["royal lineage","control of Red Sea and Indian Ocean trade (ivory, gold, incense)","military command","after c.340, office in the Christian church","landholding in the highlands"],
+ src:[["Kingdom of Aksum (Grokipedia)","Kingdom_of_Aksum"],["Ezana of Axum (Grokipedia)","Ezana_of_Axum"],["Munro-Hay, Aksum: An African Civilisation",null]] },
+
+khmer:{ name:"The Khmer Empire (Angkor)", note:"An Indianized Hindu-Buddhist empire centered on Angkor, ruled by a devaraja or &ldquo;god-king,&rdquo; whose power rested on a vast temple economy and rice-irrigation works.",
+ tiers:[
+  {n:"God-king (devaraja)",d:"The universal monarch (chakravartin), identified with a deity; builder of the great temples."},
+  {n:"Royal family &amp; princes",d:"The ruling lineage and its rival claimants to the throne."},
+  {n:"Brahmin priests &amp; high officials",d:"The Sanskrit-literate religious and administrative elite of the court."},
+  {n:"Officials, commanders &amp; landholders",d:"Provincial governors, military leaders and the temple-endowed gentry."},
+  {n:"Free commoners",d:"Farmers and artisans of the rice-and-water economy &mdash; the majority."},
+  {n:"Temple servants &amp; bonded labor (kh&ntilde;um)",d:"Bonded workers who built and maintained Angkor; slaves at the base."}],
+ traits:["royal or noble lineage","Brahmin priestly status and Sanskrit learning","service to the god-king","control of land and the temple-irrigation economy","military command"],
+ src:[["Khmer Empire (Grokipedia)","Khmer_Empire"],["Angkor (Grokipedia)","Angkor"],["Coed&egrave;s, The Indianized States of Southeast Asia",null]] },
+
+inca:{ name:"The Inca Empire (Tawantinsuyu)", note:"The largest empire of the pre-Columbian Americas, run without money, markets or writing &mdash; on a rotational labor tax (mit&rsquo;a) and reciprocity, under a sun-god emperor.",
+ tiers:[
+  {n:"Sapa Inca (the sole emperor)",d:"Son of the Sun (Inti); an absolute, sacred ruler. The Coya was his queen."},
+  {n:"Inca nobility (&ldquo;Inca by blood&rdquo;)",d:"The royal kin-groups (panaca) of Cusco who staffed the highest offices."},
+  {n:"Curacas &amp; &ldquo;Inca by privilege&rdquo;",d:"Local lords co-opted into the empire, and honorary nobles."},
+  {n:"Priests, administrators &amp; specialists",d:"Sun-cult priests and the quipucamayocs who kept records on knotted cords (quipu)."},
+  {n:"Hatun runa &mdash; commoners",d:"The farming and herding majority, owing rotational labor (mit&rsquo;a) to the state."},
+  {n:"Yanakuna &amp; mitma",d:"Lifelong servants and resettled populations; the aclla, &ldquo;chosen women.&rdquo;"}],
+ traits:["royal Inca lineage (an emperor&rsquo;s panaca)","being &ldquo;Inca by blood&rdquo; &mdash; or granted &ldquo;Inca by privilege&rdquo;","co-option as a curaca (a local lord who submitted)","administrative or priestly service","military success"],
+ src:[["Inca Empire (Grokipedia)","Inca_Empire"],["Sapa Inca (Grokipedia)","Sapa_Inca"],["D&rsquo;Altroy, The Incas",null]] },
+
+aztec:{ name:"The Aztec Empire (Mexica)", note:"The Triple Alliance, ruled from Tenochtitl&aacute;n by a &ldquo;Great Speaker.&rdquo; Status was mostly by noble birth &mdash; but valor in war could raise a commoner, a rare channel upward.",
+ tiers:[
+  {n:"Huey tlatoani (Great Speaker)",d:"The semi-divine emperor; the cihuacoatl served as his chief minister."},
+  {n:"Pipiltin &mdash; nobility",d:"Lords of the cities, by birth; they held the high offices, land and tribute."},
+  {n:"Priests &amp; elite warriors",d:"Temple priests and the eagle and jaguar knights &mdash; war honors could ennoble a commoner."},
+  {n:"Pochteca &mdash; merchant guild",d:"Long-distance traders with hereditary privileges and their own courts."},
+  {n:"Macehualtin &mdash; commoners",d:"Farmers and artisans organized in calpulli wards; the great majority."},
+  {n:"Mayeque &amp; tlacotin",d:"Landless serfs, and slaves &mdash; not hereditary; by debt or capture, and able to buy freedom."}],
+ traits:["noble (pilli) birth","valor in war &mdash; capturing enemies could raise a commoner to honors (a real merit channel)","priestly training in the calmecac","membership in the pochteca merchant guild","service to the tlatoani"],
+ src:[["Aztec Empire (Grokipedia)","Aztec_Empire"],["Aztec society (Grokipedia)","Aztec_society"],["Clendinnen, Aztecs: An Interpretation",null]] },
+
+tech:{ name:"The global tech-capital order", note:"Not a country but a stratum: a borderless elite of founders and investors whose wealth (Musk passed $800B &mdash; the most ever) rests on equity in global platforms, sitting atop billions of users and workers.",
+ tiers:[
+  {n:"Founder-owners &amp; mega-investors",d:"Musk and a handful of others holding history&rsquo;s largest fortunes in platform equity.",s:"a few thousand"},
+  {n:"Executives, engineers &amp; VCs",d:"The high-paid technical and financial class that builds and funds the platforms."},
+  {n:"The global knowledge middle",d:"Skilled, connected workers across rich and rising economies."},
+  {n:"Platform &amp; gig workers",d:"Drivers, moderators, warehouse and service labor that the platforms run on.",s:"large"},
+  {n:"The disconnected",d:"Those outside the network &mdash; about 700M still in extreme poverty."}],
+ traits:["equity ownership in a global platform","scarce technical skill","access to capital and networks","audience and reach &mdash; attention as leverage"],
+ src:[["Distribution of wealth","Distribution_of_wealth"],["International inequality","International_inequality"],["Social inequality","Social_inequality"]] }
+
+};
+
+/* ===================== FIGURE -> CIVILIZATION ===================== */
+const CIV_OF = {
+ "Narmer":"egypt","Khufu":"egypt","Thutmose III":"egypt","Ramesses II":"egypt",
+ "Sargon of Akkad":"mesopo","Hammurabi":"mesopo",
+ "Ashurbanipal":"assyria","Nebuchadnezzar II":"assyria",
+ "Cyrus the Great":"persia_a","Darius I":"persia_a",
+ "Pericles":"athens","Alexander the Great":"macedon",
+ "Ashoka":"india","Chandragupta II":"india",
+ "Qin Shi Huang":"china_e","Emperor Wu of Han":"china_e",
+ "Augustus":"rome","Trajan":"rome","Marcus Aurelius":"rome","Constantine the Great":"rome",
+ "Shapur I":"persia_s","Attila":"huns",
+ "Justinian I":"byz","Basil II":"byz",
+ "Muhammad":"caliph","Harun al-Rashid":"caliph",
+ "Emperor Taizong of Tang":"tang",
+ "Charlemagne":"latin","Pope Urban II":"latin",
+ "Saladin":"ayyubid",
+ "Genghis Khan":"mongol","Kublai Khan":"mongol",
+ "Mansa Musa":"mali","Timur":"timurid","Yongle Emperor":"ming",
+ "Mehmed II":"ottoman","Suleiman the Magnificent":"ottoman",
+ "Charles V":"habsburg","Akbar":"mughal","Aurangzeb":"mughal",
+ "Louis XIV":"bourbon","Kangxi Emperor":"qing","Qianlong Emperor":"qing",
+ "Napoleon Bonaparte":"france_m","Otto von Bismarck":"germany","Queen Victoria":"britain",
+ "Franklin D. Roosevelt":"usa_m","Joseph Stalin":"ussr","Mao Zedong":"prc",
+ "Donald Trump":"usa_now","Xi Jinping":"china_now","Elon Musk":"tech",
+ "Ezana of Axum":"aksum","Suryavarman II":"khmer","Pachacuti":"inca","Moctezuma II":"aztec"
+};
+
+/* ===================== POPULATION SHARES (estimates, apex..base, ~sum 100) ===================== */
+const SHARES = {
+ egypt:[0.001,1.5,1,1,8,80,8], mesopo:[0.001,2,12,1,70,15], assyria:[0.001,0.5,1.5,5,73,20],
+ persia_a:[0.001,2,3,80,15], athens:[3,40,13,4,40], macedon:[0.001,0.5,4,75,20],
+ india:[5,7,13,55,20], china_e:[0.001,2,80,7,6,5], rome:[0.001,0.1,1,60,9,30],
+ persia_s:[0.001,4,5,2,89], huns:[0.001,1,25,64,10], byz:[0.001,1,2,4,77,16],
+ caliph:[0.001,3,40,45,12], tang:[0.001,2,80,9,4,5], latin:[0.01,1.5,1.5,9,12,76],
+ ayyubid:[0.001,1.5,3,2,78,16], mongol:[0.001,0.5,1.5,13,75,10], mali:[0.001,2,3,60,15,20],
+ timurid:[0.001,2,3,9,76,10], ming:[0.001,2,0.2,80,8,10], ottoman:[0.001,0.5,4,60,30,5],
+ habsburg:[0.001,1,1.5,1.5,8,88], mughal:[0.001,0.1,0.5,2,87,10], bourbon:[0.001,0.5,1.5,8,10,80],
+ qing:[0.001,2,1.5,80,7,9.5], france_m:[0.001,1,8,12,30,49], germany:[0.001,1,5,14,45,35],
+ britain:[0.001,0.2,0.5,4,7,88], usa_m:[0.001,1,25,50,24], ussr:[0.001,1.5,8,55,35],
+ prc:[0.001,3,80,7,10], usa_now:[0.0002,10,40,35,15], china_now:[0.0001,5,15,40,40],
+ tech:[0.0001,1,20,50,29],
+ aksum:[0.001,1.5,3,5,75,15], khmer:[0.001,0.5,2,5,72,20], inca:[0.001,1,3,4,82,10], aztec:[0.001,1.5,3,1.5,84,10]
+};
+/* ===================== ROUTE TO THE TOP (the most reliable lever) ===================== */
+const ROUTE = {
+ forage:"merit",
+ egypt:"birth", mesopo:"birth", assyria:"birth", persia_a:"birth", athens:"birth", macedon:"birth", india:"birth",
+ china_e:"merit", rome:"birth", persia_s:"birth", huns:"birth", byz:"birth", caliph:"birth", tang:"merit",
+ latin:"birth", ayyubid:"birth", mongol:"merit", mali:"birth", timurid:"birth", ming:"merit", ottoman:"merit",
+ habsburg:"birth", mughal:"merit", bourbon:"birth", qing:"merit", france_m:"merit", germany:"birth", britain:"birth",
+ usa_m:"merit", ussr:"merit", prc:"birth", usa_now:"wealth", china_now:"merit", tech:"wealth",
+ aksum:"birth", khmer:"birth", inca:"birth", aztec:"birth"
+};
+
+function fmtPct(p){
+  if(p<0.01) return "&lt;0.01%";
+  if(p<1)    return "~"+(+p.toFixed(p<0.1?2:1))+"%";
+  if(p<10)   return "~"+(Number.isInteger(p)?p:+p.toFixed(1))+"%";
+  return "~"+Math.round(p)+"%";
+}
+
+/* ===================== HOW IT ROSE / HOW IT FELL ===================== */
+const LIFECYCLE = {
+forage:{rose:"Began with anatomically modern humans in Africa; for some 300,000 years, mobile bands of a few dozen lived by hunting and gathering.",fell:"Ended with the Neolithic Revolution from about 10,000 BCE: farming tied people to land, produced storable surplus, and with it the first durable hierarchies."},
+egypt:{rose:"Unified around 3100 BCE when Narmer joined Upper and Lower Egypt; the Nile&rsquo;s predictable flood and a god-king bureaucracy sustained three millennia of pharaonic rule.",fell:"Repeated foreign conquest &mdash; Hyksos, Assyrians, Persians, then Alexander &mdash; ended with annexation by Rome in 30 BCE after Cleopatra&rsquo;s death."},
+mesopo:{rose:"The city-states of Sumer gave way to the world&rsquo;s first empire under Sargon of Akkad (c. 2334 BCE), uniting Mesopotamia by conquest and a standing army.",fell:"Empires rose and fell on the floodplain in turn; Babylon&rsquo;s last great age ended when Cyrus&rsquo;s Persians took the city in 539 BCE."},
+assyria:{rose:"Built on Assur&rsquo;s trading wealth and a brutally effective army of iron weapons, siege engines and mass deportation, the Neo-Assyrian Empire became the Near East&rsquo;s first superstate.",fell:"Overextension and revolt: a Babylonian&ndash;Median coalition sacked Nineveh in 612 BCE, ending the empire within a generation of its peak."},
+persia_a:{rose:"Cyrus the Great forged the largest empire yet (c. 550 BCE) by conquest tempered with tolerance &mdash; local religions and elites were left in place under Persian governors (satraps).",fell:"Alexander of Macedon destroyed it in a decade of campaigns, burning Persepolis; the last king, Darius III, was killed by his own men in 330 BCE."},
+athens:{rose:"A trading polis that turned its navy and silver into power, Athens led the Greek defeat of Persia, built a maritime empire, and flowered into democracy under Pericles.",fell:"The long Peloponnesian War with Sparta, plague, and a catastrophic Sicilian expedition broke Athenian power; it was absorbed by Macedon and then Rome."},
+macedon:{rose:"Philip II forged a professional army and the deadly pike phalanx; his son Alexander used it to conquer from Greece to the Indus in just thirteen years.",fell:"Alexander died at thirty-two (323 BCE) with no stable heir; his generals (the Diadochi) carved the empire into warring successor kingdoms."},
+india:{rose:"Chandragupta Maurya unified much of the subcontinent (c. 321 BCE) by conquest and a sophisticated bureaucracy; the later Gupta age became a classical golden age of art, mathematics and trade.",fell:"The Mauryas fragmented after Ashoka; the Guptas were worn down by Huna invasions and internal division by about 550 CE, leaving a patchwork of kingdoms."},
+china_e:{rose:"Qin Shi Huang unified the warring states in 221 BCE through Legalist discipline and force, standardizing script, coin and measure; the Han then built a lasting order on a Confucian bureaucracy.",fell:"The Qin collapsed within years of its founder&rsquo;s death; the Han fell in 220 CE to court intrigue, peasant revolt and warlordism, beginning centuries of division."},
+rome:{rose:"From a city-state, Rome expanded by citizen-soldiers, roads and law across the Mediterranean; Augustus ended a century of civil war (27 BCE) to found a 200-year imperial peace.",fell:"Third-century crisis, fiscal strain, civil wars and frontier pressure split the empire; the Western half dissolved into Germanic kingdoms by 476 CE."},
+persia_s:{rose:"Ardashir overthrew the Parthians (c. 224 CE) to restore a centralized Persian empire with Zoroastrianism as state religion; Shapur I made it Rome&rsquo;s great rival, even capturing an emperor.",fell:"Exhausted by a final war with Byzantium, the empire fell with stunning speed to the Arab Muslim conquests in the 630s&ndash;650s."},
+huns:{rose:"Nomadic horse-archers from the steppe, the Huns coalesced under Attila (mid-5th century) into a confederation that extorted tribute from both halves of the Roman world.",fell:"Attila died suddenly in 453; his sons quarreled, subject peoples revolted, and the confederation shattered within years of his death."},
+byz:{rose:"The surviving Eastern Roman Empire, centered on Constantinople, preserved Roman law and statecraft in a Greek, Christian form; Justinian briefly reconquered much of the West.",fell:"Centuries of pressure &mdash; Arabs, Seljuks, and the sack by the Fourth Crusade (1204) &mdash; left a shrunken state; the Ottomans took Constantinople in 1453."},
+caliph:{rose:"United by Islam, Arab armies overran Persia and Roman Syria&ndash;Egypt within a century of Muhammad (d. 632); the Abbasids built Baghdad into the hub of a golden age of science and trade.",fell:"The caliphate fragmented as regional dynasties broke away and slave-soldiers seized real power; the Mongol sack of Baghdad in 1258 ended the Abbasid line."},
+tang:{rose:"The Tang reunified China (618) after centuries of division, building a cosmopolitan empire on a Confucian bureaucracy increasingly staffed through competitive examination.",fell:"The An Lushan rebellion (755) gutted Tang power; regional warlords and court eunuchs hollowed it out until its fall in 907."},
+latin:{rose:"Out of post-Roman chaos the Frankish kings built a realm, crowned when Charlemagne became Emperor in 800; the Latin Church gave fragmented Europe a single sacred authority.",fell:"Charlemagne&rsquo;s empire split among his heirs and crumbled under Viking, Magyar and Saracen raids; power devolved to local lords &mdash; feudalism."},
+ayyubid:{rose:"Saladin rose from a Kurdish officer family to unite Egypt and Syria, founding the Ayyubid dynasty and leading the Muslim recovery of Jerusalem from the Crusaders in 1187.",fell:"The dynasty fragmented among Saladin&rsquo;s relatives after his death; in Egypt its own slave-soldiers, the Mamluks, seized power in 1250."},
+mongol:{rose:"Genghis Khan united the warring steppe tribes (1206) and, with disciplined cavalry and a ruthless meritocracy, built the largest contiguous land empire in history within two generations.",fell:"Too vast to hold, it split into rival khanates that fragmented, were absorbed, or fell to plague and revolt &mdash; in China, expelled by the Ming in 1368."},
+mali:{rose:"Built on control of the trans-Saharan gold and salt trade, the Mali Empire rose under Sundiata in the 13th century; Mansa Musa&rsquo;s fabled pilgrimage (1324) made its wealth legendary.",fell:"Succession disputes, the rise of rival Songhai, and shifting trade routes eroded Mali through the 15th&ndash;16th centuries until it shrank to a small chiefdom."},
+timurid:{rose:"Timur, claiming the Mongol mantle, conquered from a base in Samarkand across Central Asia and Persia (late 14th century) with devastating force.",fell:"His empire fragmented among his heirs after his death in 1405, surviving as a brilliant cultural age in Persia and Central Asia before being overrun."},
+ming:{rose:"The Ming drove out the Mongol Yuan (1368), restoring native Chinese rule; the Yongle Emperor built the Forbidden City and sent vast treasure fleets across the Indian Ocean.",fell:"Fiscal crisis, famine, peasant rebellion and the Manchu invasion brought the dynasty down in 1644."},
+ottoman:{rose:"A frontier warrior principality grew into an empire straddling three continents; Mehmed II&rsquo;s capture of Constantinople (1453) and Suleiman&rsquo;s conquests marked its height.",fell:"Centuries of slow decline relative to a rising Europe ended in defeat in the First World War; the empire was partitioned and abolished in 1922."},
+habsburg:{rose:"Through a famous run of strategic marriages the Habsburgs assembled a vast inheritance; Charles V ruled Spain, the Low Countries, Austria and the Americas at once.",fell:"His empire was too sprawling to govern and split between Spanish and Austrian branches; the Spanish line died out in 1700, the Austrian one was dismantled in 1918."},
+mughal:{rose:"Babur, a Timurid prince, conquered northern India (1526); Akbar consolidated a wealthy, pluralist empire run through a merit-graded service nobility (the mansabdari).",fell:"Aurangzeb&rsquo;s long wars and religious rigidity overstretched the empire; after him it fragmented, and the British East India Company filled the vacuum."},
+bourbon:{rose:"The Bourbon kings centralized France into Europe&rsquo;s leading power; Louis XIV tamed the nobility at Versailles and ruled as an absolute monarch by divine right.",fell:"Debt, an inflexible society of legal orders, and Enlightenment ideas exploded in the Revolution of 1789, which abolished the monarchy and executed Louis XVI."},
+qing:{rose:"The Manchus, a frontier people, conquered Ming China (1644) and built the largest and most populous empire in Chinese history; Kangxi and Qianlong presided over a long, prosperous peace.",fell:"Population pressure, internal rebellions such as the Taiping, and the shock of Western and Japanese imperialism broke Qing power; the dynasty fell in 1911."},
+france_m:{rose:"The Revolution swept away the old order; Napoleon, risen through the army by talent, seized power (1799) and remade France with a meritocratic state, civil code and conscript army that conquered Europe.",fell:"Overreach &mdash; the disastrous invasion of Russia (1812) and a coalition of all Europe &mdash; brought Napoleon down by 1815; France stayed a great power but never again dominated the continent."},
+germany:{rose:"Bismarck unified the German states under Prussia through three short wars, proclaiming the Empire in 1871; rapid industrialization made it Europe&rsquo;s leading economy.",fell:"Defeat in the First World War toppled the monarchy in 1918, and the empire gave way to the Weimar Republic."},
+britain:{rose:"The first industrial nation, with naval supremacy and a global trading empire, Britain became the 19th century&rsquo;s dominant power; under Victoria its empire spanned a quarter of the globe.",fell:"Two World Wars drained its wealth and the colonies sought independence; by the mid-20th century the empire was dismantled and primacy passed to the United States."},
+usa_m:{rose:"Vast resources, immigration and industry made the United States the world&rsquo;s leading economy; the New Deal and victory in the Second World War cemented its mid-century power and a broad middle class.",fell:"Still the leading power &mdash; but the mid-century order of broad-based growth gave way, from the 1970s, to rising inequality and a more wealth-stratified society (the next entry)."},
+ussr:{rose:"The Bolsheviks seized power in 1917 and built a one-party state that, through forced industrialization and the defeat of Nazi Germany, became a nuclear superpower.",fell:"A stagnant command economy, the cost of the arms race, and nationalist and reform pressures collapsed the Soviet Union in 1991."},
+prc:{rose:"Mao&rsquo;s Communists won the civil war (1949) and unified China under a one-party state, ending a century of weakness and foreign domination.",fell:"Still in power &mdash; but Mao&rsquo;s utopian campaigns, the Great Leap famine and the Cultural Revolution, killed tens of millions before the post-1978 reforms remade the country (the next entry)."},
+usa_now:{rose:"Cold-War victory left the United States the sole superpower; finance, technology and globalization concentrated vast wealth at the top over the following decades.",fell:"Current &mdash; its trajectory is contested, debated as enduring dominance or relative decline amid rising inequality and the ascent of China."},
+china_now:{rose:"Deng&rsquo;s post-1978 reforms unleashed the fastest large-scale economic rise in history, lifting hundreds of millions from poverty and making China the world&rsquo;s second superpower under tightening Party control.",fell:"Current &mdash; its future is debated, continued ascent against headwinds of debt and a shrinking, aging population."},
+aksum:{rose:"Aksum rose from the 1st century CE on control of Red Sea trade between Rome, Arabia and India, exporting ivory, gold and incense through the port of Adulis; it minted its own coinage and turned Christian under Ezana.",fell:"The rise of Islam shifted Red Sea trade away from Aksum; environmental decline and isolation saw the kingdom contract from the 7th&ndash;8th centuries into the Christian highland realm that became Ethiopia."},
+khmer:{rose:"The Khmer Empire rose around Angkor from the 9th century on mastery of water &mdash; vast reservoirs (barays) and canals fed intensive rice farming &mdash; legitimized by the god-king cult and monumental temple-building.",fell:"Costly temple-building, the breakdown of the waterworks, wars with neighboring Ayutthaya, and a shift toward maritime trade drained Angkor; the capital was largely abandoned by the 15th century."},
+inca:{rose:"From Cusco, Pachacuti and his successors built Tawantinsuyu in under a century through conquest and co-option, binding it with roads, storehouses, a state religion and a labor tax &mdash; without money, markets or writing.",fell:"Smallpox, arriving ahead of the Europeans, killed the emperor and split the empire in civil war; Pizarro&rsquo;s tiny Spanish force exploited the rift and conquered it in 1532&ndash;33."},
+aztec:{rose:"The Mexica, late arrivals in the Valley of Mexico, founded Tenochtitl&aacute;n (1325) and, through the Triple Alliance (1428), built a tribute empire over much of Mesoamerica, fed by war and sacrifice.",fell:"Cort&eacute;s, allied with the empire&rsquo;s many resentful subject peoples and aided by smallpox, besieged and destroyed Tenochtitl&aacute;n in 1521."},
+tech:{rose:"The digital and internet revolutions, concentrated in places like Silicon Valley, created a new class whose wealth derives from owning scalable technology &mdash; software, platforms and networks &mdash; rather than land or birth.",fell:"Emergent &mdash; whether this order endures or is reshaped by regulation, competition and the disruptions of AI remains open."}
+};
+
+/* ===================== A DAY IN THE LIFE (the average person) ===================== */
+const DAYLIFE = {
+forage:"Foraging and hunting were often done by midday, leaving long stretches for rest, talk and making things &mdash; anthropologists call hunter-gatherers the original leisure society. Evenings meant the fire: storytelling, music, dancing, gossip and games. People looked forward to the seasonal gatherings when scattered bands met to feast, court and trade, and to the windfall feast when a big animal was killed. Meaning came from kinship, the land, and the ancestors and spirits woven through everything; a person&rsquo;s worth rested on skill, generosity and the stories told about them.",
+egypt:"The flood season freed farmers from the fields for building work and rest, and the day&rsquo;s labor left time for the household and the river. For fun there was beer and the tavern, music on harp and lute, dancing, board games like senet, wrestling, and fishing and fowling in the marshes. The great anticipation was the festival calendar &mdash; the Opet and the Beautiful Festival of the Valley brought processions, feasting and days off &mdash; and the next life-giving flood. Meaning rested on the gods and ma&rsquo;at (cosmic order), on family, and above all on the afterlife: a proper burial and being remembered were the deepest hope, so much of life pointed beyond death.",
+mesopo:"Days of field, canal or workshop gave way to evenings in the home and the street. People drank beer through straws in taverns, played board games and dice, wrestled, and gathered for music and song. The year turned on the great New Year festival, Akitu, with its processions of the gods, feasting and the king&rsquo;s renewal &mdash; and on weddings and the harvest. Meaning came from the city&rsquo;s patron god and its temple, from omens and the reading of fate, and from family and the ancestors; a good name and many children were what a life was measured by.",
+assyria:"For most, the day was farm and herd labor under a relentless war-state, but it still made room for the home and the village. Beer, music, feasting, snaring small game and storytelling of gods and kings filled the hours off; the elite had their famous lion hunts. People looked forward to the festivals, to the harvest, and to the return of the armies laden with plunder. Meaning rested on Ashur and the gods, on the king as their agent on earth, and on family and lineage &mdash; on survival and standing in a hard order.",
+persia_a:"Subjects across many peoples farmed, herded and traded under a notably tolerant empire, much as their ancestors had. The Persians were celebrated feasters and drinkers &mdash; Herodotus says they debated matters twice, once drunk and once sober &mdash; and loved wine, music, the hunt in walled game-parks, and riding contests. The high point of the year was Nowruz, the spring new year, with its renewal, gifts and feasting. Meaning came from the Zoroastrian struggle of truth against the lie, from fire and the sacred, and from family, honor and many sons.",
+athens:"A citizen mixed his trade or farm with the agora, the gymnasium and the assembly, for politics was both duty and pastime. Leisure meant the symposium &mdash; wine, music, poetry and fierce debate &mdash; along with athletics, gossip and the theatre. The year built toward the great festivals: the Panathenaia, and the City Dionysia with its tragedies and comedies, blending religion, art and sport. Meaning rested on the polis itself &mdash; to be a citizen, to win honor and lasting fame (arete) &mdash; and on the gods, civic duty and philosophy; for the enslaved and for women, far less of this was open.",
+macedon:"The Macedonian and Greek soldier-settlers lived by the campaign and the new Greek cities, while the conquered millions carried on much as before. Macedonians were famously hard drinkers, and the hunt was a noble passion and rite of passage; there were also athletics, the theatre and the feast. They looked forward to victory and its plunder, to festivals, and to the drinking-party. Meaning came from glory and the heroic ideal &mdash; Homer and Achilles &mdash; from loyalty to the king and the gods, and, for Greeks living far from home, from their inherited culture.",
+india:"Village life was ordered by caste, season and temple, and the day&rsquo;s hereditary work was framed by ritual. For fun there were countless festivals, music and dance, wrestling at the akhara, dice and fairs, and the endless retelling of the great epics, the Ramayana and Mahabharata. People looked forward to the festival calendar &mdash; Holi, Diwali, the harvest and temple festivals with their color, food and processions &mdash; and to weddings and pilgrimage. Meaning rested on dharma (one&rsquo;s duty by caste and stage of life), on karma and rebirth, on the gods and the temple and the family&rsquo;s rituals, with liberation (moksha) as the ultimate horizon.",
+china_e:"Peasant time was ruled by the farming calendar and the family, the seasons dictating planting, harvest and rest. Leisure meant festivals, opera and storytelling, board games and gambling, kite-flying, tea-house talk and music. The New Year was the great anticipation &mdash; family reunion, feasting, ancestral rites and rest &mdash; along with the seasonal festivals (Qingming to tend the graves, the Mid-Autumn moon), weddings and a son&rsquo;s success. Meaning came from the family and the ancestral line &mdash; filial duty above all &mdash; from Confucian harmony and Heaven&rsquo;s order, and for many from Daoist and Buddhist hopes: to honor one&rsquo;s parents and be honored by one&rsquo;s descendants.",
+rome:"The poor city-dweller&rsquo;s day ran from the grain dole through the streets to the baths &mdash; the great social hub, where one might exercise, bathe and gossip for hours. Fun meant the games above all: free and wildly popular chariot races at the Circus and gladiators in the arena, plus taverns, wine, dice and the theatre. Much of the imperial calendar was holiday, and people looked forward to the races, the public festivals, and Saturnalia&rsquo;s riot of feasting and role-reversal. Meaning rested on the household gods and the state cult, on family and ancestors, on patron-client bonds and a good name &mdash; and, for a growing number, on the new mystery cults and Christianity that promised something more.",
+persia_s:"Peasants worked the estates of a rigid order, their lives framed by village and fire-temple. Leisure meant wine and feasting, music (the court prized its minstrels), and the board games &mdash; backgammon and chess &mdash; that spread to the world from this region; the elite hunted. The year turned on Nowruz and the seasonal festivals, the harvest and weddings. Meaning came from Zoroastrian dualism &mdash; siding with truth and light against the lie &mdash; from fire, family and purity, and from honor and a good name.",
+huns:"Life was lived from the saddle and the herd, moving with the seasons across the steppe. The feast was the great pleasure &mdash; meat and fermented mare&rsquo;s milk (kumis), music and song (Attila himself was sung to at his table), riding and archery contests, and the hunt. People looked forward to the great gatherings of the people, to successful raids and the plunder and tribute they brought, and to the feasts that followed. Meaning rested on the war-band and its leader, on kinship and the ancestors, on the sky and the spirits of the steppe &mdash; and on courage, honor and a warrior&rsquo;s name.",
+byz:"City folk moved among the markets and churches, peasants worked the fields, and prayer and procession marked the day. The Hippodrome was the great passion &mdash; chariot races and the fierce rivalry of the Blue and Green factions &mdash; alongside feasts, taverns, public baths and religious processions that doubled as spectacle. People looked forward to the great church feasts of Easter and Christmas in all their splendor, to the races, and to saints&rsquo; days and their fairs. Meaning saturated everything through Orthodox Christianity &mdash; the liturgy, icons and saints, the monastic ideal and the hope of salvation &mdash; with the empire itself understood as God&rsquo;s order on earth.",
+caliph:"City life turned around the mosque, the bazaar and the bathhouse, the five daily prayers punctuating the hours. Leisure meant gardens, music and poetry (immensely prized), storytelling that gave rise to the Thousand and One Nights, chess and backgammon, and the sociability of the public bath and the market. The two great Eids &mdash; the feast ending Ramadan and the feast of sacrifice &mdash; were the year&rsquo;s high points, with feasting, new clothes, gifts and charity, along with the Friday gathering and the pilgrimage. Meaning came from Islam &mdash; the prayers, the Quran, submission to God, the community (ummah) and the hope of paradise &mdash; with learning and the law themselves treated as acts of devotion.",
+tang:"Peasants worked the land while the residents of Chang&rsquo;an enjoyed the world&rsquo;s most cosmopolitan capital. This was a golden age of poetry, composed and recited everywhere, with music and dance carried in along the Silk Road, wine houses, polo, kite-flying and storytelling. People looked forward to the New Year and the seasonal festivals &mdash; the Lantern Festival, the Mid-Autumn moon &mdash; to examination results for ambitious families, and to the bustle of the foreign quarter. Meaning rested on family and ancestors and Confucian order, and increasingly on a flourishing Buddhism &mdash; its temples, pilgrimages and the hope of merit and rebirth &mdash; with Daoist threads running throughout.",
+latin:"The peasant&rsquo;s day on the manor was governed by the church bell and the sun, dawn-to-dusk field labor broken by the rhythm of feast and fast. The alehouse was the social center; there were village games and rough football, dancing on the green, fairs, music, song and wrestling. People lived for the church feasts that broke the year &mdash; Christmas, Easter, the local saint&rsquo;s day &mdash; with their holidays and revelry, and for the harvest, the fair and the pilgrimage. Meaning came from the Church and the turning of the liturgical year, the saints and relics, the hope of heaven and the fear of hell, the manor and the family &mdash; life itself understood as a pilgrimage toward salvation.",
+ayyubid:"City and farm life turned around the mosque and the market, shadowed by the wars with the Crusaders. Leisure meant gardens and fountains, poetry and music, storytelling, chess and backgammon, the sociability of the bazaar and the public bath (hammam), and falconry and the hunt for the elite. People looked forward to the Eids, to Ramadan&rsquo;s nightly gatherings, to weddings, and to the return of victorious armies. Meaning rested on Islam &mdash; the prayers, the Quran, the community &mdash; and, in this age, on the call of jihad to recover Jerusalem, along with charity, learning and the hope of paradise.",
+mongol:"Herders moved with the seasons, living from the animal and the saddle. The three &lsquo;manly games&rsquo; &mdash; wrestling, archery and horse-racing &mdash; were the heart of every festival, alongside feasting on meat and kumis, the long song, storytelling, and hunting as both sport and training for war. People looked forward to the great seasonal gatherings and their games, to successful campaigns and their spoils, and to the feasts. Meaning came from the Eternal Blue Sky (Tengri) and the spirits, from the clan and the ancestors, and from loyalty to the khan &mdash; with honor, courage and a name carried on by one&rsquo;s descendants.",
+mali:"Farmers, herders, traders and artisans lived in village communities along the great trade routes. Music was the heart of social life &mdash; the griots&rsquo; praise-songs, the kora and the drum &mdash; with dance, oral history, wrestling, games and the market as a social event. People looked forward to the festival calendar (blending Islam with older custom), to market days, to weddings and naming ceremonies, to the return of the caravans and the harvest. Meaning came from a fusion of Islam &mdash; prayer, Ramadan, the famous pilgrimage &mdash; and ancestral African belief, from the lineage and clan, and from the spoken word and the griot&rsquo;s memory; honor and a remembered name were everything.",
+timurid:"Conquest&rsquo;s brutality sat beside a brilliant urban flowering, as Timur funneled the world&rsquo;s artisans into Samarkand. Leisure meant the life of the bazaar, Persian poetry and music at their height, the great gardens the Timurids loved to build, chess, storytelling and the hunt. People looked forward to the Eids and Nowruz, to the beauty rising in the cities, to market and caravan days, and to weddings. Meaning rested on Islam and its learning, on family and lineage, and on the patronage of beauty as a form of both devotion and prestige &mdash; with honor and the favor of God.",
+ming:"Intensely farmed land, a literate culture and crowded cities shaped the day. Leisure was rich: hugely popular opera and storytelling, printed novels and almanacs, festivals, gambling and games, tea houses, kite-flying and gardens. The New Year was the great reunion and rest, with Qingming to tend the ancestors&rsquo; graves and the Mid-Autumn and Lantern festivals close behind, along with examination success and weddings. Meaning came from the family and the ancestral line above all (filial piety), from Confucian propriety and Heaven&rsquo;s mandate, and from Buddhist and Daoist devotions &mdash; to honor one&rsquo;s parents and secure one&rsquo;s descendants.",
+ottoman:"Subjects lived within their own religious communities, peasants on the land, all drawn to a cosmopolitan capital. The coffeehouse was a great Ottoman institution &mdash; talk, games, music and storytelling &mdash; alongside the public baths, garden excursions, the Karagoz shadow-puppet theatre and the life of the bazaar. People looked forward to the Eids and Ramadan&rsquo;s nightly sociability (and to each community&rsquo;s own feasts), and to the grand imperial festivals &mdash; circumcisions, royal weddings &mdash; with their days of public celebration. Meaning rested on faith &mdash; Islam for the ruling community, with Orthodox, Armenian and Jewish life thriving alongside &mdash; on family, community (millet) and one&rsquo;s craft, and on charity, learning and the hereafter.",
+habsburg:"Peasants worked the noble estates and townsfolk lived under guild order, all within a militant Catholicism. Leisure meant the tavern, music and dancing, the painted peasant fairs (the Kirmes), Carnival&rsquo;s brief misrule before Lent, processions and games. People looked forward to the church feasts and saints&rsquo; days (and there were many holidays), to Carnival, to the harvest festival, to weddings and pilgrimages. Meaning came from the Catholic Church &mdash; intensified by the Counter-Reformation, with its Mass, saints and hope of heaven &mdash; and from family, the guild, and loyalty to lord and emperor.",
+mughal:"Peasants worked the land and artisans filled the famed workshops of a wealthy, plural empire. Festivals (Hindu and Muslim alike), a great age of music and dance, poetry and storytelling, kite-flying, wrestling, gardens and the games of chess and pachisi filled the leisure hours. People looked forward to Diwali, Holi and the harvest for Hindus; to the Eids and Ramadan for Muslims; and to fairs, pilgrimages, weddings and the famous gardens in bloom. Meaning came, for Hindus, from dharma, karma and the gods, and for Muslims from Islam and its community &mdash; with the joint family, caste or community, and the sung and spoken tradition binding it together.",
+bourbon:"The peasant&rsquo;s life turned on land, dues and the parish, with the price of bread the daily anxiety. Leisure meant the village dance and fete, the tavern, fairs, games like boules and cards, music, and courtship at gatherings, all set by the church and seigneurial calendar. People looked forward to the religious feasts and the patron saint&rsquo;s day with their holidays, to Carnival, to the harvest and its festival, and to the fair and weddings. Meaning rested on the Catholic faith and the parish, on the family and the land, on one&rsquo;s place in a fixed order &mdash; and on the hope of heaven and the saints&rsquo; protection.",
+qing:"A vast, intensely farmed and literate empire carried on under Manchu rule. Leisure was abundant: this was the era of Peking opera&rsquo;s birth, with storytelling, novels, festivals, the games that became mahjong, tea houses, kite-flying and gardens. The New Year was the great reunion and rest, with Qingming, the Dragon Boat and Mid-Autumn festivals, examination success, weddings and temple fairs to look forward to. Meaning came from the family and the ancestors &mdash; filial piety the supreme virtue &mdash; from Confucian order and Heaven&rsquo;s mandate, and from Buddhist, Daoist and folk devotions: to honor one&rsquo;s parents and continue the line.",
+france_m:"A society remade by revolution offered careers open to talent, though most still lived on the land or in workshops. The cafe was rising as a social institution, alongside the dance and the guinguette, theatre and a new mass press, cards, the promenade and music &mdash; with the Revolution&rsquo;s secular festivals joining the older feasts. People looked forward to the harvest festival and village fete, the new national holidays, market days, family milestones, and for the ambitious, advancement. Meaning was beginning to split &mdash; between the Catholic faith and parish on one side and the secular ideals of the Revolution, liberty, equality and nation, on the other &mdash; with family, locality, work and respectability holding underneath.",
+germany:"An industrializing empire ran by the factory whistle for workers and the estate for eastern peasants. The beer hall and beer garden were central to social life, along with the choral and gymnastic clubs (the Verein, a German passion), music, festivals like Oktoberfest, the Sunday excursion and the new spectator sports. People looked forward to the church feasts &mdash; Christmas above all, deeply cherished with its German traditions &mdash; to the local festival and fair, to the Sunday rest and outing, and to the club&rsquo;s gatherings. Meaning came from family and faith (Protestant or Catholic), from work and craft-pride, and from a strong new sense of nation and community &mdash; with respectability, thrift and belonging prized throughout.",
+britain:"The first industrial nation worked long shifts in its factories and mines, with service the lot of many and rents the comfort of the gentry. The pub was the social heart, joined by the new spectator sports (football clubs were forming, with cricket and the races), the music hall, the railway trip to the seaside, brass bands and choirs, and reading in a newly literate age. People looked forward to Christmas (which the Victorians reinvented), to the bank holidays and the seaside excursion, to the local fair and the races, and to Sunday&rsquo;s rest. Meaning rested on family and respectability, on Christianity in church and nonconformist chapel, on work and self-improvement, and on pride in nation and empire &mdash; duty, thrift and &lsquo;getting on.&rsquo;",
+usa_m:"The post-war boom promised a steady job, a house in the suburbs and a car, though the promise was shared unevenly. Leisure was transformed by the automobile and the screen: radio and then television, the movies and the drive-in, baseball and football, popular music and dancing, the backyard barbecue and the road trip. People looked forward to the weekend and the two-week vacation, the holidays (Thanksgiving, Christmas, the Fourth of July), the new appliances and next year&rsquo;s model, and the children&rsquo;s future. Meaning came from family and home, from church in a churchgoing era, from work and upward mobility, and from community and nation &mdash; with the American Dream, a better life for the kids, as the organizing hope.",
+ussr:"Life ran through the state and the workplace, which guaranteed work and housing but meant shortages, queues and conformity. Off-hours were rich in their way: sport (state-backed and huge), chess (a national passion), reading in a famously bookish society, the cinema, music, and the dacha &mdash; the little country plot that was a great refuge &mdash; with vodka and the kitchen-table gathering. People looked forward to the May Day and Revolution Day parades and their days off, to New Year (the great secular feast, with its tree and Grandfather Frost), to summer at the dacha, and to scarce goods finally appearing. Meaning came from family and intensely valued friendship, from culture and education, and for believers from collective ideals &mdash; private warmth holding firm beneath a constrained public life.",
+prc:"Life ran through the rural commune or the urban work unit, which controlled job, housing, rations and even permission to marry or travel, amid constant political campaigns. Leisure was limited and politicized &mdash; revolutionary opera and film, mass calisthenics, propaganda spectacle &mdash; yet the small enduring pleasures survived: chess and cards, conversation, the radio, festivals where allowed. People looked forward to the (muted but still kept) Spring Festival, to rare rest, to the end of a campaign, and to a good class label or work assignment for a child. Meaning was, officially, devotion to the revolution, to Mao and the collective; privately, the family endured as the deepest tie, and survival and a clean record were the daily hope.",
+usa_now:"Life is shaped by wage work, the car and, above all, the screen. Leisure is abundant and commercial &mdash; streaming and the internet, video games, social media, watched and played sport, dining out, travel, the gym, music and festivals &mdash; and increasingly lived online. People look forward to the weekend, to vacation and travel, to the holidays, to the next release or purchase and to life&rsquo;s milestones, and many to the hope of more security and a better deal for their children. Meaning has pluralized &mdash; family, career, faith for some and secular or therapeutic frameworks for others, community, identity and self-fulfillment &mdash; and is increasingly something one is expected to author for oneself.",
+china_now:"Urban life means long hours, the smartphone and consumer aspiration, with the hukou system still dividing city from countryside. Leisure is intensely digital and commercial &mdash; short video, mobile gaming, social apps and pay-for-everything phones &mdash; alongside shopping and dining out, a new mass culture of travel, karaoke (KTV) and sport. The Spring Festival is the great anticipation, drawing the world&rsquo;s largest annual migration home for family reunion and feasting, with the holiday Golden Weeks, travel, the next phone, a child&rsquo;s exam success and a home of one&rsquo;s own close behind. Meaning centers on family and the child&rsquo;s future (a heavy focus), on education and getting ahead, on material security, status and national pride &mdash; with older faiths and traditions persisting beneath a largely secular, striving life.",
+aksum:"Highland farmers and herders worked terraced fields while traders worked the Red Sea ports, the kingdom turning Christian after Ezana. Leisure meant feasting and locally brewed beer and mead, music and dance, storytelling, and the market as a social gathering, joined increasingly by the festivals of the new faith. People looked forward to the harvest and its feast, to market days, to the great Christian feasts taking root, and to weddings. Meaning came, after Ezana, from a Christianity rapidly woven into daily life &mdash; the church, fasting and feasting, the saints &mdash; layered over older custom, with family, the land and a remembered name beneath.",
+khmer:"Rice farmers whose labor built and fed Angkor lived by the monsoon and the temple. Leisure meant festivals and temple fairs, music and the apsara dance tradition, boat races on the canals and reservoirs, wrestling, cockfighting and the storytelling of gods and kings. People looked forward to the great temple festivals and royal ceremonies, to the water festival and the turning of the monsoon, to the harvest and to weddings. Meaning came from a fusion of Hinduism and then Buddhism &mdash; the god-king, the temple as the cosmos rendered in stone, merit and rebirth &mdash; and from the spirits of place, the family, the village, and the rhythm of water and rice.",
+inca:"Commoners farmed and herded within their kin-community, owing rotating labor to the state in place of taxes. Even that labor was made festive &mdash; communal work came with song, chicha (maize beer) and feasting &mdash; alongside festivals with music and dance and the labor-feasts that bound the community together. People looked forward to the great state and seasonal festivals, above all Inti Raymi, the sun festival, and to the planting and harvest feasts, weddings, and the redistributive feasts the state provided. Meaning rested on the sun and the sacred landscape of mountains and springs (huacas), on the ancestors (whose mummies were kept and honored), on reciprocity and the ayllu, and on the divine emperor &mdash; duty, community and the endless cycle of giving and receiving.",
+aztec:"Commoners farmed the lake-gardens and served their ward, under a religion of cosmic debt and sacrifice. Leisure filled a calendar packed with festivals &mdash; music and dance, the sacred and popular ballgame, pulque (the ritually controlled maguey beer), the great market as a social event, storytelling and flower-poetry. People looked forward to the festivals of the eighteen months with their processions and feasts, to market days at the vast Tlatelolco, to a son&rsquo;s success in war or school, and to weddings. Meaning came from a demanding cosmology &mdash; the gods sustained by human offering, the sun needing blood, life as a brief and precious loan &mdash; alongside the family, the calpulli, valor in war as a path to honor, and &lsquo;flower and song&rsquo; as a meditation on how fleeting it all is.",
+tech:"Work blurs into life through the laptop and the phone, a world sorted by talent and capital. Leisure is the screen in all its forms &mdash; streaming, gaming, social media &mdash; along with travel and experiences, fitness and the optimized body, food and coffee culture, and the ever-present side project; work and play bleed together. People look forward to the product launch and the next funding round, to travel and (in theory) the weekend, to equity vesting and the next device, and the ambitious to the dream of building something that scales. Meaning is pluralized and often self-authored: the work and the mission (sincerely held by many), wealth and impact, optimization and self-improvement, and community and identity found online &mdash; meaning as a personal project, sometimes filling the space older faiths left behind."
+};
+
+/* ===================== FAMILY & CHILDREN (fertility, where known) ===================== */
+const FAMILY = {
+forage:"Mobile life and long nursing spaced births roughly four years apart; women averaged perhaps four to six live births, with many children lost young. There were no estates to inherit.",
+egypt:"High fertility (perhaps five to seven births) met heavy child mortality; large families were an asset on the land. Elites recorded careful lineages, and brother&ndash;sister royal marriage kept the bloodline &lsquo;pure.&rsquo;",
+mesopo:"Fertility was high and valued; the Code of Hammurabi regulated marriage, dowry, inheritance and the status of children. Childlessness could be grounds for a second wife or a slave concubine.",
+assyria:"High fertility sustained a population drained by constant war and deportation. Royal and noble families practiced polygyny, and the palace harem was a center of power.",
+persia_a:"High fertility was the norm; the Persian nobility practiced polygyny and, in royal lines, close-kin marriage. Zoroastrian custom prized large families.",
+athens:"Citizen families aimed to raise a son or two to inherit and continue the line; unwanted infants could be exposed. Slaves and resident foreigners, the majority, were barred from citizenship whatever their fertility.",
+macedon:"Macedonian kings practiced polygamy for alliance and heirs, which bred deadly succession disputes. Across the Hellenistic world fertility stayed high and child mortality heavy.",
+india:"Caste was inherited and endogamous &mdash; you married within your group &mdash; so family was the unit that reproduced rank itself. Fertility was high, and sons were prized for ritual and inheritance.",
+china_e:"Confucian duty made many sons the ideal &mdash; to work the land, continue the ancestral line and care for parents. Fertility was high, and daughters married out, so sons carried the family.",
+rome:"Roman law made the father (paterfamilias) head of the household with vast authority; elites limited heirs and adopted to secure succession, while the poor and enslaved had little control over family at all. Exposure of unwanted infants was legal.",
+persia_s:"Zoroastrian custom encouraged large families and, in noble and priestly lines, close-kin marriage (khwedodah) to preserve purity. The nobility practiced polygyny.",
+huns:"Steppe leaders practiced polygyny, cementing alliances through marriage; kinship and the war-band, not fixed estates, organized society. Fertility sustained a people defined by mobility and war.",
+byz:"Christian marriage and a strong church shaped family life; large families were common and infant mortality high. Imperial and aristocratic marriages were instruments of dynastic politics.",
+caliph:"Islamic law permitted up to four wives and regulated marriage, divorce and inheritance in detail; large families were valued. Concubinage was lawful, and the child of a free man and an enslaved woman was born free.",
+tang:"Many sons remained the Confucian ideal, and the exam ladder meant a family might pour resources into educating a promising son. Fertility was high, and the extended household the norm.",
+latin:"The Church made marriage a sacrament, banned divorce and policed kinship; large families were common and child mortality severe. Among nobles, marriage and inheritance &mdash; often by primogeniture &mdash; were dynastic strategy.",
+ayyubid:"Islamic family law governed marriage, polygyny and inheritance, and ruling households used marriage to bind the extended dynasty. High fertility met high child mortality.",
+mongol:"Steppe custom allowed multiple wives, with a principal wife&rsquo;s sons favored for inheritance &mdash; though disputed succession repeatedly split the empire. Genghis Khan&rsquo;s own descendants are estimated in the millions.",
+mali:"Society mixed Islam with older West African custom; polygyny was common among those who could afford it, and lineage and clan structured social life. Hereditary occupational castes &mdash; smiths, griots, leatherworkers &mdash; married within their group.",
+timurid:"Ruling households practiced polygyny and married into Genghisid lines to legitimize power. Across the realm fertility was high and the extended family the norm.",
+ming:"Many sons meant labor, security and a chance at the exams, and ancestor worship made continuing the male line a sacred duty. Fertility was high, and foot-binding spread as a marker of female respectability.",
+ottoman:"Islamic family law governed Muslims, while non-Muslims kept their own. The sultan&rsquo;s harem, staffed by enslaved concubines, produced the heirs &mdash; and fierce succession struggles. Fertility was high across communities.",
+habsburg:"Dynastic marriage was the Habsburg strategy, taken to repeated cousin and uncle&ndash;niece unions that bred genetic disaster in the Spanish line. Commoner families were large, with heavy child mortality.",
+mughal:"Caste endogamy among Hindus and Islamic family law among Muslims governed marriage and inheritance, and the imperial harem was vast. Fertility was high and the joint family the norm.",
+bourbon:"The three estates &mdash; clergy, nobility, commoners &mdash; were largely hereditary; among peasants marriage was often late and families large but pruned by mortality, while nobles married for land and lineage.",
+qing:"Confucian family duty and ancestor worship prized many sons, and fertility was high enough that the population surged. Female infanticide and foot-binding persisted, and concubinage was common among the wealthy.",
+france_m:"The Code made the husband legal head of the family and reasserted male authority; France was unusual in beginning its fertility decline early, with smaller families spreading from the late 18th century.",
+germany:"Industrial society was reshaping the family, as large rural households gave way to smaller urban ones at the century&rsquo;s turn. The Junker aristocracy and the new industrial bourgeoisie each married within their ranks.",
+britain:"The Victorian middle class idealized the home and large, respectable families, while the poor crowded into slums with high infant mortality. Marriage and property law strongly favored husbands until reforms late in the century.",
+usa_m:"The post-war &lsquo;baby boom&rsquo; briefly pushed fertility up and families large; suburban prosperity and early marriage were the norm for white middle-class Americans, with the opportunity far less open to others.",
+ussr:"Policy swung between encouraging births &mdash; medals for &lsquo;mother heroines&rsquo; &mdash; and the reality of small urban families; women worked but also bore the domestic burden, and abortion was a common form of birth control.",
+prc:"Mao initially encouraged large families, and fertility was high before the later one-child policy. Class status was hereditary and decisive &mdash; the children of landlords or &lsquo;rightists&rsquo; bore the stigma for decades.",
+usa_now:"Fertility has fallen below replacement; family size shrinks as education and the cost of children rise, and is now strongly patterned by income. Marriage itself has become more common among the affluent than the poor.",
+china_now:"Decades of the one-child policy, now reversed, have left a shrinking, aging population; fertility is very low despite incentives, as the cost of housing and education deters larger families, and a male-skewed sex ratio is one legacy.",
+aksum:"Fertility was high, and the highland Christian culture that outlived Aksum prized large families. Specifics by class are not recorded.",
+khmer:"Fertility was high, and temple inscriptions record large numbers of bonded workers attached to single foundations. Class-specific family data is not recoverable.",
+inca:"Fertility was high, and the ayllu organized land and labor by household. The state resettled whole populations (mitma) and took &lsquo;chosen women&rsquo; (aclla) from communities, disrupting ordinary family life.",
+aztec:"Fertility was high, and the calpulli allotted land to households. Schooling was near-universal for boys, and valor in war offered a rare path to raise a commoner family&rsquo;s standing.",
+tech:"Fertility among the highly educated and affluent is low and often delayed; some in the tech elite publicly champion having more children even as the broader pattern runs toward fewer, later."
+};
+
+/* ===================== LEADER APPEARANCE & CHARACTER (where the record allows) ===================== */
+const FIGMETA = {
+"Narmer":{char:"Known almost entirely from a single carved ceremonial palette that shows him uniting the Two Lands; the man behind the founding is otherwise lost."},
+"Khufu":{char:"Remembered, on much later and hostile Greek testimony, as a tyrant who conscripted Egypt to raise the Great Pyramid; only a tiny ivory statuette survives as his likeness."},
+"Thutmose III":{look:"His mummy is that of a man of about five foot three.",char:"A brilliant and tireless general who led some seventeen campaigns and never lost a battle, he has been called the &lsquo;Napoleon of Egypt.&rsquo;"},
+"Ramesses II":{look:"His mummy reveals a man tall for his age, with a strongly hooked nose and reddish hair, who lived into his nineties.",char:"A relentless self-promoter and builder who plastered his name across Egypt and is said to have fathered around a hundred children."},
+"Sargon of Akkad":{char:"His legend &mdash; a foundling set adrift in a basket who rose from royal cup-bearer to found the first empire &mdash; prefigures later hero myths."},
+"Hammurabi":{char:"Styled himself a just shepherd of his people; his famous law-code opens by claiming the gods called him to make justice shine in the land."},
+"Ashurbanipal":{look:"Royal reliefs show him hunting lions from his chariot, the very image of kingly power.",char:"Unusually literate &mdash; he amassed the great library of Nineveh &mdash; yet boasted in his inscriptions of flaying and impaling his enemies."},
+"Nebuchadnezzar II":{char:"Builder of Babylon&rsquo;s walls and, by tradition, its Hanging Gardens; the Bible remembers him as a proud king struck by madness."},
+"Cyrus the Great":{char:"Idealized even by his enemies the Greeks as the model ruler &mdash; generous, tolerant of conquered peoples and their gods, and merciful in victory."},
+"Darius I":{char:"A gifted organizer more than a conqueror, he built the empire&rsquo;s roads, coinage, provinces and administration; his great inscription at Behistun proclaims his right to rule."},
+"Pericles":{look:"Busts always show him helmeted &mdash; ancient writers say it hid an unusually elongated head, which the comic poets mocked.",char:"Aloof, dignified and famously incorruptible, his commanding oratory earned him the nickname &lsquo;the Olympian.&rsquo;"},
+"Alexander the Great":{look:"Sources describe a youthful, clean-shaven man of fair complexion, with a tilt of the head and an intense, melting gaze; some say his eyes were of different colors.",char:"Boundlessly ambitious and personally fearless to the point of recklessness, charismatic and generous to friends, but increasingly autocratic and hard-drinking."},
+"Ashoka":{char:"After the bloodbath of his conquest of Kalinga he renounced war in remorse, embraced Buddhism, and broadcast an ethic of tolerance and non-violence on pillars across his empire."},
+"Chandragupta II":{char:"Ruling at the height of the Gupta golden age under the title Vikramaditya, he was a great patron of art and learning."},
+"Qin Shi Huang":{char:"Iron-willed and visionary but paranoid and merciless, he standardized an empire, burned books, and grew obsessed with immortality, dying in search of an elixir."},
+"Emperor Wu of Han":{char:"An energetic, expansionist ruler who pushed China&rsquo;s borders far outward; in old age he turned superstitious and paranoid, purging his own court."},
+"Augustus":{look:"Suetonius describes a short but well-formed man, with calm bright eyes he believed held a divine power, bad teeth and a blotched skin he kept out of the sun.",char:"Patient, calculating and austere, he masked absolute power behind republican forms and ruled for over forty years."},
+"Trajan":{char:"A vigorous soldier-emperor of affable manner and sound judgment, so esteemed that the Senate long wished new emperors &lsquo;luckier than Augustus and better than Trajan.&rsquo;"},
+"Marcus Aurelius":{look:"Portrait busts show a thoughtful, bearded face; his health was frail.",char:"A Stoic philosopher-king whose private &lsquo;Meditations&rsquo; reveal a dutiful, self-questioning and melancholy man burdened by constant war."},
+"Constantine the Great":{char:"Ambitious, decisive and politically shrewd, he reunified the empire by the sword, founded Constantinople, and turned the Roman state toward Christianity."},
+"Shapur I":{char:"Proud and capable, he defeated three Roman emperors and immortalized his capture of Valerian in giant rock-carved reliefs."},
+"Attila":{look:"An envoy who dined with him described a short man with a broad chest and a large head, small deep-set eyes, a thin beard and a swarthy complexion.",char:"For all his ferocity he was said to be plain in dress and food and dignified in bearing, while his name became a byword for terror."},
+"Justinian I":{char:"Tireless to the point that courtiers called him &lsquo;the emperor who never sleeps,&rsquo; ambitious and devout, he sought to restore Rome through law, conquest and the raising of Hagia Sophia."},
+"Basil II":{look:"Sources describe a short, plain, unkempt man, happiest on campaign.",char:"Austere, frugal and single-minded, he never married, gave his life to the army and the state, and crushed Bulgaria so utterly he was called &lsquo;the Bulgar-Slayer.&rsquo;"},
+"Muhammad":{char:"Known before his prophethood as al-Amin, &lsquo;the trustworthy&rsquo;; Islamic tradition remembers him as humble, just and merciful, and preserves detailed accounts of his appearance and manner."},
+"Harun al-Rashid":{char:"Presiding over Baghdad&rsquo;s golden age, he was a cultured and lavish patron, later half-legendary in the &lsquo;Thousand and One Nights.&rsquo;"},
+"Emperor Taizong of Tang":{char:"An able general and administrator held up as the model Confucian emperor &mdash; one who actively invited criticism and tolerated frank advisers."},
+"Charlemagne":{look:"His biographer (and his exhumed skeleton) describe a tall, robust man with a thick neck, large lively eyes and a dignified bearing, who loved swimming and wore plain Frankish dress.",char:"Energetic and pious, a patron of learning who, the story goes, kept a writing tablet under his pillow but never quite mastered the pen."},
+"Pope Urban II":{char:"An eloquent and forceful pope whose sermon at Clermont in 1095 launched the First Crusade and unleashed two centuries of holy war."},
+"Saladin":{char:"Even his Crusader enemies praised his chivalry, generosity and mercy; pious and modest in his habits, he gave away so much that he left almost nothing at his death."},
+"Genghis Khan":{char:"No reliable likeness survives. By every account a charismatic, disciplined and utterly ruthless leader who rewarded loyalty and merit over birth, welding the steppe into a war machine."},
+"Kublai Khan":{look:"Marco Polo, who served him, described a man of middling height and good build, fair with rosy cheeks and black eyes, grown stout and gout-ridden in age.",char:"Shrewd and magnanimous, he embraced Chinese ways to rule as emperor while never forgetting his steppe origins."},
+"Mansa Musa":{char:"Famed for almost incomprehensible wealth and open-handed piety &mdash; his lavish spending on the pilgrimage to Mecca is said to have depressed the price of gold in Egypt for years."},
+"Timur":{look:"His exhumed skeleton confirmed the chronicles: a tall man lamed in the right leg and arm &mdash; hence &lsquo;Timur the Lame,&rsquo; Tamerlane.",char:"Brilliant, charming and monstrously cruel, a chess-player and patron of art who raised towers from the skulls of the conquered."},
+"Yongle Emperor":{char:"Vigorous, ambitious and ruthless to his rivals, he seized the throne from his nephew, moved the capital to Beijing, and launched the treasure fleets to display Ming power."},
+"Mehmed II":{look:"Portraits, including one by Gentile Bellini, show an aquiline nose and a reddish beard.",char:"Multilingual and cultured but coldly ambitious, he took Constantinople at twenty-one and styled himself heir to the Roman Caesars."},
+"Suleiman the Magnificent":{look:"Portraits show a tall, slender man with a long neck, an aquiline nose and a thin moustache.",char:"Conqueror and refined patron, a poet and goldsmith, known to his own people as &lsquo;the Lawgiver&rsquo; for codifying the empire&rsquo;s law."},
+"Charles V":{look:"He bore the pronounced Habsburg jaw, an undershot bite that made eating and speaking difficult, and was pale and often unwell.",char:"Dutiful, devout and melancholic, he carried an empire &lsquo;on which the sun never set&rsquo; until, exhausted, he abdicated to a monastery."},
+"Akbar":{look:"Sources describe a broad-chested man of medium height, slightly bowlegged, with a wart on his nose held to be lucky and a loud, commanding voice.",char:"Curious and tolerant, he debated theology with priests of every faith and, though unable to read, had himself read to constantly."},
+"Aurangzeb":{char:"Austere and intensely pious &mdash; he sewed caps and copied the Quran to fund himself &mdash; a hardworking but rigid and intolerant ruler whose long wars overstretched the empire."},
+"Louis XIV":{look:"Not a tall man, he favored towering wigs and high heels; his portraits are studies in sheer royal magnificence.",char:"Hard-working, vain and supremely self-assured, he made himself the sun around which France turned &mdash; &lsquo;l&rsquo;&eacute;tat, c&rsquo;est moi.&rsquo;"},
+"Kangxi Emperor":{char:"Diligent and intellectually curious, he studied mathematics and astronomy with Jesuit tutors and, in one of history&rsquo;s longest reigns, secured Manchu rule over a prosperous China."},
+"Qianlong Emperor":{char:"Cultured and prodigiously vain &mdash; he composed tens of thousands of poems and stamped his seals over the empire&rsquo;s art treasures &mdash; presiding over the dynasty&rsquo;s height and the first signs of its decline."},
+"Napoleon Bonaparte":{look:"Of roughly average height for his day &mdash; the &lsquo;little&rsquo; Napoleon is largely a myth &mdash; pale, with a piercing gaze, and growing stout in later years.",char:"Possessed of restless energy, a prodigious memory and boundless ambition, he was both a charismatic leader of men and a cold master of power."},
+"Otto von Bismarck":{look:"A tall, heavy and imposing figure with, surprisingly, a rather high voice.",char:"Master of cold realpolitik and iron will, a brooding hypochondriac and prodigious eater who unified Germany &lsquo;by blood and iron.&rsquo;"},
+"Queen Victoria":{look:"Barely five feet tall, and stout in later life.",char:"Strong-willed, emotional and intensely devoted to her husband Albert, after whose death she mourned in seclusion for decades, lending her name to an entire age."},
+"Franklin D. Roosevelt":{look:"Tall and patrician; paralyzed from the waist down by polio, he used a wheelchair he took great pains to hide from the public.",char:"Radiating optimism and charm, a consummate and pragmatic politician who led the nation through Depression and world war."},
+"Joseph Stalin":{look:"Short and pockmarked from childhood smallpox, with a stiff, withered left arm.",char:"Paranoid, vindictive and patient, a master of bureaucratic intrigue who ruled by terror and a crude, menacing humor."},
+"Mao Zedong":{look:"Tall for his generation, fleshy in later life, with a distinctive mole on his chin.",char:"Willful, charismatic and ruthless, a guerrilla strategist and poet who grew ever more remote and cult-like in power."},
+"Donald Trump":{char:"A businessman and television personality turned politician, known for a combative, unconventional and intensely media-driven style."},
+"Xi Jinping":{char:"A disciplined, low-key public figure who has concentrated power and pressed a vision of national rejuvenation under tight Party control."},
+"Ezana of Axum":{char:"The king who Christianized Aksum &mdash; his inscriptions shift from the old gods to the Christian God &mdash; though no description of the man himself survives."},
+"Suryavarman II":{char:"Builder of Angkor Wat, he seized the throne in his youth and styled himself a universal monarch; the temple is his enduring monument, the man otherwise obscure."},
+"Pachacuti":{char:"Remembered as a transformative reformer and builder &mdash; the architect of the Inca state, its capital and its institutions &mdash; though no physical description survives."},
+"Moctezuma II":{char:"Remembered as a proud and deeply religious ruler whose fatal hesitation before the Spanish has been debated ever since."},
+"Elon Musk":{char:"An entrepreneur known for relentless work, outsized risk-taking and a provocative, highly public presence across several industries."}
+};
+
+/* ===================== HELPERS ===================== */
+function initials(name){
+  const stop={of:1,the:1,al:1,"al-rashid":1};
+  const parts=name.replace(/[^A-Za-z\s-]/g,"").split(/[\s-]+/).filter(w=>w && !stop[w.toLowerCase()]);
+  let s=(parts[0]?parts[0][0]:"")+(parts.length>1?parts[parts.length-1][0]:"");
+  return s.toUpperCase()||"\u2022";
+}
+function gURL(slug){ return "https://grokipedia.com/page/"+slug; }
+function lerpBlue(t){ // t in 0..1 -> dark blue to light blue
+  t=Math.max(0,Math.min(1,t));
+  const a=[15,40,94], b=[185,198,228];
+  const c=a.map((v,i)=>Math.round(v+(b[i]-v)*t));
+  return "rgb("+c[0]+","+c[1]+","+c[2]+")";
+}
+function esc(s){ return s; } // strings already carry HTML entities
+
+/* ===================== RENDER ===================== */
+function buildTiers(tiers, shares){
+  const n=tiers.length;
+  const useShares = Array.isArray(shares) && shares.length===n;
+  const maxP = useShares ? Math.max.apply(null, shares) : 0;
+  let h='<div class="tiers">';
+  tiers.forEach((t,i)=>{
+    const w = useShares ? Math.max(1.2, 100*shares[i]/maxP).toFixed(1) : (30+70*((i+1)/n)).toFixed(1);  /* bar length is proportional to population share */
+    const share = useShares ? fmtPct(shares[i]) : (t.s||"");
+    const cap=i===0;
+    const col=cap?"var(--flame)":lerpBlue(n>2?(i-1)/(n-2):0.5);
+    h+='<div class="tier'+(cap?' cap':'')+'">'
+      +'<div class="gutter"><span class="bar" style="width:'+w+'%;--c:'+col+'"></span></div>'
+      +'<div class="tier-info"><div class="tier-top"><span class="tier-name">'+t.n+'</span>'
+      +(share?'<span class="tier-share">'+share+'</span>':'')+'</div>'
+      +(t.d?'<p class="tier-note">'+t.d+'</p>':'')+'</div></div>';
+  });
+  return h+'</div>';
+}
+function figTraits(name){
+  const fm=FIGMETA[name]; if(!fm) return '';
+  let s='';
+  if(fm.look) s+='<p class="fig-trait"><span class="lbl">Appearance</span> '+fm.look+'</p>';
+  if(fm.char) s+='<p class="fig-trait"><span class="lbl">Character</span> '+fm.char+'</p>';
+  return s;
+}
+function buildFig(en){
+  const slug=(en.url.split("/page/")[1]||"").trim();
+  const doms=(en.dom||[]).map(d=>'<span class="d" style="background:'+(DOMAINS[d]?DOMAINS[d].color:'#888')+'"></span>').join("");
+  return '<article class="fig" data-doms="'+(en.dom||[]).join(" ")+'">'
+    +'<a class="portrait" data-slug="'+slug+'" href="'+en.url+'" target="_blank" rel="noopener" aria-label="'+en.name+' on Grokipedia">'
+    +'<span class="pmono">'+initials(en.name)+'</span></a>'
+    +'<div class="fig-body"><div class="fig-top"><span class="fig-yr">'+en.yr+'</span><span class="doms">'+doms+'</span></div>'
+    +'<h4 class="fig-name">'+en.name+'</h4>'
+    +'<p class="fig-why">'+en.why+'</p>'
+    +figTraits(en.name)
+    +'<a class="glink" href="'+en.url+'" target="_blank" rel="noopener">Grokipedia <span class="ar">&rarr;</span></a>'
+    +'</div></article>';
+}
+function srcLine(src){
+  const allG=src.every(s=>s[1]);
+  const parts=src.map(s=> s[1]
+    ? '<a href="'+gURL(s[1])+'" target="_blank" rel="noopener">'+s[0]+'</a>'
+    : '<span class="ref">'+s[0]+'</span>');
+  return '<p class="civ-src">'+(allG?'Source &middot; Grokipedia: ':'Sources &middot; ')+parts.join(' &middot; ')+'</p>';
+}
+function buildCiv(civId,figs,domId){
+  const c=CIVS[civId];
+  if(!c) return '';
+  const r=ROUTE[civId]||"birth";
+  let h='<div class="civ reveal" id="'+(domId||("civ-"+civId))+'">';
+  h+='<div class="civ-head"><h3 class="civ-name">'+c.name+'</h3>'
+    +'<span class="route" data-r="'+r+'" title="most reliable route to the top">&uarr; '+r+'</span>'
+    +(figs.length?'<span class="civ-meta">'+figs.length+' at the top</span>':'')+'</div>';
+  if(c.note) h+='<p class="tier-note" style="margin:10px 0 2px;max-width:80ch;color:var(--ink-2)">'+c.note+'</p>';
+  const lc=LIFECYCLE[civId];
+  if(lc && (lc.rose||lc.fell)){
+    h+='<div class="arc">';
+    if(lc.rose) h+='<div class="arc-i rise"><span class="arc-l">How it rose</span><p>'+lc.rose+'</p></div>';
+    if(lc.fell) h+='<div class="arc-i fall"><span class="arc-l">How it fell</span><p>'+lc.fell+'</p></div>';
+    h+='</div>';
+  }
+  h+='<p class="mini">The order &mdash; top to base</p>'+buildTiers(c.tiers, SHARES[civId]);
+  if(c.traits && c.traits.length){
+    h+='<p class="mini">Levers &mdash; what raised your odds</p><div class="traits">';
+    c.traits.forEach((t,i)=>{ h+='<span class="chip-t"><span class="n">'+String(i+1).padStart(2,"0")+'</span>'+t+'</span>'; });
+    h+='</div>';
+  }
+  if(DAYLIFE[civId]) h+='<p class="mini">A day in the life</p><p class="dl">'+DAYLIFE[civId]+'</p>';
+  if(FAMILY[civId]) h+='<p class="mini">Family &amp; children</p><p class="dl fam">'+FAMILY[civId]+'</p>';
+  h+=srcLine(c.src);
+  if(figs.length){
+    h+='<p class="mini">Who held the top</p><div class="civ-figs">'+figs.map(buildFig).join("")+'</div>';
+  }
+  return h+'</div>';
+}
+
+const timeline=document.getElementById("timeline");
+let eraCount=0;
+const usedCivs=new Set();
+const indexData=[];
+ERAS.forEach(era=>{
+  const isVoid=era.key==="void";
+  const no=isVoid?"&empty;":String(++eraCount).padStart(2,"0");
+  const idxItems=[];
+  let body='<div class="wrap">';
+  body+='<div class="era-head"><span class="era-no">'+no+'</span>'
+    +'<h2 class="era-name">'+era.label+'</h2>'
+    +'<p class="era-range">'+(era.range||"")+'</p>'
+    +(ERA_INTRO[era.key]?'<p class="era-intro">'+ERA_INTRO[era.key]+'</p>':'')+'</div>';
+
+  if(isVoid){
+    const id="civ-"+era.key+"-forage"; usedCivs.add("forage");
+    body+=buildCiv("forage",[],id);
+    idxItems.push({name:CIVS.forage.name,id:id});
+    if(era.blurb) body+='<p class="void-note">'+era.blurb+'</p>';
+    if(era.link) body+='<a class="more" href="'+era.link.url+'" target="_blank" rel="noopener">Grokipedia: '+(era.link.text||"Hunter-gatherer")+' <span class="ar">&rarr;</span></a>';
+  } else {
+    const seen=[],groups={};
+    (era.entries||[]).forEach(en=>{ const cv=CIV_OF[en.name]||"_"; if(!groups[cv]){groups[cv]=[];seen.push(cv);} groups[cv].push(en); });
+    seen.forEach(cv=>{ if(!CIVS[cv]) return; const id="civ-"+era.key+"-"+cv; usedCivs.add(cv); body+=buildCiv(cv,groups[cv],id); idxItems.push({name:CIVS[cv].name,id:id}); });
+  }
+  body+='</div>';
+  const sec=document.createElement("section");
+  sec.className="era reveal"+(isVoid?" void":"");
+  sec.id="era-"+era.key;
+  sec.innerHTML=body;
+  timeline.appendChild(sec);
+  if(idxItems.length) indexData.push({era:era.label, items:idxItems});
+});
+
+/* civilization jump index */
+const civIndexEl=document.getElementById("civIndex");
+if(civIndexEl){
+  civIndexEl.innerHTML=indexData.map(g=>
+    '<div class="idx-grp"><div class="idx-era">'+g.era+'</div><div class="idx-civs">'+
+    g.items.map(it=>'<a class="idx-civ" href="#'+it.id+'">'+it.name+'</a>').join("")+'</div></div>'
+  ).join("");
+}
+
+/* footer meta */
+const nFig=ERAS.reduce((a,e)=>a+((e.entries||[]).length),0);
+document.getElementById("footMeta").innerHTML=
+  nFig+" named figures &middot; "+usedCivs.size+" civilizations &middot; "+eraCount+" recorded ages &middot; sourced from Grokipedia &amp; standard references";
+
+/* ===================== ERA NAV + SCROLL-SPY ===================== */
+const eraNav=document.getElementById("eraNav");
+ERAS.forEach(era=>{
+  const b=document.createElement("button");
+  b.className="chip"; b.textContent=era.label; b.dataset.target="era-"+era.key;
+  b.addEventListener("click",()=>document.getElementById("era-"+era.key).scrollIntoView({behavior:"smooth",block:"start"}));
+  eraNav.appendChild(b);
+});
+const chips=[...eraNav.querySelectorAll(".chip")];
+const navH=()=>document.getElementById("navBar").offsetHeight;
+function spy(){
+  const y=window.scrollY+navH()+90; let cur=chips[0]&&chips[0].dataset.target;
+  ERAS.forEach(era=>{ const el=document.getElementById("era-"+era.key); if(el && el.offsetTop<=y) cur="era-"+era.key; });
+  chips.forEach(c=>c.classList.toggle("on",c.dataset.target===cur));
+}
+window.addEventListener("scroll",spy,{passive:true}); spy();
+
+/* ===================== DOMAIN FILTERS ===================== */
+const filters=document.getElementById("filters");
+const active=new Set();
+Object.entries(DOMAINS).forEach(([k,v])=>{
+  const b=document.createElement("button");
+  b.className="flt"; b.dataset.dom=k;
+  b.innerHTML='<span class="sw" style="background:'+v.color+'"></span>'+v.label;
+  b.addEventListener("click",()=>{ active.has(k)?active.delete(k):active.add(k); applyFilter(); });
+  filters.appendChild(b);
+});
+const clr=document.createElement("button");
+clr.className="flt-x"; clr.textContent="clear"; clr.addEventListener("click",()=>{ active.clear(); applyFilter(); });
+filters.appendChild(clr);
+function applyFilter(){
+  const on=active.size>0;
+  document.querySelectorAll(".flt").forEach(b=>{
+    const k=b.dataset.dom;
+    b.classList.toggle("on",active.has(k));
+    b.classList.toggle("off",on&&!active.has(k));
+  });
+  clr.classList.toggle("show",on);
+  document.querySelectorAll(".fig").forEach(f=>{
+    const ds=(f.dataset.doms||"").split(" ").filter(Boolean);
+    const keep=!on||ds.some(d=>active.has(d));
+    f.classList.toggle("dim",!keep);
+  });
+}
+
+/* ===================== PORTRAITS (Wikimedia Commons) ===================== */
+async function loadPortraits(){
+  const slugs=[...new Set([...document.querySelectorAll(".portrait")].map(p=>p.dataset.slug).filter(Boolean))];
+  for(let i=0;i<slugs.length;i+=20){
+    const batch=slugs.slice(i,i+20);
+    const url="https://en.wikipedia.org/w/api.php?action=query&prop=pageimages&format=json&pithumbsize=240&origin=*&titles="+batch.map(encodeURIComponent).join("|");
+    try{
+      const r=await fetch(url); const j=await r.json();
+      const pages=(j.query&&j.query.pages)||{};
+      const bySlug={};
+      Object.values(pages).forEach(p=>{ if(p.title&&p.thumbnail) bySlug[p.title.replace(/ /g,"_")]=p.thumbnail.source; });
+      batch.forEach(slug=>{
+        const src=bySlug[slug]; if(!src) return;
+        document.querySelectorAll('.portrait[data-slug="'+CSS.escape(slug)+'"]').forEach(p=>{
+          const img=new Image();
+          img.onload=()=>{ p.appendChild(img); p.classList.add("has-img"); };
+          img.alt=""; img.src=src;
+        });
+      });
+    }catch(e){ /* offline / blocked: monograms remain */ }
+  }
+}
+loadPortraits();
+
+/* ===================== SCROLL REVEAL ===================== */
+const io=new IntersectionObserver((es)=>{
+  es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add("in"); io.unobserve(e.target); } });
+},{rootMargin:"0px 0px -8% 0px"});
+document.querySelectorAll(".reveal").forEach(el=>io.observe(el));
+
+/* ===================== INTERACTIVE: CAST YOURSELF INTO HISTORY ===================== */
+(function(){
+  const sel=document.getElementById("qCiv"); if(!sel) return;
+
+  /* birth-status -> tier index per civilization (apex 0 ... base n-1); out = subject/outsider tier */
+  const CLASSMAP={
+    forage:{noble:0,wealthy:0,common:1,poor:1,enslaved:1},
+    egypt:{noble:2,wealthy:4,common:5,poor:6,enslaved:6},
+    mesopo:{noble:1,wealthy:2,common:4,poor:4,enslaved:5},
+    assyria:{noble:2,wealthy:3,common:4,poor:4,enslaved:5},
+    persia_a:{noble:1,wealthy:2,common:3,poor:3,enslaved:4},
+    athens:{noble:0,wealthy:0,common:1,poor:1,enslaved:4,out:2},
+    macedon:{noble:1,wealthy:2,common:2,poor:3,enslaved:4,out:3},
+    india:{noble:1,wealthy:2,common:3,poor:3,enslaved:4},
+    china_e:{noble:1,wealthy:4,common:2,poor:2,enslaved:5},
+    rome:{noble:1,wealthy:2,common:3,poor:3,enslaved:5},
+    persia_s:{noble:2,wealthy:3,common:4,poor:4,enslaved:4},
+    huns:{noble:1,wealthy:2,common:2,poor:3,enslaved:4,out:3},
+    byz:{noble:1,wealthy:2,common:4,poor:4,enslaved:5},
+    caliph:{noble:1,wealthy:2,common:2,poor:2,enslaved:4,out:3},
+    tang:{noble:1,wealthy:3,common:2,poor:2,enslaved:5},
+    latin:{noble:2,wealthy:3,common:4,poor:5,enslaved:5},
+    ayyubid:{noble:1,wealthy:2,common:4,poor:4,enslaved:5},
+    mongol:{noble:2,wealthy:3,common:3,poor:4,enslaved:5,out:4},
+    mali:{noble:1,wealthy:3,common:3,poor:3,enslaved:5},
+    timurid:{noble:1,wealthy:3,common:4,poor:4,enslaved:5},
+    ming:{noble:1,wealthy:4,common:3,poor:3,enslaved:5},
+    ottoman:{noble:1,wealthy:3,common:3,poor:3,enslaved:5,out:4},
+    habsburg:{noble:1,wealthy:4,common:5,poor:5,enslaved:5},
+    mughal:{noble:1,wealthy:3,common:4,poor:4,enslaved:5},
+    bourbon:{noble:2,wealthy:3,common:5,poor:5,enslaved:5},
+    qing:{noble:1,wealthy:4,common:3,poor:3,enslaved:5},
+    france_m:{noble:1,wealthy:2,common:5,poor:5,enslaved:5},
+    germany:{noble:1,wealthy:2,common:5,poor:5,enslaved:5},
+    britain:{noble:1,wealthy:2,common:4,poor:4,enslaved:5,out:5},
+    usa_m:{noble:1,wealthy:1,common:3,poor:4,enslaved:4,out:4},
+    ussr:{noble:1,wealthy:2,common:3,poor:4,enslaved:4},
+    prc:{noble:1,wealthy:3,common:2,poor:2,enslaved:4,out:4},
+    usa_now:{noble:1,wealthy:1,common:2,poor:4,enslaved:4},
+    china_now:{noble:1,wealthy:2,common:3,poor:4,enslaved:4,out:4},
+    aksum:{noble:1,wealthy:3,common:4,poor:4,enslaved:5},
+    khmer:{noble:2,wealthy:3,common:4,poor:4,enslaved:5},
+    inca:{noble:1,wealthy:2,common:4,poor:4,enslaved:5,out:5},
+    aztec:{noble:1,wealthy:3,common:4,poor:4,enslaved:5},
+    tech:{noble:1,wealthy:1,common:2,poor:3,enslaved:4}
+  };
+  /* societies with a real merit ladder: the tier a literate commoner could climb into */
+  const MERIT={china_e:1,tang:1,ming:1,qing:2,mughal:2,ottoman:2,mongol:2,france_m:2,ussr:2,usa_m:2,china_now:2};
+  /* of those, the modern ones where that ladder was (with caveats) open to women too */
+  const FEMALE_MERIT={france_m:1,ussr:1,usa_m:1,china_now:1};
+  const NO_SLAVERY=new Set(["france_m","germany","britain","usa_m","ussr","prc","usa_now","china_now","tech"]);
+  const LIFE_EXP={void:"about 30",bronze:"about 30",classical:"about 30",postclassical:"about 30",earlymodern:"about 35",modern:"about 45",now:"about 78"};
+  const REPS=[["void","forage"],["bronze","egypt"],["classical","rome"],["postclassical","tang"],["earlymodern","bourbon"],["modern","britain"],["now","usa_now"]];
+
+  /* which era each civilization sits in */
+  const eraOf={}; ERAS.forEach(e=>{ (e.entries||[]).forEach(en=>{ const c=CIV_OF[en.name]; if(c&&!eraOf[c]) eraOf[c]=e; }); });
+  const voidEra=ERAS.find(e=>e.key==="void"); if(voidEra) eraOf.forage=voidEra;
+
+  /* populate the age picker, grouped by era */
+  ERAS.forEach(e=>{
+    let civs=[];
+    if(e.key==="void") civs=["forage"];
+    else { const seen=new Set(); (e.entries||[]).forEach(en=>{ const c=CIV_OF[en.name]; if(c&&CIVS[c]&&!seen.has(c)){ seen.add(c); civs.push(c);} }); }
+    if(!civs.length) return;
+    const og=document.createElement("optgroup"); og.label=e.label;
+    civs.forEach(c=>{ const o=document.createElement("option"); o.value=c; o.textContent=CIVS[c].name; og.appendChild(o); });
+    sel.appendChild(og);
+  });
+
+  const st={sex:"m",birth:"common",group:"in",lit:"0",civ:"egypt"};
+  if([...sel.options].some(o=>o.value==="egypt")) sel.value="egypt"; else if(sel.options.length) { sel.selectedIndex=0; st.civ=sel.value; }
+
+  function bindOpts(id,key){
+    const box=document.getElementById(id); if(!box) return;
+    const btns=[...box.querySelectorAll(".opt")];
+    const sync=()=>btns.forEach(b=>b.classList.toggle("on",b.dataset.v===st[key]));
+    btns.forEach(b=>b.addEventListener("click",()=>{ st[key]=b.dataset.v; sync(); render(); }));
+    sync();
+  }
+  bindOpts("qSex","sex"); bindOpts("qBirth","birth"); bindOpts("qGroup","group"); bindOpts("qLit","lit");
+  sel.addEventListener("change",()=>{ st.civ=sel.value; render(); });
+  const rndBtn=document.getElementById("qRnd");
+  if(rndBtn) rndBtn.addEventListener("click",()=>{ const all=[...sel.options].map(o=>o.value); if(!all.length) return; st.civ=all[Math.floor(Math.random()*all.length)]; sel.value=st.civ; render(); });
+
+  function meritApplies(civ,s,idx){
+    const m=MERIT[civ];
+    return m!==undefined && s.lit==="1" && (s.birth==="common"||s.birth==="poor") && (s.sex==="m"||FEMALE_MERIT[civ]) && idx>m;
+  }
+  function placeIdx(civ,s){
+    const cm=CLASSMAP[civ], c=CIVS[civ]; if(!cm||!c) return 0;
+    const n=c.tiers.length;
+    let idx=cm[s.birth]; if(idx===undefined||idx===null) idx=cm.common;
+    if(s.group==="out" && cm.out!==undefined && cm.out!==null && (s.birth==="common"||s.birth==="poor"||s.birth==="wealthy")) idx=cm.out;
+    if(meritApplies(civ,s,idx)) idx=MERIT[civ];
+    return Math.max(0,Math.min(n-1,idx));
+  }
+  function standing(civ,idx){
+    const S=SHARES[civ]; if(!S||!S.length) return null;
+    let below=0,total=0; S.forEach((p,i)=>{ total+=p; if(i>idx) below+=p; });
+    return total>0 ? ((below+(S[idx]||0)/2)/total*100) : null;
+  }
+  function bar(pct,cls){ return '<div class="sbar"><span class="sbar-f '+(cls||"")+'" style="width:'+Math.max(2,Math.min(100,pct))+'%"></span></div>'; }
+  function pyramid(civ,hi){
+    const c=CIVS[civ],S=SHARES[civ]; if(!c) return "";
+    const n=c.tiers.length, max=S?Math.max.apply(null,S):0;
+    let h='<div class="spyr">';
+    c.tiers.forEach((t,i)=>{
+      const w=S?Math.max(2,100*S[i]/max):(30+70*((i+1)/n)), cap=i===0, you=i===hi;
+      const col=cap?"var(--flame)":lerpBlue(n>2?(i-1)/(n-2):.5);
+      h+='<div class="spyr-r'+(you?" you":"")+'"><span class="spyr-bar" style="width:'+w.toFixed(1)+'%;--c:'+col+'"></span>'
+        +'<span class="spyr-n">'+t.n+(S?' <i>'+fmtPct(S[i])+'</i>':"")+(you?' <b>&larr; you</b>':"")+'</span></div>';
+    });
+    return h+'</div>';
+  }
+  function render(){
+    const out=document.getElementById("simOut"); if(!out) return;
+    const civ=st.civ, c=CIVS[civ]; if(!c){ out.hidden=true; return; }
+    const era=eraOf[civ]||{}, idx=placeIdx(civ,st), t=c.tiers[idx]||{}, sp=standing(civ,idx), female=st.sex==="f", cm=CLASSMAP[civ]||{};
+    const P=[];
+    P.push('<div class="so-head"><span class="so-k">If you were born into</span><h3 class="so-civ">'+c.name+(era.range?' <span class="so-yr">'+era.range+'</span>':"")+'</h3></div>');
+    P.push('<p class="so-line">You would most likely live as <b class="so-tier">'+t.n+'</b>'+(SHARES[civ]?' &mdash; one of the <b>'+fmtPct(SHARES[civ][idx])+'</b> of people in that layer.':'.')+'</p>');
+    if(t.d) P.push('<p class="so-d">'+t.d+'</p>');
+    P.push(pyramid(civ,idx));
+    if(sp!==null) P.push('<div class="so-stand"><div class="so-stand-top"><span class="so-stand-l">Relative standing &mdash; against everyone alive then</span><span class="so-stand-v">better off than ~'+Math.round(sp)+'%</span></div>'+bar(sp,"flame")+'</div>');
+    else if(civ==="forage") P.push('<div class="so-stand"><span class="so-stand-l">There was no ladder &mdash; you would stand roughly equal to everyone around you.</span></div>');
+    if(DAYLIFE[civ]) P.push('<p class="so-day"><span class="so-tag">Most people then</span>'+DAYLIFE[civ]+'</p>');
+
+    const cav=[];
+    if(st.birth==="noble" && idx<=1 && civ!=="forage") cav.push('Even born to the ruling class, the throne itself was a single seat among millions &mdash; you would serve near power far sooner than hold it.');
+    if(female) cav.push('As a woman you would take your household&rsquo;s rank but rarely its public power &mdash; office, the army, most trades, and in most ages literacy itself, were closed to you.');
+    if(meritApplies(civ,st,placeRaw(civ,st))) cav.push('You climbed: here talent and learning could lift a commoner into the ruling service &mdash; one of the few ladders that rewarded merit over birth.');
+    else if(MERIT[civ]!==undefined && st.lit==="1" && female && !FEMALE_MERIT[civ] && (st.birth==="common"||st.birth==="poor")) cav.push('This society let literate men rise on merit &mdash; but that ladder was shut to women.');
+    if(st.group==="out" && cm.out!==undefined && cm.out!==null && (st.birth==="common"||st.birth==="poor"||st.birth==="wealthy")) cav.push('As an outsider to the dominant people or faith, you were held below the heights whatever your wealth or wits.');
+    if(NO_SLAVERY.has(civ) && st.birth==="enslaved") cav.push('Chattel slavery had largely been abolished by this age &mdash; you would instead be among the most marginalized.');
+    if(LIFE_EXP[era.key]) cav.push('Life expectancy at birth was '+LIFE_EXP[era.key]+(era.key==="now"?".":" &mdash; survive childhood, though, and you could expect far longer."));
+    if(cav.length) P.push('<ul class="so-cav">'+cav.map(x=>'<li>'+x+'</li>').join("")+'</ul>');
+
+    let strip='<div class="so-ages"><p class="so-ages-l">The same you, across the ages &mdash; your relative standing</p>';
+    REPS.forEach(([ek,cv])=>{
+      if(!CIVS[cv]) return;
+      const ii=placeIdx(cv,st), ss=standing(cv,ii), er=eraOf[cv]||{}, nm=(CIVS[cv].tiers[ii]||{}).n||"";
+      strip+='<button class="age-row'+(cv===civ?" cur":"")+'" type="button" data-civ="'+cv+'"><span class="age-era">'+(er.label||ek)+'</span>'+bar(ss!==null?ss:50,cv===civ?"flame":"")+'<span class="age-v">'+(ss!==null?"~"+Math.round(ss)+"%":"&mdash;")+'</span><span class="age-tier">'+nm+'</span></button>';
+    });
+    strip+='</div>'; P.push(strip);
+
+    out.innerHTML=P.join(""); out.hidden=false;
+    out.querySelectorAll(".age-row").forEach(b=>b.addEventListener("click",()=>{ st.civ=b.dataset.civ; sel.value=st.civ; render(); }));
+  }
+  /* idx before clamping, used only to test whether the merit lever fired */
+  function placeRaw(civ,s){
+    const cm=CLASSMAP[civ]; if(!cm) return 99;
+    let idx=cm[s.birth]; if(idx===undefined||idx===null) idx=cm.common;
+    if(s.group==="out" && cm.out!==undefined && cm.out!==null && (s.birth==="common"||s.birth==="poor"||s.birth==="wealthy")) idx=cm.out;
+    return idx;
+  }
+  render();
+})();
+
+/* ===================== BOOT LINE ===================== */
+(function(){
+  const el=document.getElementById("bootText"), cur=document.getElementById("cursor");
+  const msg="indexing 5,000 years of hierarchy \u2014 "+usedCivs.size+" civilizations, "+nFig+" names at the top.";
+  if(!el){return;}
+  cur.style.display="inline-block";
+  let i=0;
+  (function type(){ if(i<=msg.length){ el.textContent=msg.slice(0,i++); setTimeout(type, i<14?60:22); } else { setTimeout(()=>cur.style.display="none",1400); } })();
+})();
+</script>
+</body>
+</html>
