@@ -1,0 +1,23 @@
+{
+  "generated_at": "2026-06-20T02:48:38.451Z",
+  "model": "claude-haiku-4-5",
+  "url": "https://gooboolygoo.github.io/projects/strata/",
+  "hashtags": [
+    "history",
+    "civilizations",
+    "interactive",
+    "webdev",
+    "indiedev"
+  ],
+  "x": {
+    "tweet": "You didn't choose when you were born. For almost all of history, that choice decided everything. Pick an age, tell STRATA who you are, and see exactly where you'd rank.",
+    "reply_lead": "see your rank across history →"
+  },
+  "vertical_caption": "You didn't choose when you were born. For almost all of history, that decided everything. Tell STRATA who you are, pick an age, and see where you'd actually rank in that hierarchy.",
+  "shorts_description_lead": "You didn't choose when you were born. For almost all of history, that choice decided everything. Pick an age and find out exactly where STRATA would have placed you in the hierarchy.",
+  "video": {
+    "title": "Where Would You Rank in History",
+    "script": "For almost all of recorded history, one fact decided your entire life: who your parents were. Today we can reverse it. Tell this tool who you are, pick any civilization and any age, and it calculates exactly where you'd rank in that hierarchy. Birth, merit, wealth, faith. See which traits pushed people up. Try it with yourself, link in the description.",
+    "word_count": 61
+  }
+}
